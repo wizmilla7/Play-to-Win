@@ -1,0 +1,3190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎰 Multi‑Game Platform</title>
+    <style>
+        /* ── reset & base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a1a;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, #111128, #0d0d22);
+            border-radius: 36px;
+            padding: 24px 28px 32px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .brand {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links button {
+            background: rgba(255, 255, 255, 0.04);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .nav-links button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        .nav-links button.active {
+            background: rgba(255, 215, 0, 0.12);
+            color: #f7e05e;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .user-area .balance {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f7e05e;
+        }
+
+        .user-area .btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .user-area .btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .user-area .btn-logout {
+            color: #ff6b6b;
+        }
+        .user-area .btn-change-pw {
+            color: #f7e05e;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .game-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* ── KENO ── */
+        .keno-wrapper {
+            background: #0f0f2a;
+            border-radius: 20px;
+            padding: 20px 22px 24px;
+        }
+
+        /* ── Winning Numbers Banner (Horizontal Layout) ── */
+        .winning-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.08), rgba(0, 200, 80, 0.03));
+            border: 1px solid rgba(0, 230, 118, 0.15);
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            min-height: 48px;
+        }
+        .winning-banner.visible {
+            display: flex;
+        }
+        .winning-banner .label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #00e676;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .winning-banner .balls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 6px;
+            flex: 1;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .winning-banner .ball {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #00e676, #00c853);
+            color: #0b0b1a;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 11px;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.25);
+            padding: 0 2px;
+            animation: popIn 0.35s ease forwards;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        .winning-banner .ball.matched {
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+            border: 2px solid #f7e05e;
+        }
+        .winning-banner .ball.revealing {
+            animation: popIn 0.35s ease forwards;
+        }
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotate(-10deg);
+            }
+            60% {
+                transform: scale(1.2) rotate(2deg);
+                opacity: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .winning-banner .status-text {
+            font-size: 12px;
+            opacity: 0.5;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .keno-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .keno-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f7e05e;
+            letter-spacing: 0.5px;
+        }
+
+        .keno-sub {
+            font-size: 14px;
+            opacity: 0.5;
+            margin-bottom: 16px;
+        }
+
+        .keno-grid-wrap {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 12px 8px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .keno-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+        }
+
+        .keno-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            user-select: none;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .keno-cell:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .keno-cell.selected {
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            color: #0b0b1a;
+            border-color: #f7e05e;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            transform: scale(1.04);
+        }
+        .keno-cell.drawn {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.25);
+            cursor: default;
+            border-color: rgba(255, 255, 255, 0.02);
+        }
+        .keno-cell.matched {
+            background: linear-gradient(135deg, #00e676, #00c853);
+            color: #0b0b1a;
+            border-color: #00e676;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.35);
+            transform: scale(1.06);
+            animation: matchPop 0.4s ease;
+        }
+        .keno-cell.winning {
+            background: linear-gradient(135deg, #00e676, #00c853);
+            color: #0b0b1a;
+            border-color: #00e676;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.5);
+            transform: scale(1.08);
+            animation: winPop 0.5s ease;
+        }
+        @keyframes winPop {
+            0% {
+                transform: scale(0.5);
+                opacity: 0.3;
+            }
+            60% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+        @keyframes matchPop {
+            0% {
+                transform: scale(0.6);
+                opacity: 0.3;
+            }
+            60% {
+                transform: scale(1.12);
+            }
+            100% {
+                transform: scale(1.06);
+                opacity: 1;
+            }
+        }
+
+        .keno-cell.blink {
+            animation: blinkAnim 0.6s ease 3;
+            background: rgba(255, 215, 0, 0.4);
+            border-color: #f7e05e;
+            color: #fff;
+            transform: scale(1.08);
+        }
+        @keyframes blinkAnim {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+            50% {
+                opacity: 0.2;
+                transform: scale(0.85);
+            }
+        }
+
+        .keno-bottom {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .keno-bet-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 6px 14px 6px 18px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .keno-bet-area label {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.4;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .keno-bet-area input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 6px 10px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            width: 80px;
+            font-family: inherit;
+            outline: none;
+        }
+        .keno-bet-area input:focus {
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+
+        .keno-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .keno-actions .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            color: #0b0b1a;
+        }
+        .btn-gold:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.25);
+        }
+        .btn-gold:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .keno-pick-count {
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.4;
+            margin-left: auto;
+        }
+        .keno-pick-count strong {
+            color: #f7e05e;
+            opacity: 1;
+        }
+
+        .keno-tabs {
+            display: flex;
+            gap: 4px;
+            margin: 14px 0 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            padding-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .keno-tabs button {
+            background: transparent;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .keno-tabs button:hover {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .keno-tabs button.active {
+            background: rgba(255, 215, 0, 0.08);
+            color: #f7e05e;
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 8px 0;
+            min-height: 60px;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        .tab-panel .empty {
+            opacity: 0.3;
+            font-size: 14px;
+        }
+
+        .keno-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 6px 0 8px 0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .keno-stats .stat-item {
+            opacity: 0.5;
+        }
+        .keno-stats .stat-item strong {
+            color: #fff;
+            opacity: 1;
+            font-weight: 700;
+        }
+        .keno-stats .stat-item.highlight {
+            opacity: 1;
+            color: #f7e05e;
+        }
+        .keno-stats .stat-item.highlight strong {
+            color: #f7e05e;
+        }
+
+        .keno-result {
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            min-height: 44px;
+            margin-top: 8px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .keno-result .empty {
+            opacity: 0.3;
+        }
+        .keno-result .win-badge {
+            background: linear-gradient(135deg, #00e676, #00c853);
+            color: #0b0b1a;
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .keno-result .lose-badge {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .keno-result .match-nums {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .keno-result .match-nums span {
+            background: rgba(255, 215, 0, 0.08);
+            padding: 0 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #f7e05e;
+        }
+
+        /* ── Players list ── */
+        .keno-players {
+            margin-top: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .keno-players h4 {
+            font-size: 14px;
+            opacity: 0.5;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .keno-players .player-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 16px;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 14px;
+        }
+        .keno-players .player-row:last-child {
+            border-bottom: none;
+        }
+        .keno-players .player-name {
+            font-weight: 600;
+            color: #f7e05e;
+            min-width: 80px;
+        }
+        .keno-players .player-numbers {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+        }
+        .keno-players .player-numbers span {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .keno-players .player-bet {
+            opacity: 0.4;
+            font-size: 13px;
+            margin-left: auto;
+        }
+
+        /* ── History / Results / Stats ── */
+        .history-entry {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            align-items: center;
+            font-size: 13px;
+        }
+        .history-entry:last-child {
+            border-bottom: none;
+        }
+        .history-entry .round {
+            font-weight: 600;
+            color: #f7e05e;
+            min-width: 60px;
+            font-size: 13px;
+        }
+        .history-entry .numbers {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+        }
+        .history-entry .numbers span {
+            background: rgba(0, 230, 118, 0.08);
+            padding: 0 6px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #00e676;
+            min-width: 22px;
+            text-align: center;
+        }
+        .history-entry .info {
+            opacity: 0.3;
+            font-size: 11px;
+            margin-left: auto;
+        }
+        .history-entry .winners {
+            color: #f7e05e;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        /* Results tab - compact */
+        .results-round-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 16px;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        .results-round-header .r-title {
+            font-weight: 600;
+            color: #f7e05e;
+            font-size: 14px;
+        }
+        .results-round-header .r-time {
+            opacity: 0.3;
+            font-size: 12px;
+        }
+        .results-winning-numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 6px 0 10px 0;
+        }
+        .results-winning-numbers .wnum {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: rgba(0, 230, 118, 0.1);
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            color: #00e676;
+            border: 1px solid rgba(0, 230, 118, 0.1);
+            padding: 0 2px;
+        }
+        .results-players {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-top: 4px;
+        }
+        .results-players .rp-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 12px;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .results-players .rp-row .rp-name {
+            font-weight: 600;
+            color: #f7e05e;
+            min-width: 70px;
+            font-size: 13px;
+        }
+        .results-players .rp-row .rp-matches {
+            opacity: 0.5;
+            font-size: 12px;
+        }
+        .results-players .rp-row .rp-win {
+            font-weight: 700;
+            font-size: 13px;
+            margin-left: auto;
+        }
+        .results-players .rp-row .rp-win.positive {
+            color: #00e676;
+        }
+        .results-players .rp-row .rp-win.zero {
+            opacity: 0.2;
+        }
+        .results-summary {
+            padding: 8px 10px;
+            margin-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 12px;
+            opacity: 0.4;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        /* Statistics - compact */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            padding: 6px 0;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 10px 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .stat-card .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: #f7e05e;
+        }
+        .stat-card .stat-label {
+            font-size: 10px;
+            opacity: 0.4;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .stat-card.green .stat-value {
+            color: #00e676;
+        }
+        .stat-card.gold .stat-value {
+            color: #f7e05e;
+        }
+        .stat-card.pink .stat-value {
+            color: #ff6b6b;
+        }
+
+        .top-numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 6px 0;
+        }
+        .top-numbers .num-badge {
+            background: rgba(255, 215, 0, 0.06);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #f7e05e;
+            border: 1px solid rgba(255, 215, 0, 0.06);
+        }
+        .top-numbers .num-badge .count {
+            opacity: 0.4;
+            font-weight: 400;
+            margin-left: 3px;
+            font-size: 11px;
+        }
+
+        /* ── AVIATOR ── */
+        .aviator-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 24px;
+            padding: 20px 24px;
+        }
+        .aviator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .game-brand {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f7e05e;
+        }
+        .current-multiplier {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .aviator-history {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 6px;
+            flex-wrap: nowrap;
+            scrollbar-width: none;
+        }
+        .aviator-history::-webkit-scrollbar {
+            display: none;
+        }
+        .history-item {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 4px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .history-item.high {
+            color: #00e676;
+            border-color: rgba(0, 230, 118, 0.1);
+        }
+        .history-item.low {
+            color: #ff6b6b;
+            border-color: rgba(255, 107, 107, 0.1);
+        }
+        .aviator-stats {
+            text-align: right;
+            font-size: 14px;
+            opacity: 0.4;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+        .aviator-main {
+            text-align: center;
+            padding: 20px 0 30px 0;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .big-multiplier {
+            font-size: 80px;
+            font-weight: 800;
+            color: #fff;
+            transition: color 0.3s ease;
+            line-height: 1;
+        }
+        .big-multiplier.crashed {
+            color: #ff6b6b;
+        }
+        .game-status {
+            font-size: 15px;
+            opacity: 0.4;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+        .aviator-betslip {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 18px 20px 20px 20px;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .bet-label {
+            font-size: 14px;
+            opacity: 0.5;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .bet-input-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .bet-input-group input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            width: 120px;
+            font-family: inherit;
+            outline: none;
+            flex-shrink: 0;
+        }
+        .bet-input-group input:focus {
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+        .bet-presets {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .bet-presets button {
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .bet-presets button:hover,
+        .bet-presets button.active {
+            background: rgba(255, 215, 0, 0.12);
+            color: #f7e05e;
+        }
+        .bet-btn,
+        .cashout-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            margin-top: 4px;
+        }
+        .bet-btn {
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            color: #0b0b1a;
+        }
+        .bet-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.25);
+        }
+        .bet-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .cashout-btn {
+            background: linear-gradient(135deg, #00e676, #00c853);
+            color: #0b0b1a;
+            margin-top: 8px;
+            animation: pulse-cash 1.2s infinite alternate;
+        }
+        .cashout-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 230, 118, 0.3);
+        }
+        .cashout-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+            animation: none;
+        }
+        @keyframes pulse-cash {
+            0% {
+                box-shadow: 0 4px 20px rgba(0, 230, 118, 0.15);
+            }
+            100% {
+                box-shadow: 0 4px 40px rgba(0, 230, 118, 0.4);
+            }
+        }
+
+        /* ── DICE ── */
+        .dice-area {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .dice-result {
+            font-size: 80px;
+            margin: 10px 0;
+        }
+        .dice-options {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin: 16px 0;
+        }
+        .dice-options button {
+            padding: 12px 28px;
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .dice-options button:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .dice-options button.selected {
+            border-color: #f7e05e;
+            background: rgba(255, 215, 0, 0.08);
+            color: #f7e05e;
+        }
+
+        /* ── ADMIN PANEL ── */
+        .admin-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .admin-panel .card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .admin-panel .card h3 {
+            font-size: 16px;
+            opacity: 0.5;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-panel .card .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 14px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .admin-panel .card .item:last-child {
+            border-bottom: none;
+        }
+        .admin-panel .card .item .actions button {
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            padding: 4px 12px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 4px;
+            font-family: inherit;
+        }
+        .admin-panel .card .item .actions .delete {
+            color: #ff6b6b;
+        }
+        .admin-panel .clear-all-btn {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+        }
+        .admin-panel .clear-all-btn:hover {
+            background: rgba(255, 107, 107, 0.25);
+        }
+
+        .admin-manual {
+            grid-column: 1 / -1;
+            background: rgba(255, 215, 0, 0.04);
+            border: 1px solid rgba(255, 215, 0, 0.08);
+        }
+        .admin-manual .manual-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        .admin-manual .manual-row select,
+        .admin-manual .manual-row input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            outline: none;
+            flex: 1;
+            min-width: 120px;
+        }
+        .admin-manual .manual-row select option {
+            background: #1a1a3a;
+        }
+        .admin-manual .manual-row select:focus,
+        .admin-manual .manual-row input:focus {
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+        .admin-manual .manual-row .type-group {
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 4px;
+        }
+        .admin-manual .manual-row .type-group button {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .admin-manual .manual-row .type-group button.active-deposit {
+            background: rgba(0, 230, 118, 0.15);
+            color: #00e676;
+        }
+        .admin-manual .manual-row .type-group button.active-withdraw {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+        }
+        .admin-manual .manual-row .type-group button:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .admin-manual .manual-row .btn-execute {
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            color: #0b0b1a;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .admin-manual .manual-row .btn-execute:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.25);
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            color: #0b0b1a;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.25);
+        }
+        .btn-primary:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #00e676, #00c853);
+            color: #0b0b1a;
+        }
+        .btn-danger {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+        }
+        .btn-sm {
+            padding: 6px 16px;
+            font-size: 13px;
+            border-radius: 12px;
+        }
+
+        /* ── Modals ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal {
+            background: linear-gradient(145deg, #1a1a3a, #0f0f28);
+            border-radius: 32px;
+            padding: 32px 28px;
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            animation: modalIn 0.25s ease;
+        }
+        @keyframes modalIn {
+            0% {
+                transform: scale(0.9) translateY(20px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal h2 {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        .modal p.sub {
+            opacity: 0.4;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .modal input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-family: inherit;
+            outline: none;
+        }
+        .modal input:focus {
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+        .modal .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .modal .actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+        .modal .error {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-bottom: 8px;
+            min-height: 20px;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 28px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 15px;
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #fff;
+            display: none;
+            animation: toastIn 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+        .toast.show {
+            display: block;
+        }
+        .toast.success {
+            border-color: rgba(0, 230, 118, 0.2);
+            color: #00e676;
+        }
+        .toast.error {
+            border-color: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        .toast.info {
+            border-color: rgba(255, 215, 0, 0.15);
+            color: #f7e05e;
+        }
+        @keyframes toastIn {
+            0% {
+                transform: translateX(-50%) translateY(30px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .app {
+                padding: 16px;
+            }
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .nav-links {
+                justify-content: center;
+            }
+            .user-area {
+                justify-content: center;
+            }
+            .admin-panel {
+                grid-template-columns: 1fr;
+            }
+            .admin-manual .manual-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .admin-manual .manual-row .type-group {
+                justify-content: center;
+            }
+            .keno-grid {
+                gap: 3px;
+            }
+            .keno-cell {
+                font-size: 13px;
+                border-radius: 6px;
+            }
+            .keno-title {
+                font-size: 22px;
+            }
+            .keno-bottom {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .keno-bet-area {
+                justify-content: center;
+            }
+            .keno-actions {
+                justify-content: center;
+            }
+            .keno-pick-count {
+                margin-left: 0;
+                text-align: center;
+            }
+            .big-multiplier {
+                font-size: 56px;
+            }
+            .aviator-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .bet-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .bet-input-group input {
+                width: 100%;
+            }
+            .bet-presets {
+                justify-content: center;
+            }
+            .stat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .winning-banner .ball {
+                min-width: 28px;
+                height: 28px;
+                font-size: 11px;
+            }
+            .winning-banner .label {
+                font-size: 12px;
+            }
+            .results-winning-numbers .wnum {
+                min-width: 24px;
+                height: 24px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .keno-grid {
+                gap: 2px;
+            }
+            .keno-cell {
+                font-size: 11px;
+                border-radius: 4px;
+            }
+            .keno-title {
+                font-size: 18px;
+            }
+            .keno-tabs button {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+            .keno-stats {
+                font-size: 12px;
+                gap: 12px;
+            }
+            .dice-result {
+                font-size: 60px;
+            }
+            .big-multiplier {
+                font-size: 42px;
+            }
+            .stat-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .stat-card .stat-value {
+                font-size: 18px;
+            }
+            .winning-banner .ball {
+                min-width: 24px;
+                height: 24px;
+                font-size: 10px;
+            }
+            .winning-banner {
+                padding: 8px 10px;
+                gap: 4px 8px;
+            }
+            .winning-banner .label {
+                font-size: 11px;
+            }
+            .winning-banner .status-text {
+                font-size: 10px;
+            }
+            .results-winning-numbers .wnum {
+                min-width: 22px;
+                height: 22px;
+                font-size: 10px;
+            }
+            .results-players .rp-row {
+                font-size: 12px;
+            }
+            .results-players .rp-row .rp-name {
+                min-width: 50px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app" id="app">
+        <!-- Navbar -->
+        <div class="navbar">
+            <div class="brand">🎰 GameHub</div>
+            <div class="nav-links" id="navLinks">
+                <button class="active" data-section="keno">Keno</button>
+                <button data-section="aviator">Aviator</button>
+                <button data-section="dice">Dice</button>
+                <button data-section="admin" id="adminNav" style="display:none;">Admin</button>
+            </div>
+            <div class="user-area" id="userArea">
+                <span class="balance" id="balanceDisplay">0.00 ETB</span>
+                <button class="btn" id="loginBtn">Login</button>
+                <button class="btn" id="registerBtn">Register</button>
+                <button class="btn btn-change-pw" id="changePwBtn" style="display:none;">🔑 Change Password</button>
+                <button class="btn btn-logout" id="logoutBtn" style="display:none;">Logout</button>
+            </div>
+        </div>
+
+        <!-- Sections -->
+        <!-- Keno -->
+        <div class="section active" id="section-keno">
+            <div class="game-container">
+                <div class="keno-wrapper">
+                    <!-- WINNING BANNER -->
+                    <div id="winningBanner" class="winning-banner">
+                        <span class="label">🎯 WINNING NUMBERS</span>
+                        <div class="balls" id="winningBannerBalls"></div>
+                        <span class="status-text" id="bannerStatus">Revealing...</span>
+                    </div>
+
+                    <div class="keno-header">
+                        <span class="keno-title">FAST KENO</span>
+                    </div>
+                    <div class="keno-sub">Choose 10 numbers · From 1 to 80</div>
+                    <div class="keno-grid-wrap">
+                        <div class="keno-grid" id="kenoGrid"></div>
+                    </div>
+                    <div class="keno-tabs">
+                        <button class="active" data-tab="game">Game</button>
+                        <button data-tab="history">History</button>
+                        <button data-tab="results">Results</button>
+                        <button data-tab="statistics">Statistics</button>
+                    </div>
+
+                    <!-- Tab Panels -->
+                    <div id="tabGame" class="tab-panel active">
+                        <div class="keno-stats">
+                            <span class="stat-item highlight">All <strong id="totalPlayersCount">0</strong></span>
+                            <span class="stat-item">My Tickets <strong id="myTicketsCount">0</strong></span>
+                            <span class="stat-item">My Bets <strong id="myBetsCount">0</strong></span>
+                            <span class="stat-item" style="margin-left:auto;opacity:0.3;font-size:20px;font-weight:700;">3***0</span>
+                        </div>
+                        <div class="keno-bottom">
+                            <div class="keno-bet-area">
+                                <label>BET</label>
+                                <input type="number" id="kenoBet" value="5" step="1" min="1" />
+                            </div>
+                            <div class="keno-actions">
+                                <button class="btn btn-gold" id="kenoDraw">🎲 DRAW</button>
+                                <button class="btn btn-outline" id="kenoQuick">⚡ Quick</button>
+                                <button class="btn btn-outline" id="kenoClear">✕ Clear</button>
+                            </div>
+                            <div class="keno-pick-count">
+                                <strong id="kenoCount">0</strong> / 10
+                            </div>
+                        </div>
+                        <div class="keno-result" id="kenoResult">
+                            <span class="empty">Pick numbers and hit DRAW</span>
+                        </div>
+
+                        <div class="keno-players">
+                            <h4>🎮 Current Players</h4>
+                            <div id="playersList">
+                                <span style="opacity:0.3;font-size:14px;">No active players</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History Tab -->
+                    <div id="tabHistory" class="tab-panel">
+                        <div id="historyContent">
+                            <span class="empty">No game history yet</span>
+                        </div>
+                    </div>
+
+                    <!-- Results Tab -->
+                    <div id="tabResults" class="tab-panel">
+                        <div id="resultsContent">
+                            <span class="empty">No results yet</span>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Tab -->
+                    <div id="tabStatistics" class="tab-panel">
+                        <div id="statsContent">
+                            <span class="empty">No statistics available</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aviator -->
+        <div class="section" id="section-aviator">
+            <div class="game-container aviator-container">
+                <div class="aviator-header">
+                    <span class="game-brand">gasha.bet</span>
+                    <span class="current-multiplier" id="aviatorTopMult">1.44x</span>
+                </div>
+                <div class="aviator-history" id="aviatorHistory"></div>
+                <div class="aviator-stats">
+                    <span id="aviatorStats">1,298</span>
+                </div>
+                <div class="aviator-main">
+                    <div class="big-multiplier" id="aviatorBigMult">1.44x</div>
+                    <div class="game-status" id="aviatorStatus">Waiting for bet...</div>
+                </div>
+                <div class="aviator-betslip">
+                    <div class="bet-label">Bet</div>
+                    <div class="bet-input-group">
+                        <input type="number" id="aviatorBet" value="20.00" step="0.50" min="0.50" />
+                        <div class="bet-presets">
+                            <button data-amount="20">20</button>
+                            <button data-amount="80">80</button>
+                            <button data-amount="40">40</button>
+                            <button data-amount="400">400</button>
+                        </div>
+                    </div>
+                    <button class="bet-btn" id="aviatorBetBtn">Bet 20.00 ETB</button>
+                    <button class="cashout-btn" id="aviatorCashout" disabled>Cash Out</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dice -->
+        <div class="section" id="section-dice">
+            <div class="game-container">
+                <h2>🎲 Dice</h2>
+                <p style="opacity:0.5;margin-bottom:10px;">Predict over or under 3.5</p>
+                <div class="dice-area">
+                    <div class="dice-result" id="diceResult">🎲</div>
+                    <div class="dice-options">
+                        <button data-bet="over" class="selected">Over (3.5)</button>
+                        <button data-bet="under">Under (3.5)</button>
+                    </div>
+                    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+                        <input type="number" id="diceBet" value="5" step="1" min="1" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:8px 12px;color:#fff;width:80px;font-family:inherit;font-weight:700;" />
+                        <button class="btn btn-primary" id="diceRoll">🎲 Roll</button>
+                    </div>
+                    <div id="diceResultText" style="margin-top:12px;min-height:24px;opacity:0.5;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin -->
+        <div class="section" id="section-admin">
+            <h2>🔧 Admin Panel</h2>
+            <div class="admin-panel">
+                <div class="card admin-manual">
+                    <h3>💸 Manual Transaction</h3>
+                    <div class="manual-row">
+                        <select id="adminUserSelect">
+                            <option value="">— Select User —</option>
+                        </select>
+                        <input type="number" id="adminAmount" placeholder="Amount" value="50" step="1" min="1" />
+                        <div class="type-group">
+                            <button id="adminTypeDeposit" class="active-deposit">💰 Deposit</button>
+                            <button id="adminTypeWithdraw">🏦 Withdraw</button>
+                        </div>
+                        <button class="btn-execute" id="adminExecuteBtn">Execute</button>
+                    </div>
+                    <div id="adminManualResult" style="margin-top:10px;font-size:14px;min-height:20px;opacity:0.6;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>📥 Deposits <button class="clear-all-btn" id="clearDepositsBtn">Clear All</button></h3>
+                    <div id="pendingDeposits"><p style="opacity:0.3;">No deposits</p></div>
+                </div>
+
+                <div class="card">
+                    <h3>📤 Withdrawals <button class="clear-all-btn" id="clearWithdrawalsBtn">Clear All</button></h3>
+                    <div id="pendingWithdrawals"><p style="opacity:0.3;">No withdrawals</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <h2>🔐 Login</h2>
+            <p class="sub">Enter your credentials</p>
+            <div class="error" id="loginError"></div>
+            <input type="text" id="loginUsername" placeholder="Username" />
+            <input type="password" id="loginPassword" placeholder="Password" />
+            <div class="actions">
+                <button class="btn btn-primary" id="loginSubmit">Login</button>
+                <button class="btn btn-sm" id="loginClose" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal">
+            <h2>📝 Register</h2>
+            <p class="sub">Create a new account</p>
+            <div class="error" id="registerError"></div>
+            <input type="text" id="registerUsername" placeholder="Username" />
+            <input type="password" id="registerPassword" placeholder="Password" />
+            <input type="text" id="registerPhone" placeholder="Phone Number (e.g. 09XXXXXXXX)" />
+            <div class="actions">
+                <button class="btn btn-primary" id="registerSubmit">Register</button>
+                <button class="btn btn-sm" id="registerClose" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal-overlay" id="changePwModal">
+        <div class="modal">
+            <h2>🔑 Change Password</h2>
+            <p class="sub">Update your account password</p>
+            <div class="error" id="changePwError"></div>
+            <input type="password" id="changePwCurrent" placeholder="Current Password" />
+            <input type="password" id="changePwNew" placeholder="New Password" />
+            <input type="password" id="changePwConfirm" placeholder="Confirm New Password" />
+            <div class="actions">
+                <button class="btn btn-primary" id="changePwSubmit">Update</button>
+                <button class="btn btn-sm" id="changePwClose" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ─────────────────────────────────────────────────────────────────
+        //  DATA LAYER (localStorage)
+        // ─────────────────────────────────────────────────────────────────
+
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('users') || '[]');
+        }
+
+        function setUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        function getTransactions() {
+            return JSON.parse(localStorage.getItem('transactions') || '[]');
+        }
+
+        function setTransactions(txns) {
+            localStorage.setItem('transactions', JSON.stringify(txns));
+        }
+
+        function getKenoHistory() {
+            return JSON.parse(localStorage.getItem('kenoHistory') || '[]');
+        }
+
+        function setKenoHistory(history) {
+            localStorage.setItem('kenoHistory', JSON.stringify(history));
+        }
+
+        function getCurrentUser() {
+            return JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+        }
+
+        function setCurrentUser(user) {
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
+        }
+
+        function findUser(username) {
+            return getUsers().find(u => u.username === username);
+        }
+
+        function updateUser(username, newData) {
+            const users = getUsers();
+            const idx = users.findIndex(u => u.username === username);
+            if (idx !== -1) {
+                users[idx] = { ...users[idx], ...newData };
+                setUsers(users);
+                const cur = getCurrentUser();
+                if (cur && cur.username === username) {
+                    setCurrentUser(users[idx]);
+                }
+                return users[idx];
+            }
+            return null;
+        }
+
+        function addTransaction(txn) {
+            const txns = getTransactions();
+            txn.id = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            txns.push(txn);
+            setTransactions(txns);
+            return txn;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  STATE
+        // ─────────────────────────────────────────────────────────────────
+
+        let currentUser = getCurrentUser();
+        let allUsers = getUsers();
+        let transactions = getTransactions();
+        let kenoHistory = getKenoHistory();
+
+        // ─────────────────────────────────────────────────────────────────
+        //  DOM REFS
+        // ─────────────────────────────────────────────────────────────────
+
+        const balanceDisplay = document.getElementById('balanceDisplay');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const changePwBtn = document.getElementById('changePwBtn');
+        const userArea = document.getElementById('userArea');
+
+        const navLinks = document.getElementById('navLinks');
+        const adminNav = document.getElementById('adminNav');
+
+        const sections = document.querySelectorAll('.section');
+
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const changePwModal = document.getElementById('changePwModal');
+
+        const loginError = document.getElementById('loginError');
+        const registerError = document.getElementById('registerError');
+        const changePwError = document.getElementById('changePwError');
+
+        const loginUsername = document.getElementById('loginUsername');
+        const loginPassword = document.getElementById('loginPassword');
+        const registerUsername = document.getElementById('registerUsername');
+        const registerPassword = document.getElementById('registerPassword');
+        const registerPhone = document.getElementById('registerPhone');
+
+        const changePwCurrent = document.getElementById('changePwCurrent');
+        const changePwNew = document.getElementById('changePwNew');
+        const changePwConfirm = document.getElementById('changePwConfirm');
+
+        const toast = document.getElementById('toast');
+        let toastTimer = null;
+
+        // Admin manual
+        const adminUserSelect = document.getElementById('adminUserSelect');
+        const adminAmount = document.getElementById('adminAmount');
+        const adminTypeDeposit = document.getElementById('adminTypeDeposit');
+        const adminTypeWithdraw = document.getElementById('adminTypeWithdraw');
+        const adminExecuteBtn = document.getElementById('adminExecuteBtn');
+        const adminManualResult = document.getElementById('adminManualResult');
+
+        // Keno banner
+        const winningBanner = document.getElementById('winningBanner');
+        const winningBannerBalls = document.getElementById('winningBannerBalls');
+        const bannerStatus = document.getElementById('bannerStatus');
+
+        // ─────────────────────────────────────────────────────────────────
+        //  HELPERS
+        // ─────────────────────────────────────────────────────────────────
+
+        function round2(v) { return Math.round(v * 100) / 100; }
+
+        function format(v) { return v.toFixed(2); }
+
+        function showToast(msg, type = 'info', dur = 3000) {
+            if (toastTimer) clearTimeout(toastTimer);
+            toast.textContent = msg;
+            toast.className = 'toast show ' + type;
+            toastTimer = setTimeout(() => { toast.className = 'toast';
+                toastTimer = null; }, dur);
+        }
+
+        function updateBalanceUI() {
+            if (currentUser) {
+                balanceDisplay.textContent = format(currentUser.balance) + ' ETB';
+            } else {
+                balanceDisplay.textContent = '0.00 ETB';
+            }
+        }
+
+        function updateUI() {
+            if (currentUser) {
+                loginBtn.style.display = 'none';
+                registerBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-block';
+                changePwBtn.style.display = 'inline-block';
+                if (currentUser.isAdmin) {
+                    adminNav.style.display = 'inline-block';
+                } else {
+                    adminNav.style.display = 'none';
+                }
+                if (!currentUser.isAdmin) {
+                    document.getElementById('section-admin').classList.remove('active');
+                }
+            } else {
+                loginBtn.style.display = 'inline-block';
+                registerBtn.style.display = 'inline-block';
+                logoutBtn.style.display = 'none';
+                changePwBtn.style.display = 'none';
+                adminNav.style.display = 'none';
+                if (document.getElementById('section-admin').classList.contains('active')) {
+                    switchSection('keno');
+                }
+            }
+            updateBalanceUI();
+            document.querySelectorAll('.user-area .btn').forEach(btn => {
+                if (btn.textContent === '💳 Deposit' || btn.textContent === '🏦 Withdraw') {
+                    btn.style.display = currentUser ? 'inline-block' : 'none';
+                }
+            });
+            populateAdminUserSelect();
+            renderAdminPanel();
+            updatePlayersList();
+            updateKenoStats();
+            renderHistory();
+            renderResults();
+            renderStatistics();
+        }
+
+        function switchSection(sectionId) {
+            sections.forEach(sec => sec.classList.remove('active'));
+            const target = document.getElementById('section-' + sectionId);
+            if (target) target.classList.add('active');
+            document.querySelectorAll('.nav-links button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.section === sectionId);
+            });
+            if (sectionId === 'keno') {
+                setTimeout(updateKenoUI, 50);
+                updatePlayersList();
+                updateKenoStats();
+                renderHistory();
+                renderResults();
+                renderStatistics();
+            }
+            if (sectionId === 'admin') {
+                populateAdminUserSelect();
+                renderAdminPanel();
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  AUTH
+        // ─────────────────────────────────────────────────────────────────
+
+        function login(username, password) {
+            const user = findUser(username);
+            if (!user) {
+                loginError.textContent = 'User not found';
+                return false;
+            }
+            if (user.password !== password) {
+                loginError.textContent = 'Incorrect password';
+                return false;
+            }
+            setCurrentUser(user);
+            currentUser = user;
+            loginError.textContent = '';
+            loginModal.classList.remove('open');
+            showToast('Welcome, ' + user.username + '!', 'success');
+            addPlayer(user.username);
+            updateUI();
+            initKeno();
+            initAviator();
+            initDice();
+            return true;
+        }
+
+        function register(username, password, phone) {
+            if (findUser(username)) {
+                registerError.textContent = 'Username already exists';
+                return false;
+            }
+            if (!phone || phone.length < 5) {
+                registerError.textContent = 'Please enter a valid phone number';
+                return false;
+            }
+            const newUser = {
+                username,
+                password,
+                phone,
+                balance: 100,
+                isAdmin: false,
+            };
+            const users = getUsers();
+            users.push(newUser);
+            setUsers(users);
+            registerError.textContent = '';
+            registerModal.classList.remove('open');
+            showToast('Account created! Please login.', 'success');
+            return true;
+        }
+
+        function logout() {
+            if (currentUser) {
+                removePlayer(currentUser.username);
+            }
+            sessionStorage.removeItem('currentUser');
+            currentUser = null;
+            updateUI();
+            showToast('Logged out', 'info');
+            location.reload();
+        }
+
+        function changePassword(username, currentPw, newPw, confirmPw) {
+            const user = findUser(username);
+            if (!user) {
+                changePwError.textContent = 'User not found';
+                return false;
+            }
+            if (user.password !== currentPw) {
+                changePwError.textContent = 'Current password is incorrect';
+                return false;
+            }
+            if (newPw.length < 3) {
+                changePwError.textContent = 'New password must be at least 3 characters';
+                return false;
+            }
+            if (newPw !== confirmPw) {
+                changePwError.textContent = 'Passwords do not match';
+                return false;
+            }
+            updateUser(username, { password: newPw });
+            if (currentUser && currentUser.username === username) {
+                currentUser.password = newPw;
+                setCurrentUser(currentUser);
+            }
+            changePwError.textContent = '';
+            changePwModal.classList.remove('open');
+            showToast('Password updated successfully!', 'success');
+            return true;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  ADMIN
+        // ─────────────────────────────────────────────────────────────────
+
+        function populateAdminUserSelect() {
+            const users = getUsers();
+            adminUserSelect.innerHTML = '<option value="">— Select User —</option>';
+            users.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.username;
+                opt.textContent = u.username + ' (balance: ' + format(u.balance) + ')';
+                adminUserSelect.appendChild(opt);
+            });
+        }
+
+        let adminTxType = 'deposit';
+
+        adminTypeDeposit.addEventListener('click', function() {
+            adminTxType = 'deposit';
+            this.className = 'active-deposit';
+            adminTypeWithdraw.className = '';
+            adminManualResult.textContent = '';
+        });
+        adminTypeWithdraw.addEventListener('click', function() {
+            adminTxType = 'withdraw';
+            this.className = 'active-withdraw';
+            adminTypeDeposit.className = '';
+            adminManualResult.textContent = '';
+        });
+
+        adminExecuteBtn.addEventListener('click', function() {
+            if (!currentUser || !currentUser.isAdmin) {
+                showToast('Admin access required', 'error');
+                return;
+            }
+            const username = adminUserSelect.value;
+            if (!username) {
+                adminManualResult.textContent = '⚠️ Please select a user.';
+                return;
+            }
+            const amount = parseFloat(adminAmount.value);
+            if (isNaN(amount) || amount <= 0) {
+                adminManualResult.textContent = '⚠️ Enter a valid amount.';
+                return;
+            }
+
+            const user = findUser(username);
+            if (!user) {
+                adminManualResult.textContent = '⚠️ User not found.';
+                return;
+            }
+
+            if (adminTxType === 'withdraw' && amount > user.balance) {
+                adminManualResult.textContent = '⚠️ Insufficient balance for withdrawal.';
+                return;
+            }
+
+            const newBalance = adminTxType === 'deposit' ?
+                round2(user.balance + amount) :
+                round2(user.balance - amount);
+
+            updateUser(username, { balance: newBalance });
+
+            addTransaction({
+                username: username,
+                type: adminTxType,
+                amount: amount,
+                status: adminTxType === 'deposit' ? 'approved' : 'sent',
+                details: 'Manual by admin',
+                timestamp: new Date().toISOString(),
+            });
+
+            if (currentUser && currentUser.username === username) {
+                currentUser.balance = newBalance;
+                setCurrentUser(currentUser);
+                updateBalanceUI();
+            }
+
+            adminManualResult.textContent =
+                `✅ ${adminTxType === 'deposit' ? 'Deposited' : 'Withdrew'} ${format(amount)} ETB ${adminTxType === 'deposit' ? 'to' : 'from'} ${username}. New balance: ${format(newBalance)} ETB`;
+            showToast(
+                `✅ ${adminTxType === 'deposit' ? 'Deposited' : 'Withdrew'} ${format(amount)} ETB ${adminTxType === 'deposit' ? 'to' : 'from'} ${username}`,
+                'success');
+
+            populateAdminUserSelect();
+            renderAdminPanel();
+            updateUI();
+        });
+
+        function renderAdminPanel() {
+            if (!currentUser || !currentUser.isAdmin) return;
+
+            const depositTxns = transactions.filter(t => t.type === 'deposit');
+            const withdrawTxns = transactions.filter(t => t.type === 'withdraw');
+
+            const depDiv = document.getElementById('pendingDeposits');
+            if (depositTxns.length === 0) {
+                depDiv.innerHTML = '<p style="opacity:0.3;">No deposits</p>';
+            } else {
+                depDiv.innerHTML = depositTxns.map(t => {
+                    const statusEmoji = t.status === 'approved' ? '✅' : t.status === 'rejected' ? '❌' : '⏳';
+                    return `
+                        <div class="item">
+                            <span>${t.username} — ${format(t.amount)} ETB ${statusEmoji}</span>
+                            <div class="actions">
+                                <button class="delete" data-id="${t.id}" data-action="deleteTransaction">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const wdDiv = document.getElementById('pendingWithdrawals');
+            if (withdrawTxns.length === 0) {
+                wdDiv.innerHTML = '<p style="opacity:0.3;">No withdrawals</p>';
+            } else {
+                wdDiv.innerHTML = withdrawTxns.map(t => {
+                    const statusEmoji = t.status === 'sent' ? '✅' : t.status === 'rejected' ? '❌' : '⏳';
+                    return `
+                        <div class="item">
+                            <span>${t.username} (${t.phone || 'N/A'}) — ${format(t.amount)} ETB ${statusEmoji}</span>
+                            <div class="actions">
+                                <button class="delete" data-id="${t.id}" data-action="deleteTransaction">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.querySelectorAll('#pendingDeposits .delete, #pendingWithdrawals .delete').forEach(btn => {
+                btn.onclick = function() {
+                    deleteTransaction(this.dataset.id);
+                };
+            });
+        }
+
+        function deleteTransaction(id) {
+            if (!currentUser || !currentUser.isAdmin) return;
+            if (!confirm('Delete this transaction permanently?')) return;
+            let txns = getTransactions();
+            txns = txns.filter(t => t.id !== id);
+            setTransactions(txns);
+            transactions = txns;
+            renderAdminPanel();
+            showToast('Transaction deleted', 'info');
+        }
+
+        function clearDeposits() {
+            if (!currentUser || !currentUser.isAdmin) return;
+            if (!confirm('Delete ALL deposit records permanently?')) return;
+            let txns = getTransactions();
+            txns = txns.filter(t => t.type !== 'deposit');
+            setTransactions(txns);
+            transactions = txns;
+            renderAdminPanel();
+            showToast('All deposits cleared', 'info');
+        }
+
+        function clearWithdrawals() {
+            if (!currentUser || !currentUser.isAdmin) return;
+            if (!confirm('Delete ALL withdrawal records permanently?')) return;
+            let txns = getTransactions();
+            txns = txns.filter(t => t.type !== 'withdraw');
+            setTransactions(txns);
+            transactions = txns;
+            renderAdminPanel();
+            showToast('All withdrawals cleared', 'info');
+        }
+
+        document.getElementById('clearDepositsBtn').addEventListener('click', clearDeposits);
+        document.getElementById('clearWithdrawalsBtn').addEventListener('click', clearWithdrawals);
+
+        // ─────────────────────────────────────────────────────────────────
+        //  KENO GAME
+        // ─────────────────────────────────────────────────────────────────
+
+        let kenoPlayers = {};
+
+        function addPlayer(username) {
+            if (!kenoPlayers[username]) {
+                kenoPlayers[username] = new Set();
+                updatePlayersList();
+                updateKenoStats();
+            }
+        }
+
+        function removePlayer(username) {
+            delete kenoPlayers[username];
+            updatePlayersList();
+            updateKenoStats();
+        }
+
+        function setPlayerSelections(username, selections) {
+            if (kenoPlayers[username]) {
+                kenoPlayers[username] = selections;
+            } else {
+                kenoPlayers[username] = new Set(selections);
+            }
+            updatePlayersList();
+            updateKenoStats();
+        }
+
+        function clearAllSelections() {
+            for (const user in kenoPlayers) {
+                kenoPlayers[user] = new Set();
+            }
+            updatePlayersList();
+            updateKenoStats();
+        }
+
+        function updatePlayersList() {
+            const container = document.getElementById('playersList');
+            const entries = Object.entries(kenoPlayers).filter(([_, set]) => set.size > 0);
+            if (entries.length === 0) {
+                container.innerHTML = '<span style="opacity:0.3;font-size:14px;">No active players</span>';
+                return;
+            }
+            let html = '';
+            for (const [username, set] of entries) {
+                const nums = Array.from(set).sort((a, b) => a - b);
+                html += `
+                    <div class="player-row">
+                        <span class="player-name">${username}</span>
+                        <div class="player-numbers">${nums.map(n => `<span>${n}</span>`).join('')}</div>
+                        <span class="player-bet">${nums.length} numbers</span>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function updateKenoStats() {
+            const total = Object.keys(kenoPlayers).filter(u => kenoPlayers[u].size > 0).length;
+            document.getElementById('totalPlayersCount').textContent = total;
+            if (currentUser) {
+                const mySelections = kenoPlayers[currentUser.username] || new Set();
+                document.getElementById('myTicketsCount').textContent = mySelections.size;
+                document.getElementById('myBetsCount').textContent = mySelections.size > 0 ? 1 : 0;
+            } else {
+                document.getElementById('myTicketsCount').textContent = '0';
+                document.getElementById('myBetsCount').textContent = '0';
+            }
+        }
+
+        let kenoState = {
+            selected: new Set(),
+            drawn: new Set(),
+            matched: new Set(),
+            isDrawing: false,
+            bet: 5,
+            lastResult: null,
+            roundNumber: 0,
+        };
+
+        const kenoGrid = document.getElementById('kenoGrid');
+        const kenoBet = document.getElementById('kenoBet');
+        const kenoDraw = document.getElementById('kenoDraw');
+        const kenoQuick = document.getElementById('kenoQuick');
+        const kenoClear = document.getElementById('kenoClear');
+        const kenoCount = document.getElementById('kenoCount');
+        const kenoResult = document.getElementById('kenoResult');
+
+        function initKeno() {
+            buildKenoGrid();
+            if (currentUser) {
+                addPlayer(currentUser.username);
+            }
+            updateKenoUI();
+            updatePlayersList();
+            updateKenoStats();
+            renderHistory();
+            renderResults();
+            renderStatistics();
+
+            kenoDraw.onclick = kenoDrawHandler;
+            kenoQuick.onclick = kenoQuickPick;
+            kenoClear.onclick = kenoClearPicks;
+            kenoBet.onchange = function() {
+                kenoState.bet = parseFloat(this.value) || 5;
+            };
+
+            document.querySelectorAll('.keno-tabs button').forEach(btn => {
+                btn.onclick = function() {
+                    document.querySelectorAll('.keno-tabs button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const tab = this.dataset.tab;
+                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                    const panel = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+                    if (panel) panel.classList.add('active');
+                    if (tab === 'history') renderHistory();
+                    if (tab === 'results') renderResults();
+                    if (tab === 'statistics') renderStatistics();
+                };
+            });
+        }
+
+        function buildKenoGrid() {
+            kenoGrid.innerHTML = '';
+            for (let i = 1; i <= 80; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'keno-cell';
+                cell.dataset.num = i;
+                cell.textContent = i;
+                cell.addEventListener('click', () => kenoCellClick(i));
+                kenoGrid.appendChild(cell);
+            }
+        }
+
+        function kenoCellClick(num) {
+            if (kenoState.isDrawing) return;
+            if (kenoState.drawn.has(num)) return;
+            if (!currentUser) {
+                showToast('Please login to play', 'error');
+                return;
+            }
+            if (kenoState.selected.has(num)) {
+                kenoState.selected.delete(num);
+            } else {
+                if (kenoState.selected.size >= 10) {
+                    showToast('Max 10 numbers', 'error');
+                    return;
+                }
+                kenoState.selected.add(num);
+            }
+            if (currentUser) {
+                setPlayerSelections(currentUser.username, kenoState.selected);
+            }
+            updateKenoUI();
+            kenoResult.innerHTML = '<span class="empty">' + (kenoState.selected.size > 0 ? kenoState.selected.size +
+                ' numbers selected' : 'Pick numbers and hit DRAW') + '</span>';
+            // Hide banner when selecting new numbers
+            winningBanner.classList.remove('visible');
+            updatePlayersList();
+            updateKenoStats();
+        }
+
+        function updateKenoUI() {
+            const cells = kenoGrid.querySelectorAll('.keno-cell');
+            cells.forEach(cell => {
+                const num = parseInt(cell.dataset.num);
+                cell.className = 'keno-cell';
+                if (kenoState.matched.has(num)) cell.classList.add('matched');
+                else if (kenoState.drawn.has(num)) cell.classList.add('drawn');
+                else if (kenoState.selected.has(num)) cell.classList.add('selected');
+                cell.classList.remove('blink', 'winning');
+            });
+            kenoCount.textContent = kenoState.selected.size;
+            kenoDraw.disabled = kenoState.selected.size === 0 || kenoState.isDrawing || !currentUser || currentUser
+                .balance < kenoState.bet;
+        }
+
+        function kenoQuickPick() {
+            if (kenoState.isDrawing) return;
+            if (!currentUser) { showToast('Please login', 'error'); return; }
+            kenoState.selected.clear();
+            const nums = [];
+            for (let i = 1; i <= 80; i++) nums.push(i);
+            shuffle(nums);
+            const count = Math.floor(Math.random() * 6) + 5;
+            for (let i = 0; i < count; i++) {
+                kenoState.selected.add(nums[i]);
+            }
+            kenoState.drawn.clear();
+            kenoState.matched.clear();
+            if (currentUser) {
+                setPlayerSelections(currentUser.username, kenoState.selected);
+            }
+            updateKenoUI();
+            winningBanner.classList.remove('visible');
+            kenoResult.innerHTML = '<span style="opacity:0.3;">⚡ ' + kenoState.selected.size +
+                ' numbers quick-picked</span>';
+            updatePlayersList();
+            updateKenoStats();
+        }
+
+        function kenoClearPicks() {
+            if (kenoState.isDrawing) return;
+            kenoState.selected.clear();
+            kenoState.drawn.clear();
+            kenoState.matched.clear();
+            if (currentUser) {
+                setPlayerSelections(currentUser.username, kenoState.selected);
+            }
+            updateKenoUI();
+            winningBanner.classList.remove('visible');
+            kenoResult.innerHTML = '<span class="empty">Pick numbers and hit DRAW</span>';
+            updatePlayersList();
+            updateKenoStats();
+        }
+
+        function kenoDrawHandler() {
+            if (!currentUser) {
+                showToast('Please login first', 'error');
+                return;
+            }
+            if (kenoState.isDrawing) return;
+            if (kenoState.selected.size === 0) return;
+            const bet = parseFloat(kenoBet.value) || 5;
+            if (bet > currentUser.balance) {
+                showToast('Insufficient balance', 'error');
+                return;
+            }
+            currentUser.balance = round2(currentUser.balance - bet);
+            updateUser(currentUser.username, { balance: currentUser.balance });
+            setCurrentUser(currentUser);
+            updateBalanceUI();
+
+            kenoState.isDrawing = true;
+            kenoDraw.disabled = true;
+            kenoState.roundNumber++;
+
+            const pool = [];
+            for (let i = 1; i <= 80; i++) pool.push(i);
+            shuffle(pool);
+            const drawn = pool.slice(0, 20);
+            kenoState.drawn = new Set(drawn);
+
+            const playersSnapshot = {};
+            for (const [username, selections] of Object.entries(kenoPlayers)) {
+                if (selections.size > 0) {
+                    playersSnapshot[username] = Array.from(selections);
+                }
+            }
+
+            // Clear and show banner with status
+            winningBanner.classList.add('visible');
+            winningBannerBalls.innerHTML = '';
+            bannerStatus.textContent = 'Revealing...';
+
+            let idx = 0;
+            const total = drawn.length;
+
+            function animateNext() {
+                if (idx >= total) {
+                    bannerStatus.textContent = 'Complete!';
+                    evaluateAllPlayers(drawn, bet, playersSnapshot);
+                    return;
+                }
+                const num = drawn[idx];
+                // Add to grid with blink
+                const cell = kenoGrid.querySelector(`.keno-cell[data-num="${num}"]`);
+                if (cell) {
+                    cell.classList.add('blink');
+                    cell.classList.remove('selected');
+                    cell.classList.add('drawn');
+                }
+                // Add to banner with pop animation
+                const ball = document.createElement('span');
+                ball.className = 'ball revealing';
+                ball.textContent = num;
+                winningBannerBalls.appendChild(ball);
+
+                idx++;
+                setTimeout(animateNext, 180);
+            }
+
+            animateNext();
+        }
+
+        function evaluateAllPlayers(drawnNumbers, bet, playersSnapshot) {
+            const roundResults = {
+                round: kenoState.roundNumber,
+                time: new Date().toISOString(),
+                winningNumbers: drawnNumbers,
+                players: {},
+                totalWinners: 0,
+                totalPayout: 0,
+            };
+
+            // Update banner to show matches for current user
+            const allBalls = winningBannerBalls.querySelectorAll('.ball');
+            if (currentUser && kenoPlayers[currentUser.username]) {
+                const mySelections = kenoPlayers[currentUser.username];
+                allBalls.forEach((ball) => {
+                    const num = parseInt(ball.textContent);
+                    if (mySelections.has(num)) {
+                        ball.classList.add('matched');
+                    }
+                });
+            }
+
+            for (const [username, selections] of Object.entries(playersSnapshot)) {
+                if (selections.length === 0) continue;
+                const matches = selections.filter(n => drawnNumbers.includes(n));
+                const matchCount = matches.length;
+                let multiplier = 0;
+                if (matchCount >= 10) multiplier = 500;
+                else if (matchCount >= 9) multiplier = 50;
+                else if (matchCount >= 8) multiplier = 10;
+                else if (matchCount >= 7) multiplier = 3;
+                else if (matchCount >= 6) multiplier = 1;
+                else if (matchCount >= 5) multiplier = 0.5;
+
+                const win = round2(bet * multiplier);
+                const user = findUser(username);
+                if (win > 0 && user) {
+                    user.balance = round2(user.balance + win);
+                    updateUser(username, { balance: user.balance });
+                    if (currentUser && currentUser.username === username) {
+                        currentUser.balance = user.balance;
+                        setCurrentUser(currentUser);
+                        updateBalanceUI();
+                    }
+                    addTransaction({
+                        username: username,
+                        type: 'deposit',
+                        amount: win,
+                        status: 'approved',
+                        details: `Keno win: ${matchCount} matches (Round ${kenoState.roundNumber})`,
+                        timestamp: new Date().toISOString(),
+                    });
+                    roundResults.totalWinners++;
+                    roundResults.totalPayout += win;
+                    showToast(`🎉 ${username} won ${format(win)} ETB (${matchCount} matches)`, 'success', 3000);
+                }
+                roundResults.players[username] = {
+                    selections: selections,
+                    matches: matches,
+                    matchCount: matchCount,
+                    win: win,
+                };
+            }
+
+            kenoHistory.push(roundResults);
+            if (kenoHistory.length > 100) kenoHistory.shift();
+            setKenoHistory(kenoHistory);
+
+            // Update current user's board with matches
+            if (currentUser) {
+                const mySelections = kenoPlayers[currentUser.username] || new Set();
+                const myMatches = [];
+                for (const n of mySelections) {
+                    if (drawnNumbers.includes(n)) {
+                        myMatches.push(n);
+                        kenoState.matched.add(n);
+                    }
+                }
+                const matchCount = myMatches.length;
+                let multiplier = 0;
+                if (matchCount >= 10) multiplier = 500;
+                else if (matchCount >= 9) multiplier = 50;
+                else if (matchCount >= 8) multiplier = 10;
+                else if (matchCount >= 7) multiplier = 3;
+                else if (matchCount >= 6) multiplier = 1;
+                else if (matchCount >= 5) multiplier = 0.5;
+                const win = round2(bet * multiplier);
+                let resultHtml = '';
+                if (win > 0) {
+                    resultHtml =
+                        `<span class="win-badge">+${format(win)} ETB</span> <span style="opacity:0.5;">${matchCount} matches</span>`;
+                    if (myMatches.length > 0) {
+                        resultHtml += `<div class="match-nums">${myMatches.map(n => `<span>${n}</span>`).join('')}</div>`;
+                    }
+                } else {
+                    resultHtml =
+                        `<span class="lose-badge">No win</span> <span style="opacity:0.5;">${matchCount} matches</span>`;
+                    if (myMatches.length > 0) {
+                        resultHtml += `<div class="match-nums">${myMatches.map(n => `<span>${n}</span>`).join('')}</div>`;
+                    }
+                }
+                kenoResult.innerHTML = resultHtml;
+            }
+
+            // Highlight winning numbers on grid
+            const cells = kenoGrid.querySelectorAll('.keno-cell');
+            cells.forEach(cell => {
+                const num = parseInt(cell.dataset.num);
+                if (drawnNumbers.includes(num) && !kenoState.matched.has(num)) {
+                    cell.classList.add('winning');
+                }
+            });
+
+            updateKenoUI();
+            updatePlayersList();
+            updateKenoStats();
+            renderHistory();
+            renderResults();
+            renderStatistics();
+
+            setTimeout(() => {
+                kenoState.drawn.clear();
+                kenoState.matched.clear();
+                clearAllSelections();
+                kenoState.selected.clear();
+                if (currentUser) {
+                    setPlayerSelections(currentUser.username, new Set());
+                }
+                updateKenoUI();
+                kenoResult.innerHTML = '<span class="empty">Pick numbers and hit DRAW</span>';
+                updatePlayersList();
+                updateKenoStats();
+                kenoState.isDrawing = false;
+                kenoDraw.disabled = false;
+                bannerStatus.textContent = 'Done';
+            }, 6000);
+        }
+
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  HISTORY TAB
+        // ─────────────────────────────────────────────────────────────────
+
+        function renderHistory() {
+            const container = document.getElementById('historyContent');
+            if (kenoHistory.length === 0) {
+                container.innerHTML = '<span class="empty">No game history yet</span>';
+                return;
+            }
+            let html = '';
+            const recent = [...kenoHistory].reverse().slice(0, 20);
+            recent.forEach(h => {
+                const date = new Date(h.time);
+                const timeStr = date.toLocaleTimeString();
+                const nums = h.winningNumbers.sort((a, b) => a - b);
+                html += `
+                    <div class="history-entry">
+                        <span class="round">#${h.round}</span>
+                        <div class="numbers">${nums.map(n => `<span>${n}</span>`).join('')}</div>
+                        <span class="winners">🏆 ${h.totalWinners || 0} winners</span>
+                        <span class="info">${timeStr}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  RESULTS TAB
+        // ─────────────────────────────────────────────────────────────────
+
+        function renderResults() {
+            const container = document.getElementById('resultsContent');
+            if (kenoHistory.length === 0) {
+                container.innerHTML = '<span class="empty">No results yet</span>';
+                return;
+            }
+            const last = kenoHistory[kenoHistory.length - 1];
+            const date = new Date(last.time);
+            const timeStr = date.toLocaleString();
+
+            let html = `
+                <div class="results-round-header">
+                    <span class="r-title">Round #${last.round}</span>
+                    <span class="r-time">${timeStr}</span>
+                </div>
+                <div style="font-size:12px;opacity:0.4;padding:0 10px 4px 10px;">🎯 Winning Numbers</div>
+                <div class="results-winning-numbers">
+                    ${last.winningNumbers.sort((a,b)=>a-b).map(n => `<span class="wnum">${n}</span>`).join('')}
+                </div>
+                <div style="font-size:12px;opacity:0.4;padding:4px 10px;">👤 Players</div>
+                <div class="results-players">
+            `;
+
+            const entries = Object.entries(last.players);
+            if (entries.length === 0) {
+                html += '<div style="padding:8px 10px;opacity:0.3;font-size:13px;">No players this round</div>';
+            } else {
+                entries.forEach(([username, data]) => {
+                    const winClass = data.win > 0 ? 'positive' : 'zero';
+                    const winText = data.win > 0 ? `+${format(data.win)} ETB` : '—';
+                    html += `
+                        <div class="rp-row">
+                            <span class="rp-name">${username}</span>
+                            <span class="rp-matches">${data.matchCount} matches</span>
+                            <span class="rp-win ${winClass}">${winText}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `
+                </div>
+                <div class="results-summary">
+                    <span>🏆 Winners: ${last.totalWinners || 0}</span>
+                    <span>💰 Payout: ${format(last.totalPayout || 0)} ETB</span>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  STATISTICS TAB
+        // ─────────────────────────────────────────────────────────────────
+
+        function renderStatistics() {
+            const container = document.getElementById('statsContent');
+
+            if (kenoHistory.length === 0) {
+                container.innerHTML = '<span class="empty">No statistics available</span>';
+                return;
+            }
+
+            const totalGames = kenoHistory.length;
+
+            const freq = {};
+            for (let i = 1; i <= 80; i++) freq[i] = 0;
+            kenoHistory.forEach(h => {
+                h.winningNumbers.forEach(n => { freq[n] = (freq[n] || 0) + 1; });
+            });
+
+            const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+            let totalWinners = 0,
+                totalPayout = 0;
+            kenoHistory.forEach(h => {
+                totalWinners += h.totalWinners || 0;
+                totalPayout += h.totalPayout || 0;
+            });
+
+            let html = `
+                <div class="stat-grid">
+                    <div class="stat-card gold">
+                        <div class="stat-value">${totalGames}</div>
+                        <div class="stat-label">Total Games</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-value">${totalWinners}</div>
+                        <div class="stat-label">Total Winners</div>
+                    </div>
+                    <div class="stat-card pink">
+                        <div class="stat-value">${format(totalPayout)}</div>
+                        <div class="stat-label">Total Payout (ETB)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${kenoHistory.length > 0 ? Math.round(totalWinners / kenoHistory.length) : 0}</div>
+                        <div class="stat-label">Avg Winners / Game</div>
+                    </div>
+                </div>
+                <div style="margin-top:14px;opacity:0.4;font-size:12px;margin-bottom:6px;">🔥 Most Frequent Numbers</div>
+                <div class="top-numbers">
+                    ${sorted.map(([num, count]) => `<span class="num-badge">${num} <span class="count">(${count}x)</span></span>`).join('')}
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  AVIATOR GAME
+        // ─────────────────────────────────────────────────────────────────
+
+        let aviatorState = {
+            isPlaying: false,
+            isCrashed: false,
+            multiplier: 1.0,
+            crashPoint: 0,
+            bet: 20.00,
+            profit: 0,
+            history: [],
+            autoCashout: 2.0,
+            autoEnabled: false,
+            animId: null,
+            startTime: 0,
+            cashoutAt: 0,
+            betPlaced: false,
+        };
+
+        const aviatorTopMult = document.getElementById('aviatorTopMult');
+        const aviatorBigMult = document.getElementById('aviatorBigMult');
+        const aviatorStatus = document.getElementById('aviatorStatus');
+        const aviatorHistoryEl = document.getElementById('aviatorHistory');
+        const aviatorStats = document.getElementById('aviatorStats');
+        const aviatorBetInput = document.getElementById('aviatorBet');
+        const aviatorBetBtn = document.getElementById('aviatorBetBtn');
+        const aviatorCashoutBtn = document.getElementById('aviatorCashout');
+        const aviatorPresets = document.querySelectorAll('.bet-presets button');
+
+        function initAviator() {
+            aviatorPresets.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const val = parseFloat(this.dataset.amount);
+                    if (!isNaN(val)) {
+                        aviatorBetInput.value = val;
+                        aviatorState.bet = val;
+                        updateAviatorBetBtn();
+                    }
+                });
+            });
+
+            aviatorBetInput.addEventListener('input', function() {
+                const val = parseFloat(this.value);
+                if (!isNaN(val) && val > 0) {
+                    aviatorState.bet = val;
+                    updateAviatorBetBtn();
+                }
+            });
+
+            aviatorBetBtn.addEventListener('click', aviatorPlaceBet);
+            aviatorCashoutBtn.addEventListener('click', aviatorCashOut);
+
+            updateAviatorUI();
+        }
+
+        function updateAviatorBetBtn() {
+            aviatorBetBtn.textContent = `Bet ${format(aviatorState.bet)} ETB`;
+            if (currentUser && currentUser.balance < aviatorState.bet) {
+                aviatorBetBtn.disabled = true;
+            } else {
+                aviatorBetBtn.disabled = aviatorState.isPlaying;
+            }
+        }
+
+        function updateAviatorUI() {
+            const mult = aviatorState.multiplier;
+            const displayMult = mult.toFixed(2) + 'x';
+            aviatorTopMult.textContent = displayMult;
+            aviatorBigMult.textContent = displayMult;
+            aviatorBigMult.classList.toggle('crashed', aviatorState.isCrashed);
+
+            aviatorStatus.textContent = aviatorState.isPlaying ? (aviatorState.isCrashed ? '💥 Crashed' : '✈️ Flying…') :
+                'Waiting for bet...';
+
+            aviatorHistoryEl.innerHTML = '';
+            if (aviatorState.history.length > 0) {
+                const hist = [...aviatorState.history].reverse().slice(0, 15);
+                hist.forEach(val => {
+                    const span = document.createElement('span');
+                    span.className = 'history-item';
+                    span.textContent = val.toFixed(2) + 'x';
+                    if (val >= 2.0) span.classList.add('high');
+                    else if (val < 1.5) span.classList.add('low');
+                    aviatorHistoryEl.appendChild(span);
+                });
+            } else {
+                const defaults = [1.77, 1.11, 1.19, 3.09, 2.93, 5.19, 3.20];
+                defaults.forEach(val => {
+                    const span = document.createElement('span');
+                    span.className = 'history-item';
+                    span.textContent = val.toFixed(2) + 'x';
+                    if (val >= 2.0) span.classList.add('high');
+                    else if (val < 1.5) span.classList.add('low');
+                    aviatorHistoryEl.appendChild(span);
+                });
+            }
+
+            aviatorStats.textContent = '1,298';
+            updateAviatorBetBtn();
+            aviatorCashoutBtn.disabled = !aviatorState.isPlaying || aviatorState.isCrashed;
+        }
+
+        function aviatorPlaceBet() {
+            if (!currentUser) { showToast('Please login', 'error'); return; }
+            if (aviatorState.isPlaying) return;
+            const bet = parseFloat(aviatorBetInput.value) || 20;
+            if (bet > currentUser.balance) {
+                showToast('Insufficient balance', 'error');
+                return;
+            }
+            if (bet <= 0) { showToast('Invalid bet', 'error'); return; }
+            aviatorState.bet = bet;
+            currentUser.balance = round2(currentUser.balance - bet);
+            updateUser(currentUser.username, { balance: currentUser.balance });
+            setCurrentUser(currentUser);
+            updateBalanceUI();
+
+            aviatorState.isPlaying = true;
+            aviatorState.isCrashed = false;
+            aviatorState.multiplier = 1.0;
+            aviatorState.profit = 0;
+            aviatorState.betPlaced = true;
+            aviatorState.cashoutAt = 0;
+
+            const r = Math.random();
+            let crash = 1.0;
+            if (r < 0.05) crash = 1.0 + Math.random() * 0.3;
+            else if (r < 0.15) crash = 1.3 + Math.random() * 0.5;
+            else if (r < 0.35) crash = 1.8 + Math.random() * 0.8;
+            else if (r < 0.60) crash = 2.6 + Math.random() * 1.5;
+            else if (r < 0.80) crash = 4.1 + Math.random() * 3.0;
+            else if (r < 0.94) crash = 7.1 + Math.random() * 6.0;
+            else crash = 13 + Math.random() * 20;
+            aviatorState.crashPoint = Math.min(Math.max(crash, 1.01), 40);
+
+            updateAviatorUI();
+            aviatorStartLoop();
+        }
+
+        function aviatorStartLoop() {
+            if (aviatorState.animId) cancelAnimationFrame(aviatorState.animId);
+            let lastTime = performance.now();
+            let elapsed = 0;
+
+            function tick(timestamp) {
+                if (!aviatorState.isPlaying) {
+                    aviatorState.animId = null;
+                    return;
+                }
+                const dt = (timestamp - lastTime) / 1000;
+                lastTime = timestamp;
+                elapsed += dt;
+
+                const baseMult = 1 + elapsed * 0.12;
+                const mult = Math.min(baseMult + Math.sin(elapsed * 0.8) * 0.02 * elapsed, 50);
+                aviatorState.multiplier = Math.min(mult, aviatorState.crashPoint);
+
+                if (aviatorState.multiplier >= aviatorState.crashPoint) {
+                    aviatorCrash();
+                    return;
+                }
+
+                aviatorState.profit = round2(aviatorState.bet * aviatorState.multiplier - aviatorState.bet);
+                updateAviatorUI();
+                aviatorState.animId = requestAnimationFrame(tick);
+            }
+
+            aviatorState.animId = requestAnimationFrame(tick);
+        }
+
+        function aviatorCrash() {
+            aviatorState.isCrashed = true;
+            aviatorState.isPlaying = false;
+            aviatorState.betPlaced = false;
+            aviatorState.profit = -aviatorState.bet;
+            aviatorState.history.push(aviatorState.crashPoint);
+            if (aviatorState.history.length > 30) aviatorState.history.shift();
+            updateAviatorUI();
+            showToast('💥 Crashed at ' + aviatorState.crashPoint.toFixed(2) + '×', 'error');
+            updateBalanceUI();
+            aviatorBetBtn.disabled = false;
+        }
+
+        function aviatorCashOut() {
+            if (!aviatorState.isPlaying || aviatorState.isCrashed) return;
+            aviatorState.isPlaying = false;
+            aviatorState.betPlaced = false;
+            const mult = aviatorState.multiplier;
+            const win = round2(aviatorState.bet * mult);
+            aviatorState.profit = round2(win - aviatorState.bet);
+            currentUser.balance = round2(currentUser.balance + win);
+            updateUser(currentUser.username, { balance: currentUser.balance });
+            setCurrentUser(currentUser);
+            updateBalanceUI();
+            aviatorState.history.push(mult);
+            if (aviatorState.history.length > 30) aviatorState.history.shift();
+            updateAviatorUI();
+            showToast('✅ Cashed out at ' + mult.toFixed(2) + '× — +' + format(aviatorState.profit), 'success');
+            aviatorBetBtn.disabled = false;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  DICE GAME
+        // ─────────────────────────────────────────────────────────────────
+
+        let diceState = {
+            bet: 5,
+            choice: 'over',
+            result: null,
+        };
+
+        const diceResult = document.getElementById('diceResult');
+        const diceBet = document.getElementById('diceBet');
+        const diceRoll = document.getElementById('diceRoll');
+        const diceResultText = document.getElementById('diceResultText');
+        const diceOptions = document.querySelectorAll('.dice-options button');
+
+        function initDice() {
+            diceOptions.forEach(btn => {
+                btn.onclick = function() {
+                    diceOptions.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    diceState.choice = this.dataset.bet;
+                };
+            });
+            diceRoll.onclick = diceRollHandler;
+            diceBet.onchange = function() {
+                diceState.bet = parseFloat(this.value) || 5;
+            };
+            diceBet.value = diceState.bet;
+            updateDiceUI();
+        }
+
+        function diceRollHandler() {
+            if (!currentUser) { showToast('Please login', 'error'); return; }
+            const bet = parseFloat(diceBet.value) || 5;
+            if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
+            if (bet <= 0) { showToast('Invalid bet', 'error'); return; }
+
+            currentUser.balance = round2(currentUser.balance - bet);
+            updateUser(currentUser.username, { balance: currentUser.balance });
+            setCurrentUser(currentUser);
+            updateBalanceUI();
+
+            const roll = Math.floor(Math.random() * 6) + 1;
+            diceState.result = roll;
+            const isOver = roll > 3.5;
+            const win = (diceState.choice === 'over' && isOver) || (diceState.choice === 'under' && !isOver);
+            const winAmount = win ? round2(bet * 1.9) : 0;
+
+            if (win) {
+                currentUser.balance = round2(currentUser.balance + winAmount);
+                updateUser(currentUser.username, { balance: currentUser.balance });
+                setCurrentUser(currentUser);
+                updateBalanceUI();
+                diceResultText.innerHTML = `🎉 Rolled ${roll}! You won ${format(winAmount)} ETB!`;
+                showToast(`🎲 Rolled ${roll} — Won ${format(winAmount)} ETB`, 'success');
+            } else {
+                diceResultText.innerHTML = `😔 Rolled ${roll}. You lost.`;
+                showToast(`🎲 Rolled ${roll} — Lost ${format(bet)} ETB`, 'error');
+            }
+
+            diceResult.textContent = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][roll - 1];
+        }
+
+        function updateDiceUI() {}
+
+        // ─────────────────────────────────────────────────────────────────
+        //  EVENT BINDINGS & INIT
+        // ─────────────────────────────────────────────────────────────────
+
+        loginBtn.onclick = () => { loginModal.classList.add('open');
+            loginError.textContent = ''; };
+        registerBtn.onclick = () => { registerModal.classList.add('open');
+            registerError.textContent = ''; };
+        changePwBtn.onclick = () => { changePwModal.classList.add('open');
+            changePwError.textContent = '';
+            changePwCurrent.value = '';
+            changePwNew.value = '';
+            changePwConfirm.value = ''; };
+
+        loginClose.onclick = () => loginModal.classList.remove('open');
+        registerClose.onclick = () => registerModal.classList.remove('open');
+        changePwClose.onclick = () => changePwModal.classList.remove('open');
+
+        loginModal.onclick = (e) => { if (e.target === loginModal) loginModal.classList.remove('open'); };
+        registerModal.onclick = (e) => { if (e.target === registerModal) registerModal.classList.remove('open'); };
+        changePwModal.onclick = (e) => { if (e.target === changePwModal) changePwModal.classList.remove('open'); };
+
+        loginSubmit.onclick = () => {
+            const u = loginUsername.value.trim();
+            const p = loginPassword.value.trim();
+            if (!u || !p) { loginError.textContent = 'Please fill all fields'; return; }
+            login(u, p);
+        };
+        registerSubmit.onclick = () => {
+            const u = registerUsername.value.trim();
+            const p = registerPassword.value.trim();
+            const ph = registerPhone.value.trim();
+            if (!u || !p || !ph) { registerError.textContent = 'Please fill all fields'; return; }
+            if (u.length < 3) { registerError.textContent = 'Username at least 3 characters'; return; }
+            if (p.length < 3) { registerError.textContent = 'Password at least 3 characters'; return; }
+            if (ph.length < 5) { registerError.textContent = 'Please enter a valid phone number'; return; }
+            register(u, p, ph);
+        };
+        changePwSubmit.onclick = () => {
+            if (!currentUser) { showToast('You must be logged in', 'error'); return; }
+            const cur = changePwCurrent.value.trim();
+            const newPw = changePwNew.value.trim();
+            const confirm = changePwConfirm.value.trim();
+            if (!cur || !newPw || !confirm) {
+                changePwError.textContent = 'Please fill all fields';
+                return;
+            }
+            changePassword(currentUser.username, cur, newPw, confirm);
+        };
+
+        loginPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginSubmit.click(); });
+        registerPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') registerSubmit.click(); });
+        changePwConfirm.addEventListener('keydown', (e) => { if (e.key === 'Enter') changePwSubmit.click(); });
+
+        logoutBtn.onclick = logout;
+
+        navLinks.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const section = btn.dataset.section;
+            if (!section) return;
+            if (section === 'admin' && (!currentUser || !currentUser.isAdmin)) {
+                showToast('Admin only', 'error');
+                return;
+            }
+            switchSection(section);
+        });
+
+        // ─────────────────────────────────────────────────────────────────
+        //  INIT
+        // ─────────────────────────────────────────────────────────────────
+
+        if (!findUser('admin')) {
+            const users = getUsers();
+            users.push({ username: 'admin', password: 'admin', phone: '0000000000', balance: 9999, isAdmin: true });
+            setUsers(users);
+        }
+
+        if (currentUser) {
+            const fresh = findUser(currentUser.username);
+            if (fresh) {
+                currentUser = fresh;
+                setCurrentUser(currentUser);
+                addPlayer(currentUser.username);
+            } else {
+                logout();
+            }
+        }
+
+        const depositReqBtn = document.createElement('button');
+        depositReqBtn.className = 'btn';
+        depositReqBtn.textContent = '💳 Deposit';
+        depositReqBtn.onclick = requestDeposit;
+        const withdrawReqBtn = document.createElement('button');
+        withdrawReqBtn.className = 'btn';
+        withdrawReqBtn.textContent = '🏦 Withdraw';
+        withdrawReqBtn.onclick = requestWithdraw;
+        const userAreaDiv = document.getElementById('userArea');
+        userAreaDiv.insertBefore(depositReqBtn, userAreaDiv.querySelector('.btn'));
+        userAreaDiv.insertBefore(withdrawReqBtn, userAreaDiv.querySelector('.btn'));
+
+        function requestDeposit() {
+            if (!currentUser) { showToast('Please login', 'error'); return; }
+            const amount = prompt('Enter amount to deposit (ETB):', '50');
+            if (amount === null) return;
+            const amt = parseFloat(amount);
+            if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
+            addTransaction({
+                username: currentUser.username,
+                type: 'deposit',
+                amount: amt,
+                status: 'pending',
+                details: 'SMS confirmation pending',
+                timestamp: new Date().toISOString(),
+            });
+            showToast('Deposit request submitted for ' + format(amt) + ' ETB. Awaiting admin approval.', 'info');
+            if (currentUser.isAdmin) renderAdminPanel();
+        }
+
+        function requestWithdraw() {
+            if (!currentUser) { showToast('Please login', 'error'); return; }
+            const amount = prompt('Enter amount to withdraw (ETB):', '20');
+            if (amount === null) return;
+            const amt = parseFloat(amount);
+            if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
+            if (amt > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
+
+            const user = findUser(currentUser.username);
+            currentUser.balance = round2(currentUser.balance - amt);
+            updateUser(currentUser.username, { balance: currentUser.balance });
+            setCurrentUser(currentUser);
+            updateBalanceUI();
+
+            addTransaction({
+                username: currentUser.username,
+                phone: user ? user.phone : 'N/A',
+                type: 'withdraw',
+                amount: amt,
+                status: 'pending',
+                details: 'Phone: ' + (prompt('Enter phone number:', '09XXXXXXXX') || 'N/A'),
+                timestamp: new Date().toISOString(),
+            });
+            showToast('Withdrawal request for ' + format(amt) + ' ETB submitted. Awaiting admin processing.', 'info');
+            if (currentUser.isAdmin) renderAdminPanel();
+        }
+
+        updateUI();
+        initKeno();
+        initAviator();
+        initDice();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                loginModal.classList.remove('open');
+                registerModal.classList.remove('open');
+                changePwModal.classList.remove('open');
+            }
+        });
+
+        console.log('🚀 Platform initialized. Admin: admin/admin');
+    </script>
+</body>
+</html>
