@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <title>🎰 Multi‑Game Platform</title>
     <style>
         /* ── reset & base ── */
@@ -149,70 +149,79 @@
             padding: 20px 22px 24px;
         }
 
-        /* ── Winning Numbers Banner (Horizontal Layout) ── */
+        /* ── Winning Numbers Banner (Horizontal & Compact) ── */
         .winning-banner {
             display: none;
-            background: linear-gradient(135deg, rgba(0, 230, 118, 0.08), rgba(0, 200, 80, 0.03));
-            border: 1px solid rgba(0, 230, 118, 0.15);
-            border-radius: 16px;
-            padding: 10px 14px;
-            margin-bottom: 14px;
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.06), rgba(0, 200, 80, 0.02));
+            border: 1px solid rgba(0, 230, 118, 0.12);
+            border-radius: 14px;
+            padding: 6px 12px;
+            margin-bottom: 12px;
             align-items: center;
             flex-wrap: wrap;
-            gap: 6px 12px;
-            min-height: 48px;
+            gap: 4px 10px;
+            min-height: 36px;
         }
         .winning-banner.visible {
             display: flex;
         }
         .winning-banner .label {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 700;
             color: #00e676;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             white-space: nowrap;
+            flex-shrink: 0;
         }
         .winning-banner .balls {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px 6px;
-            flex: 1;
+            gap: 3px 4px;
+            flex: 1 1 auto;
             align-items: center;
             justify-content: flex-start;
+            min-width: 0;
         }
         .winning-banner .ball {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 28px;
-            height: 28px;
+            min-width: 20px;
+            height: 20px;
             background: linear-gradient(135deg, #00e676, #00c853);
             color: #0b0b1a;
             border-radius: 50%;
             font-weight: 700;
-            font-size: 11px;
-            box-shadow: 0 0 20px rgba(0, 230, 118, 0.25);
-            padding: 0 2px;
-            animation: popIn 0.35s ease forwards;
+            font-size: 9px;
+            box-shadow: 0 0 12px rgba(0, 230, 118, 0.2);
+            padding: 0 1px;
+            animation: popIn 0.3s ease forwards;
             opacity: 0;
-            transform: scale(0.5);
+            transform: scale(0.4);
+            flex-shrink: 0;
+            transition: all 0.15s;
+            line-height: 1;
         }
         .winning-banner .ball.matched {
             background: linear-gradient(135deg, #f7e05e, #d4a800);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
-            border: 2px solid #f7e05e;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.35);
+            border: 1.5px solid #f7e05e;
+            transform: scale(1.05);
+            min-width: 22px;
+            height: 22px;
+            font-size: 10px;
         }
         .winning-banner .ball.revealing {
-            animation: popIn 0.35s ease forwards;
+            animation: popIn 0.3s ease forwards;
         }
         @keyframes popIn {
             0% {
                 opacity: 0;
-                transform: scale(0.3) rotate(-10deg);
+                transform: scale(0.3) rotate(-8deg);
             }
             60% {
-                transform: scale(1.2) rotate(2deg);
+                transform: scale(1.15) rotate(2deg);
                 opacity: 1;
             }
             100% {
@@ -222,10 +231,12 @@
         }
 
         .winning-banner .status-text {
-            font-size: 12px;
-            opacity: 0.5;
+            font-size: 10px;
+            opacity: 0.4;
             font-weight: 500;
             white-space: nowrap;
+            flex-shrink: 0;
+            margin-left: auto;
         }
 
         .keno-header {
@@ -674,22 +685,23 @@
         .results-winning-numbers {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
-            padding: 6px 0 10px 0;
+            gap: 3px 4px;
+            padding: 4px 0 8px 0;
         }
         .results-winning-numbers .wnum {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 28px;
-            height: 28px;
-            background: rgba(0, 230, 118, 0.1);
+            min-width: 22px;
+            height: 22px;
+            background: rgba(0, 230, 118, 0.08);
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 700;
             color: #00e676;
-            border: 1px solid rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.08);
             padding: 0 2px;
+            flex-shrink: 0;
         }
         .results-players {
             display: flex;
@@ -1396,18 +1408,32 @@
             .stat-grid {
                 grid-template-columns: 1fr 1fr;
             }
+            /* Winning banner compact on tablet */
             .winning-banner .ball {
-                min-width: 28px;
-                height: 28px;
-                font-size: 11px;
+                min-width: 18px;
+                height: 18px;
+                font-size: 8px;
+            }
+            .winning-banner .ball.matched {
+                min-width: 20px;
+                height: 20px;
+                font-size: 9px;
+            }
+            .winning-banner {
+                padding: 4px 10px;
+                gap: 3px 8px;
+                min-height: 32px;
             }
             .winning-banner .label {
-                font-size: 12px;
+                font-size: 10px;
+            }
+            .winning-banner .status-text {
+                font-size: 9px;
             }
             .results-winning-numbers .wnum {
-                min-width: 24px;
-                height: 24px;
-                font-size: 11px;
+                min-width: 20px;
+                height: 20px;
+                font-size: 9px;
             }
         }
 
@@ -1443,25 +1469,41 @@
             .stat-card .stat-value {
                 font-size: 18px;
             }
+            /* Winning banner - extra compact on phone */
             .winning-banner .ball {
-                min-width: 24px;
-                height: 24px;
-                font-size: 10px;
+                min-width: 15px;
+                height: 15px;
+                font-size: 7px;
+                box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
+            }
+            .winning-banner .ball.matched {
+                min-width: 17px;
+                height: 17px;
+                font-size: 8px;
+                box-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
+                border-width: 1px;
+            }
+            .winning-banner .balls {
+                gap: 2px 3px;
             }
             .winning-banner {
-                padding: 8px 10px;
-                gap: 4px 8px;
+                padding: 3px 8px;
+                gap: 2px 6px;
+                min-height: 26px;
+                border-radius: 10px;
+                margin-bottom: 8px;
             }
             .winning-banner .label {
-                font-size: 11px;
+                font-size: 8px;
+                letter-spacing: 0.2px;
             }
             .winning-banner .status-text {
-                font-size: 10px;
+                font-size: 7px;
             }
             .results-winning-numbers .wnum {
-                min-width: 22px;
-                height: 22px;
-                font-size: 10px;
+                min-width: 18px;
+                height: 18px;
+                font-size: 8px;
             }
             .results-players .rp-row {
                 font-size: 12px;
@@ -1469,6 +1511,39 @@
             .results-players .rp-row .rp-name {
                 min-width: 50px;
                 font-size: 12px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            /* Very small screens - make balls even smaller */
+            .winning-banner .ball {
+                min-width: 13px;
+                height: 13px;
+                font-size: 6px;
+            }
+            .winning-banner .ball.matched {
+                min-width: 15px;
+                height: 15px;
+                font-size: 7px;
+            }
+            .winning-banner .balls {
+                gap: 1px 2px;
+            }
+            .winning-banner {
+                padding: 2px 6px;
+                gap: 1px 4px;
+                min-height: 22px;
+            }
+            .winning-banner .label {
+                font-size: 7px;
+            }
+            .winning-banner .status-text {
+                font-size: 6px;
+            }
+            .results-winning-numbers .wnum {
+                min-width: 16px;
+                height: 16px;
+                font-size: 7px;
             }
         }
     </style>
@@ -1499,7 +1574,7 @@
         <div class="section active" id="section-keno">
             <div class="game-container">
                 <div class="keno-wrapper">
-                    <!-- WINNING BANNER -->
+                    <!-- WINNING BANNER – horizontal compact -->
                     <div id="winningBanner" class="winning-banner">
                         <span class="label">🎯 WINNING NUMBERS</span>
                         <div class="balls" id="winningBannerBalls"></div>
@@ -2465,7 +2540,7 @@
                 winningBannerBalls.appendChild(ball);
 
                 idx++;
-                setTimeout(animateNext, 180);
+                setTimeout(animateNext, 150);
             }
 
             animateNext();
@@ -2606,7 +2681,7 @@
                 kenoState.isDrawing = false;
                 kenoDraw.disabled = false;
                 bannerStatus.textContent = 'Done';
-            }, 6000);
+            }, 5500);
         }
 
         function shuffle(arr) {
