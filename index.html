@@ -149,7 +149,7 @@
             padding: 12px 12px 16px;
         }
 
-        /* ── Winning Numbers Banner – HORIZONTAL, SMALL, BLINKING ── */
+        /* ── Winning Numbers Banner – horizontal, small, blinking, wraps ── */
         .winning-banner {
             display: none;
             background: linear-gradient(135deg, rgba(0, 230, 118, 0.06), rgba(0, 200, 80, 0.02));
@@ -161,7 +161,6 @@
             flex-wrap: nowrap;
             gap: 3px 8px;
             min-height: 26px;
-            overflow-x: auto;
         }
         .winning-banner.visible {
             display: flex;
@@ -177,16 +176,11 @@
         }
         .winning-banner .balls {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;          /* allows wrapping to next lines */
             gap: 2px 3px;
             align-items: center;
             flex: 1 1 auto;
-            overflow-x: auto;
             padding: 1px 0;
-            scrollbar-width: none;
-        }
-        .winning-banner .balls::-webkit-scrollbar {
-            display: none;
         }
         .winning-banner .ball {
             display: inline-flex;
@@ -401,12 +395,13 @@
             }
         }
 
-        .keno-bottom {
+        /* ── New Layout: Bet controls row, then Draw button row ── */
+        .keno-controls-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
             align-items: center;
-            margin-top: 2px;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
         .keno-bet-area {
@@ -453,30 +448,6 @@
             font-weight: 700;
         }
 
-        .btn-gold {
-            background: linear-gradient(135deg, #f7e05e, #d4a800);
-            color: #0b0b1a;
-        }
-        .btn-gold:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2);
-        }
-        .btn-gold:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-outline {
-            background: rgba(255, 255, 255, 0.04);
-            color: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: #fff;
-        }
-
         .keno-pick-count {
             font-size: 12px;
             font-weight: 600;
@@ -486,6 +457,38 @@
         .keno-pick-count strong {
             color: #f7e05e;
             opacity: 1;
+        }
+
+        /* Draw button – full width, below the controls */
+        .keno-draw-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 6px;
+        }
+        .keno-draw-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            border-radius: 40px;
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            color: #0b0b1a;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.15);
+        }
+        .keno-draw-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+        }
+        .keno-draw-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .keno-tabs {
@@ -719,14 +722,9 @@
         }
         .results-winning-numbers {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 2px 3px;
             padding: 3px 0 6px 0;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .results-winning-numbers::-webkit-scrollbar {
-            display: none;
         }
         .results-winning-numbers .wnum {
             display: inline-flex;
@@ -1424,8 +1422,9 @@
                 padding: 4px 2px;
                 margin-bottom: 6px;
             }
-            .keno-bottom {
+            .keno-controls-row {
                 gap: 4px;
+                margin-bottom: 4px;
             }
             .keno-bet-area {
                 padding: 2px 6px 2px 8px;
@@ -1441,6 +1440,10 @@
             }
             .keno-pick-count {
                 font-size: 10px;
+            }
+            .keno-draw-btn {
+                padding: 8px;
+                font-size: 14px;
             }
             .keno-tabs button {
                 font-size: 8px;
@@ -1601,7 +1604,7 @@
         <div class="section active" id="section-keno">
             <div class="game-container">
                 <div class="keno-wrapper">
-                    <!-- WINNING BANNER – horizontal, small, blinking -->
+                    <!-- WINNING BANNER – horizontal, wraps -->
                     <div id="winningBanner" class="winning-banner">
                         <span class="label">🎯 WINNING NUMBERS</span>
                         <div class="balls" id="winningBannerBalls"></div>
@@ -1615,6 +1618,27 @@
                     <div class="keno-grid-wrap">
                         <div class="keno-grid" id="kenoGrid"></div>
                     </div>
+
+                    <!-- Controls row: bet, quick/clear, pick count -->
+                    <div class="keno-controls-row">
+                        <div class="keno-bet-area">
+                            <label>BET</label>
+                            <input type="number" id="kenoBet" value="5" step="1" min="1" />
+                        </div>
+                        <div class="keno-actions">
+                            <button class="btn btn-outline" id="kenoQuick">⚡</button>
+                            <button class="btn btn-outline" id="kenoClear">✕</button>
+                        </div>
+                        <div class="keno-pick-count">
+                            <strong id="kenoCount">0</strong>/10
+                        </div>
+                    </div>
+
+                    <!-- Draw button – full width, directly below grid -->
+                    <div class="keno-draw-row">
+                        <button class="keno-draw-btn" id="kenoDraw">🎲 DRAW</button>
+                    </div>
+
                     <div class="keno-tabs">
                         <button class="active" data-tab="game">Game</button>
                         <button data-tab="history">History</button>
@@ -1628,24 +1652,9 @@
                             <span class="stat-item">My Tickets <strong id="myTicketsCount">0</strong></span>
                             <span class="stat-item">My Bets <strong id="myBetsCount">0</strong></span>
                         </div>
-                        <div class="keno-bottom">
-                            <div class="keno-bet-area">
-                                <label>BET</label>
-                                <input type="number" id="kenoBet" value="5" step="1" min="1" />
-                            </div>
-                            <div class="keno-actions">
-                                <button class="btn btn-gold" id="kenoDraw">🎲 DRAW</button>
-                                <button class="btn btn-outline" id="kenoQuick">⚡</button>
-                                <button class="btn btn-outline" id="kenoClear">✕</button>
-                            </div>
-                            <div class="keno-pick-count">
-                                <strong id="kenoCount">0</strong>/10
-                            </div>
-                        </div>
                         <div class="keno-result" id="kenoResult">
                             <span class="empty">Pick numbers & hit DRAW</span>
                         </div>
-
                         <div class="keno-players">
                             <h4>🎮 Current Players</h4>
                             <div id="playersList">
@@ -2168,7 +2177,6 @@
 
         // ─── MORE GENEROUS MULTIPLIERS ───
         function getMultiplier(matchCount) {
-            // Much better odds for players
             if (matchCount >= 10) return 500;
             if (matchCount >= 9) return 100;
             if (matchCount >= 8) return 30;
