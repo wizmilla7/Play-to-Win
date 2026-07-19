@@ -348,7 +348,7 @@
             transform: scale(1.06);
         }
 
-        /* Hot & Cold text colors (applied to grid cells) */
+        /* Hot & Cold text colors */
         .keno-cell.hot {
             color: #ff4444 !important;
             font-weight: 700;
@@ -357,7 +357,6 @@
             color: #4488ff !important;
             font-weight: 700;
         }
-        /* Override hot/cold when selected/drawn/matched/winning */
         .keno-cell.selected.hot,
         .keno-cell.selected.cold,
         .keno-cell.matched.hot,
@@ -366,7 +365,7 @@
         .keno-cell.winning.cold,
         .keno-cell.drawn.hot,
         .keno-cell.drawn.cold {
-            color: inherit !important; /* let the state class set color */
+            color: inherit !important;
         }
         .keno-cell.drawn.hot,
         .keno-cell.drawn.cold {
@@ -804,7 +803,7 @@
             color: #ff6b6b;
         }
 
-        /* Hot & Cold numbers in stats panel (kept for reference) */
+        /* Hot & Cold numbers in stats panel */
         .hot-cold-row {
             display: flex;
             flex-wrap: wrap;
@@ -1162,6 +1161,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
         }
         .admin-panel .card .item {
             display: flex;
@@ -1281,6 +1282,34 @@
         .admin-manual .manual-row .btn-execute:hover {
             transform: translateY(-1px);
             box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        /* Sync buttons styling */
+        .sync-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .sync-buttons .btn-sm {
+            font-size: 10px;
+            padding: 4px 12px;
+        }
+        .sync-buttons .btn-export {
+            background: rgba(0, 230, 118, 0.15);
+            color: #00e676;
+        }
+        .sync-buttons .btn-export:hover {
+            background: rgba(0, 230, 118, 0.25);
+        }
+        .sync-buttons .btn-import {
+            background: rgba(255, 215, 0, 0.15);
+            color: #f7e05e;
+        }
+        .sync-buttons .btn-import:hover {
+            background: rgba(255, 215, 0, 0.25);
+        }
+        .sync-buttons .btn-import input[type="file"] {
+            display: none;
         }
 
         /* ── Buttons ── */
@@ -1620,6 +1649,10 @@
                 font-size: 12px;
                 padding: 6px 14px;
             }
+            .sync-buttons .btn-sm {
+                font-size: 9px;
+                padding: 3px 8px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -1793,10 +1826,30 @@
 
         <!-- Admin -->
         <div class="section" id="section-admin">
-            <h2 style="font-size:18px;">🔧 Admin</h2>
+            <h2 style="font-size:18px;">🔧 Admin Panel</h2>
             <div class="admin-panel">
+                <!-- User List - with Sync buttons -->
+                <div class="card" style="grid-column:1/-1;background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.08);">
+                    <h3>
+                        👥 Registered Users
+                        <span class="sync-buttons">
+                            <button class="btn btn-sm btn-export" id="exportUsersBtn">📤 Export</button>
+                            <button class="btn btn-sm btn-import" id="importUsersBtn">📥 Import</button>
+                            <input type="file" id="importFileInput" accept=".json" />
+                            <button class="btn btn-sm" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);" id="refreshUsersBtn">⟳ Refresh</button>
+                        </span>
+                    </h3>
+                    <div id="userListContainer">
+                        <p style="opacity:0.3;">Loading users...</p>
+                    </div>
+                    <p style="font-size:9px;opacity:0.3;margin-top:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:6px;">
+                        💡 Users are stored locally per device. Use <strong>Export</strong> on the device where users register,
+                        then <strong>Import</strong> on your admin device to sync all users.
+                    </p>
+                </div>
+
                 <div class="card admin-manual">
-                    <h3>💸 Manual Tx</h3>
+                    <h3>💸 Manual Transaction</h3>
                     <div class="manual-row">
                         <select id="adminUserSelect"><option value="">— Select User —</option></select>
                         <input type="number" id="adminAmount" placeholder="Amount" value="50" step="1" min="1" />
@@ -1808,10 +1861,12 @@
                     </div>
                     <div id="adminManualResult" style="margin-top:6px;font-size:12px;min-height:16px;opacity:0.6;"></div>
                 </div>
+
                 <div class="card">
                     <h3>📥 Deposits <button class="clear-all-btn" id="clearDepositsBtn">Clear</button></h3>
                     <div id="pendingDeposits"><p style="opacity:0.3;">No deposits</p></div>
                 </div>
+
                 <div class="card">
                     <h3>📤 Withdrawals <button class="clear-all-btn" id="clearWithdrawalsBtn">Clear</button></h3>
                     <div id="pendingWithdrawals"><p style="opacity:0.3;">No withdrawals</p></div>
@@ -1841,7 +1896,7 @@
             <div class="error" id="registerError"></div>
             <input type="text" id="registerUsername" placeholder="Username" />
             <input type="password" id="registerPassword" placeholder="Password" />
-            <input type="text" id="registerPhone" placeholder="Phone (e.g. 09XXXXXXXX)" />
+            <input type="text" id="registerPhone" placeholder="9-digit phone (e.g. 912321221)" maxlength="9" />
             <div class="actions">
                 <button class="btn btn-primary" id="registerSubmit">Register</button>
                 <button class="btn btn-sm" id="registerClose" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);">Cancel</button>
@@ -1887,6 +1942,11 @@
         function setCurrentUser(user) { sessionStorage.setItem('currentUser', JSON.stringify(user)); }
 
         function findUser(username) { return getUsers().find(u => u.username === username); }
+
+        function findUserByPhone(phone) {
+            const users = getUsers();
+            return users.find(u => u.phone === phone);
+        }
 
         function updateUser(username, newData) {
             const users = getUsers();
@@ -1953,6 +2013,11 @@
         const adminTypeWithdraw = document.getElementById('adminTypeWithdraw');
         const adminExecuteBtn = document.getElementById('adminExecuteBtn');
         const adminManualResult = document.getElementById('adminManualResult');
+        const userListContainer = document.getElementById('userListContainer');
+        const refreshUsersBtn = document.getElementById('refreshUsersBtn');
+        const exportUsersBtn = document.getElementById('exportUsersBtn');
+        const importUsersBtn = document.getElementById('importUsersBtn');
+        const importFileInput = document.getElementById('importFileInput');
 
         const winningBanner = document.getElementById('winningBanner');
         const winningBannerBalls = document.getElementById('winningBannerBalls');
@@ -2004,13 +2069,13 @@
             }
             updateBalanceUI();
             populateAdminUserSelect();
+            renderUserList();
             renderAdminPanel();
             updatePlayersList();
             updateKenoStats();
             renderHistory();
             renderResults();
             renderStatistics();
-            // Apply hot/cold colors after stats update
             applyHotColdToGrid();
         }
 
@@ -2030,12 +2095,15 @@
                     renderStatistics();
                     applyHotColdToGrid(); }, 30);
             }
-            if (sectionId === 'admin') { populateAdminUserSelect();
-                renderAdminPanel(); }
+            if (sectionId === 'admin') {
+                populateAdminUserSelect();
+                renderUserList();
+                renderAdminPanel();
+            }
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  AUTH
+        //  AUTH – with phone validation and uniqueness
         // ─────────────────────────────────────────────────────────────────
 
         function login(username, password) {
@@ -2055,16 +2123,41 @@
             return true;
         }
 
-        function register(username, password, phone) {
-            if (findUser(username)) { registerError.textContent = 'Username exists'; return false; }
-            if (!phone || phone.length < 5) { registerError.textContent = 'Valid phone required'; return false; }
-            const newUser = { username, password, phone, balance: 100, isAdmin: false };
+        function register(username, password, phoneInput) {
+            const phoneDigits = phoneInput.trim();
+            if (!/^\d{9}$/.test(phoneDigits)) {
+                registerError.textContent = 'Phone must be exactly 9 digits (e.g. 912321221)';
+                return false;
+            }
+            const fullPhone = '+251' + phoneDigits;
+
+            if (findUser(username)) {
+                registerError.textContent = 'Username already exists';
+                return false;
+            }
+            if (findUserByPhone(fullPhone)) {
+                registerError.textContent = 'This phone number is already registered';
+                return false;
+            }
+
+            const newUser = {
+                username,
+                password,
+                phone: fullPhone,
+                balance: 100,
+                isAdmin: false,
+            };
             const users = getUsers();
             users.push(newUser);
             setUsers(users);
             registerError.textContent = '';
             registerModal.classList.remove('open');
             showToast('Account created! Please login.', 'success');
+            // Refresh admin lists if admin is logged in
+            if (currentUser && currentUser.isAdmin) {
+                populateAdminUserSelect();
+                renderUserList();
+            }
             return true;
         }
 
@@ -2093,8 +2186,116 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  ADMIN
+        //  ADMIN – User List, Export, Import
         // ─────────────────────────────────────────────────────────────────
+
+        function renderUserList() {
+            const users = getUsers();
+            if (users.length === 0) {
+                userListContainer.innerHTML = '<p style="opacity:0.3;">No registered users yet</p>';
+                return;
+            }
+            let html = '';
+            users.forEach(u => {
+                const isAdmin = u.isAdmin ? '👑 Admin' : '👤 User';
+                html += `
+                    <div class="item">
+                        <span><strong>${u.username}</strong> — ${u.phone} — ${format(u.balance)} ETB <span style="opacity:0.3;font-size:10px;">${isAdmin}</span></span>
+                    </div>
+                `;
+            });
+            userListContainer.innerHTML = html;
+        }
+
+        // ─── EXPORT USERS ───
+        function exportUsers() {
+            const users = getUsers();
+            const data = {
+                version: '1.0',
+                exportedAt: new Date().toISOString(),
+                users: users,
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gamehub_users_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast(`Exported ${users.length} users`, 'success');
+        }
+
+        // ─── IMPORT USERS ───
+        function importUsers(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.users || !Array.isArray(data.users)) {
+                        showToast('Invalid file format', 'error');
+                        return;
+                    }
+                    const importedUsers = data.users;
+                    const currentUsers = getUsers();
+                    // Merge: existing users by username get updated, new users added
+                    const merged = [...currentUsers];
+                    let added = 0,
+                        updated = 0;
+                    importedUsers.forEach(imported => {
+                        const existingIndex = merged.findIndex(u => u.username === imported.username);
+                        if (existingIndex !== -1) {
+                            // Update existing (preserve balance if higher? We'll just update all fields)
+                            merged[existingIndex] = { ...merged[existingIndex], ...imported };
+                            updated++;
+                        } else {
+                            // Check phone uniqueness
+                            const phoneExists = merged.some(u => u.phone === imported.phone);
+                            if (!phoneExists) {
+                                merged.push(imported);
+                                added++;
+                            } else {
+                                // If phone exists, skip this user but warn
+                                showToast(`Skipped ${imported.username}: phone ${imported.phone} already used`, 'info', 2000);
+                            }
+                        }
+                    });
+                    setUsers(merged);
+                    // Refresh UI
+                    populateAdminUserSelect();
+                    renderUserList();
+                    renderAdminPanel();
+                    updateUI();
+                    showToast(`Imported: ${added} new, ${updated} updated`, 'success');
+                } catch (err) {
+                    showToast('Error reading file: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ─── EVENT BINDINGS ───
+        exportUsersBtn.addEventListener('click', function() {
+            if (!currentUser || !currentUser.isAdmin) { showToast('Admin access required', 'error'); return; }
+            exportUsers();
+        });
+
+        importUsersBtn.addEventListener('click', function() {
+            if (!currentUser || !currentUser.isAdmin) { showToast('Admin access required', 'error'); return; }
+            importFileInput.click();
+        });
+
+        importFileInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                importUsers(this.files[0]);
+                this.value = ''; // Reset so same file can be re-imported
+            }
+        });
+
+        refreshUsersBtn.addEventListener('click', function() {
+            populateAdminUserSelect();
+            renderUserList();
+            showToast('User list refreshed', 'info', 1500);
+        });
 
         function populateAdminUserSelect() {
             const users = getUsers();
@@ -2140,6 +2341,7 @@
                 `✅ ${adminTxType==='deposit'?'Deposited':'Withdrew'} ${format(amount)} ETB ${adminTxType==='deposit'?'to':'from'} ${username}`,
                 'success');
             populateAdminUserSelect();
+            renderUserList();
             renderAdminPanel();
             updateUI();
         });
@@ -2251,7 +2453,6 @@
             }
         }
 
-        // Multipliers (more generous)
         function getMultiplier(matchCount) {
             if (matchCount >= 10) return 500;
             if (matchCount >= 9) return 100;
@@ -2342,7 +2543,6 @@
             winningBanner.classList.remove('visible');
             updatePlayersList();
             updateKenoStats();
-            // Re-apply hot/cold colors because updateKenoUI may have removed classes
             applyHotColdToGrid();
         }
 
@@ -2350,13 +2550,11 @@
             const cells = kenoGrid.querySelectorAll('.keno-cell');
             cells.forEach(cell => {
                 const num = parseInt(cell.dataset.num);
-                // Reset all state classes, but keep hot/cold classes? We'll re-apply hot/cold after.
                 cell.classList.remove('selected', 'drawn', 'matched', 'winning', 'hot', 'cold');
                 if (kenoState.matched.has(num)) cell.classList.add('matched');
                 else if (kenoState.drawn.has(num)) cell.classList.add('drawn');
                 else if (kenoState.selected.has(num)) cell.classList.add('selected');
             });
-            // Now re-apply hot/cold colors (they may be overridden by state classes via CSS)
             applyHotColdToGrid();
             kenoCount.textContent = kenoState.selected.size;
             kenoDraw.disabled = kenoState.selected.size === 0 || kenoState.isDrawing || !currentUser || currentUser
@@ -2499,7 +2697,6 @@
             if (kenoHistory.length > 100) kenoHistory.shift();
             setKenoHistory(kenoHistory);
 
-            // Update grid: mark matched (green) and winning (green) for all drawn numbers
             const cells = kenoGrid.querySelectorAll('.keno-cell');
             cells.forEach(cell => {
                 const num = parseInt(cell.dataset.num);
@@ -2571,19 +2768,14 @@
         //  HOT/COLD GRID COLORING
         // ─────────────────────────────────────────────────────────────────
 
-        let hotNumbers = [];
-        let coldNumbers = [];
-
         function applyHotColdToGrid() {
             const cells = kenoGrid.querySelectorAll('.keno-cell');
-            // First, remove existing hot/cold classes (they might be re-added)
             cells.forEach(cell => {
                 cell.classList.remove('hot', 'cold');
             });
 
-            if (kenoHistory.length < 3) return; // not enough data
+            if (kenoHistory.length < 3) return;
 
-            // Compute frequencies
             const freq = {};
             for (let i = 1; i <= 80; i++) freq[i] = 0;
             kenoHistory.forEach(h => {
@@ -2591,14 +2783,9 @@
             });
             const entries = Object.entries(freq).map(([num, count]) => ({ num: parseInt(num), count }));
             const sorted = entries.sort((a, b) => b.count - a.count);
-            // Hot: top 5
             const hot = sorted.slice(0, 5).map(item => item.num);
-            // Cold: bottom 5 among those with count > 0
             const withCount = sorted.filter(item => item.count > 0);
             const cold = withCount.slice(-5).map(item => item.num);
-
-            hotNumbers = hot;
-            coldNumbers = cold;
 
             cells.forEach(cell => {
                 const num = parseInt(cell.dataset.num);
@@ -2671,7 +2858,6 @@
             let html =
                 `<div class="stat-grid"><div class="stat-card gold"><div class="stat-value">${totalGames}</div><div class="stat-label">Games</div></div><div class="stat-card green"><div class="stat-value">${totalWinners}</div><div class="stat-label">Winners</div></div><div class="stat-card pink"><div class="stat-value">${format(totalPayout)}</div><div class="stat-label">Payout (ETB)</div></div><div class="stat-card"><div class="stat-value">${kenoHistory.length>0?Math.round(totalWinners/kenoHistory.length):0}</div><div class="stat-label">Avg Winners</div></div></div>`;
 
-            // Hot & Cold in stats panel
             html += `<div class="hot-cold-row">`;
             if (hot.length > 0) {
                 html +=
@@ -2687,7 +2873,6 @@
                 `<div style="margin-top:6px;opacity:0.4;font-size:10px;margin-bottom:3px;">📊 Most Frequent (all)</div><div class="top-numbers">${top10.map(([num,count])=>`<span class="num-badge">${num} <span class="count">(${count}x)</span></span>`).join('')}</div>`;
 
             container.innerHTML = html;
-            // Apply hot/cold to grid (already called after)
         }
 
         // ─────────────────────────────────────────────────────────────────
@@ -3079,7 +3264,6 @@
             if (!u || !p || !ph) { registerError.textContent = 'Fill all fields'; return; }
             if (u.length < 3) { registerError.textContent = 'Username min 3 chars'; return; }
             if (p.length < 3) { registerError.textContent = 'Password min 3 chars'; return; }
-            if (ph.length < 5) { registerError.textContent = 'Valid phone'; return; }
             register(u, p, ph);
         };
         changePwSubmit.onclick = () => {
@@ -3109,7 +3293,7 @@
 
         if (!findUser('admin')) {
             const users = getUsers();
-            users.push({ username: 'admin', password: 'admin', phone: '0000000000', balance: 9999, isAdmin: true });
+            users.push({ username: 'admin', password: 'admin', phone: '+251000000000', balance: 9999, isAdmin: true });
             setUsers(users);
         }
 
@@ -3140,41 +3324,4 @@
             if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
             addTransaction({ username: currentUser.username, type: 'deposit', amount: amt, status: 'pending',
                 details: 'SMS pending', timestamp: new Date().toISOString() });
-            showToast('Deposit request for ' + format(amt) + ' ETB submitted.', 'info');
-            if (currentUser.isAdmin) renderAdminPanel();
-        }
-
-        function requestWithdraw() {
-            if (!currentUser) { showToast('Please login', 'error'); return; }
-            const amount = prompt('Enter amount to withdraw (ETB):', '20');
-            if (amount === null) return;
-            const amt = parseFloat(amount);
-            if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
-            if (amt > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
-            const user = findUser(currentUser.username);
-            currentUser.balance = round2(currentUser.balance - amt);
-            updateUser(currentUser.username, { balance: currentUser.balance });
-            setCurrentUser(currentUser);
-            updateBalanceUI();
-            addTransaction({ username: currentUser.username, phone: user ? user.phone : 'N/A', type: 'withdraw',
-                amount: amt, status: 'pending', details: 'Phone: ' + (prompt('Enter phone:', '09XXXXXXXX') || 'N/A'),
-                timestamp: new Date().toISOString() });
-            showToast('Withdrawal for ' + format(amt) + ' ETB submitted.', 'info');
-            if (currentUser.isAdmin) renderAdminPanel();
-        }
-
-        updateUI();
-        initKeno();
-        initAviator();
-        initDice();
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') { loginModal.classList.remove('open');
-                registerModal.classList.remove('open');
-                changePwModal.classList.remove('open'); }
-        });
-
-        console.log('🚀 Platform ready. Admin: admin/admin');
-    </script>
-</body>
-</html>
+            showToast('Deposit request
