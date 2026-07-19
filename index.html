@@ -149,18 +149,19 @@
             padding: 20px 22px 24px;
         }
 
-        /* ── Winning Numbers Banner (Horizontal & Compact) ── */
+        /* ── Winning Numbers Banner – HORIZONTAL & COMPACT ── */
         .winning-banner {
             display: none;
             background: linear-gradient(135deg, rgba(0, 230, 118, 0.06), rgba(0, 200, 80, 0.02));
             border: 1px solid rgba(0, 230, 118, 0.12);
             border-radius: 14px;
-            padding: 6px 12px;
+            padding: 4px 10px;
             margin-bottom: 12px;
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;          /* keep everything in one line if possible */
             gap: 4px 10px;
-            min-height: 36px;
+            min-height: 32px;
+            overflow-x: auto;           /* scroll horizontally if too many numbers */
         }
         .winning-banner.visible {
             display: flex;
@@ -176,12 +177,16 @@
         }
         .winning-banner .balls {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;          /* prevent wrapping – keep horizontal */
             gap: 3px 4px;
-            flex: 1 1 auto;
             align-items: center;
-            justify-content: flex-start;
-            min-width: 0;
+            flex: 1 1 auto;
+            overflow-x: auto;
+            padding: 2px 0;
+            scrollbar-width: none;      /* hide scrollbar */
+        }
+        .winning-banner .balls::-webkit-scrollbar {
+            display: none;
         }
         .winning-banner .ball {
             display: inline-flex;
@@ -662,7 +667,7 @@
             font-size: 12px;
         }
 
-        /* Results tab - compact */
+        /* Results tab - horizontal winning numbers */
         .results-round-header {
             display: flex;
             flex-wrap: wrap;
@@ -684,9 +689,14 @@
         }
         .results-winning-numbers {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 3px 4px;
             padding: 4px 0 8px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .results-winning-numbers::-webkit-scrollbar {
+            display: none;
         }
         .results-winning-numbers .wnum {
             display: inline-flex;
@@ -1408,7 +1418,7 @@
             .stat-grid {
                 grid-template-columns: 1fr 1fr;
             }
-            /* Winning banner compact on tablet */
+            /* Winning banner - smaller on tablet */
             .winning-banner .ball {
                 min-width: 18px;
                 height: 18px;
@@ -1420,9 +1430,9 @@
                 font-size: 9px;
             }
             .winning-banner {
-                padding: 4px 10px;
+                padding: 3px 8px;
                 gap: 3px 8px;
-                min-height: 32px;
+                min-height: 28px;
             }
             .winning-banner .label {
                 font-size: 10px;
@@ -1487,9 +1497,9 @@
                 gap: 2px 3px;
             }
             .winning-banner {
-                padding: 3px 8px;
+                padding: 2px 6px;
                 gap: 2px 6px;
-                min-height: 26px;
+                min-height: 22px;
                 border-radius: 10px;
                 margin-bottom: 8px;
             }
@@ -1530,9 +1540,9 @@
                 gap: 1px 2px;
             }
             .winning-banner {
-                padding: 2px 6px;
+                padding: 2px 4px;
                 gap: 1px 4px;
-                min-height: 22px;
+                min-height: 18px;
             }
             .winning-banner .label {
                 font-size: 7px;
@@ -1574,7 +1584,7 @@
         <div class="section active" id="section-keno">
             <div class="game-container">
                 <div class="keno-wrapper">
-                    <!-- WINNING BANNER – horizontal compact -->
+                    <!-- WINNING BANNER – HORIZONTAL & COMPACT -->
                     <div id="winningBanner" class="winning-banner">
                         <span class="label">🎯 WINNING NUMBERS</span>
                         <div class="balls" id="winningBannerBalls"></div>
