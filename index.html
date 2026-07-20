@@ -1411,6 +1411,23 @@
             margin-bottom: 6px;
             min-height: 16px;
         }
+        /* Remember me checkbox */
+        .modal .remember-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+        }
+        .modal .remember-group input[type="checkbox"] {
+            width: auto;
+            margin-bottom: 0;
+            accent-color: #f7e05e;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
 
         /* ── Toast ── */
         .toast {
@@ -1892,6 +1909,10 @@
             <div class="error" id="loginError"></div>
             <input type="text" id="loginUsername" placeholder="Username" />
             <input type="password" id="loginPassword" placeholder="Password" />
+            <div class="remember-group">
+                <input type="checkbox" id="loginRemember" />
+                <label for="loginRemember">Remember me</label>
+            </div>
             <div class="actions">
                 <button class="btn btn-primary" id="loginSubmit">Login</button>
                 <button class="btn btn-sm" id="loginClose" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);">Cancel</button>
@@ -1901,7 +1922,7 @@
     <div class="modal-overlay" id="registerModal">
         <div class="modal">
             <h2>📝 Register</h2>
-            <p class="sub">Create account — balance starts at 0</p>
+            <p class="sub">Create account — balance starts at <strong>0</strong></p>
             <div class="error" id="registerError"></div>
             <input type="text" id="registerUsername" placeholder="Username" />
             <input type="password" id="registerPassword" placeholder="Password" />
@@ -2039,6 +2060,7 @@
         const changePwError = document.getElementById('changePwError');
         const loginUsername = document.getElementById('loginUsername');
         const loginPassword = document.getElementById('loginPassword');
+        const loginRemember = document.getElementById('loginRemember');
         const registerUsername = document.getElementById('registerUsername');
         const registerPassword = document.getElementById('registerPassword');
         const registerPhone = document.getElementById('registerPhone');
@@ -2161,16 +2183,25 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  AUTH — with case‑insensitive login (username + password)
+        //  AUTH — with case‑insensitive login + "Remember me"
         // ─────────────────────────────────────────────────────────────────
 
-        async function login(username, password) {
+        async function login(username, password, remember = false) {
             // 1) Try exact match with the backend first
             try {
                 const result = await API.login(username, password);
                 if (result.success) {
                     currentUser = result.user;
-                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    // Store according to "remember"
+                    if (remember) {
+                        localStorage.setItem('gamehub_user', JSON.stringify(currentUser));
+                        localStorage.setItem('gamehub_creds', JSON.stringify({ username, password }));
+                    } else {
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        // Clear any saved credentials
+                        localStorage.removeItem('gamehub_user');
+                        localStorage.removeItem('gamehub_creds');
+                    }
                     loginError.textContent = '';
                     loginModal.classList.remove('open');
                     showToast('Welcome, ' + currentUser.username + '!', 'success');
@@ -2198,7 +2229,15 @@
                     const result = await API.login(found.username, found.password);
                     if (result.success) {
                         currentUser = result.user;
-                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        if (remember) {
+                            localStorage.setItem('gamehub_user', JSON.stringify(currentUser));
+                            localStorage.setItem('gamehub_creds', JSON.stringify({ username: found.username, password: found
+                                    .password }));
+                        } else {
+                            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                            localStorage.removeItem('gamehub_user');
+                            localStorage.removeItem('gamehub_creds');
+                        }
                         loginError.textContent = '';
                         loginModal.classList.remove('open');
                         showToast('Welcome, ' + currentUser.username + '! (case‑insensitive)', 'success');
@@ -2268,6 +2307,8 @@
         function logout() {
             if (currentUser) removePlayer(currentUser.username);
             sessionStorage.removeItem('currentUser');
+            localStorage.removeItem('gamehub_user');
+            localStorage.removeItem('gamehub_creds');
             currentUser = null;
             updateUI();
             showToast('Logged out', 'info');
@@ -2286,7 +2327,15 @@
                 await API.updateUser(username, { password: newPw });
                 if (currentUser && currentUser.username === username) {
                     currentUser.password = newPw;
-                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    // Update stored credentials if remembered
+                    if (localStorage.getItem('gamehub_user')) {
+                        localStorage.setItem('gamehub_user', JSON.stringify(currentUser));
+                        const creds = JSON.parse(localStorage.getItem('gamehub_creds') || '{}');
+                        creds.password = newPw;
+                        localStorage.setItem('gamehub_creds', JSON.stringify(creds));
+                    } else {
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    }
                 }
                 changePwError.textContent = '';
                 changePwModal.classList.remove('open');
@@ -3418,8 +3467,24 @@
         //  EVENT BINDINGS & INIT
         // ─────────────────────────────────────────────────────────────────
 
-        loginBtn.onclick = () => { loginModal.classList.add('open');
-            loginError.textContent = ''; };
+        loginBtn.onclick = () => {
+            loginModal.classList.add('open');
+            loginError.textContent = '';
+            // Pre-fill if saved credentials exist
+            const creds = localStorage.getItem('gamehub_creds');
+            if (creds) {
+                try {
+                    const { username, password } = JSON.parse(creds);
+                    loginUsername.value = username;
+                    loginPassword.value = password;
+                    loginRemember.checked = true;
+                } catch (e) {}
+            } else {
+                loginUsername.value = '';
+                loginPassword.value = '';
+                loginRemember.checked = false;
+            }
+        };
         registerBtn.onclick = () => { registerModal.classList.add('open');
             registerError.textContent = ''; };
         changePwBtn.onclick = () => { changePwModal.classList.add('open');
@@ -3437,7 +3502,7 @@
             const u = loginUsername.value.trim(),
                 p = loginPassword.value.trim();
             if (!u || !p) { loginError.textContent = 'Fill all fields'; return; }
-            login(u, p);
+            login(u, p, loginRemember.checked);
         };
         registerSubmit.onclick = () => {
             const u = registerUsername.value.trim(),
@@ -3486,6 +3551,62 @@
         userAreaDiv.insertBefore(withdrawReqBtn, userAreaDiv.querySelector('.btn'));
 
         // ─────────────────────────────────────────────────────────────────
+        //  AUTO-LOGIN on page load (if remembered)
+        // ─────────────────────────────────────────────────────────────────
+
+        async function tryAutoLogin() {
+            // Check localStorage for remembered user
+            const storedUser = localStorage.getItem('gamehub_user');
+            const storedCreds = localStorage.getItem('gamehub_creds');
+            if (storedUser && storedCreds) {
+                try {
+                    const user = JSON.parse(storedUser);
+                    const creds = JSON.parse(storedCreds);
+                    // Attempt login with stored credentials
+                    const result = await API.login(creds.username, creds.password);
+                    if (result.success) {
+                        currentUser = result.user;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        showToast('Auto‑login: ' + currentUser.username, 'success');
+                        await refreshData();
+                        addPlayer(currentUser.username);
+                        updateUI();
+                        initKeno();
+                        initAviator();
+                        initDice();
+                        return true;
+                    } else {
+                        // Credentials invalid, clear localStorage
+                        localStorage.removeItem('gamehub_user');
+                        localStorage.removeItem('gamehub_creds');
+                    }
+                } catch (e) {
+                    localStorage.removeItem('gamehub_user');
+                    localStorage.removeItem('gamehub_creds');
+                }
+            }
+            // Otherwise check sessionStorage
+            const savedUser = sessionStorage.getItem('currentUser');
+            if (savedUser) {
+                try {
+                    const parsed = JSON.parse(savedUser);
+                    const user = await API.getUser(parsed.username);
+                    if (user) {
+                        currentUser = user;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        addPlayer(currentUser.username);
+                        updateUI();
+                        initKeno();
+                        initAviator();
+                        initDice();
+                        return true;
+                    }
+                } catch (e) { /* ignore */ }
+            }
+            return false;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
         //  INIT
         // ─────────────────────────────────────────────────────────────────
 
@@ -3493,30 +3614,22 @@
             await checkServer();
             if (serverOnline) {
                 await refreshData();
-                const savedUser = sessionStorage.getItem('currentUser');
-                if (savedUser) {
-                    try {
-                        const parsed = JSON.parse(savedUser);
-                        const user = await API.getUser(parsed.username);
-                        if (user) {
-                            currentUser = user;
-                            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                            addPlayer(currentUser.username);
-                            updateUI();
-                            initKeno();
-                            initAviator();
-                            initDice();
-                        }
-                    } catch (e) { /* ignore */ }
+                // Try auto-login
+                const loggedIn = await tryAutoLogin();
+                if (!loggedIn) {
+                    // No auto-login, just show UI
+                    updateUI();
+                    initKeno();
+                    initAviator();
+                    initDice();
                 }
             } else {
                 showToast('Server offline – please start the backend', 'error', 5000);
+                updateUI();
+                initKeno();
+                initAviator();
+                initDice();
             }
-
-            updateUI();
-            initKeno();
-            initAviator();
-            initDice();
 
             if (allUsers.length === 0 && serverOnline) {
                 setTimeout(refreshData, 1000);
