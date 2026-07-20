@@ -1962,8 +1962,13 @@
                         username,
                         password
                     }) }); },
-            async register(username, password, phone) { return this._fetch('/register', { method: 'POST', body: JSON
-                        .stringify({ username, password, phone }) }); },
+            // Now sends balance: 0 explicitly
+            async register(username, password, phone) {
+                return this._fetch('/register', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password, phone, balance: 0 })
+                });
+            },
         };
 
         // ─────────────────────────────────────────────────────────────────
@@ -2138,6 +2143,7 @@
 
         async function login(username, password) {
             try {
+                // Sends the EXACT username and password as typed → backend must be case‑sensitive
                 const result = await API.login(username, password);
                 if (result.success) {
                     currentUser = result.user;
@@ -2162,13 +2168,32 @@
             }
         }
 
+        // ── UPDATED REGISTER FUNCTION (FIXED: NO username===password check) ──
         async function register(username, password, phoneInput) {
+            // 1. Validate phone digits
             const phoneDigits = phoneInput.trim();
             if (!/^\d{9}$/.test(phoneDigits)) {
                 registerError.textContent = 'Phone must be exactly 9 digits (e.g. 912321221)';
                 return false;
             }
             const fullPhone = '+251' + phoneDigits;
+
+            // 2. Check duplicate phone number
+            if (allUsers.some(u => u.phone === fullPhone)) {
+                registerError.textContent = 'Phone number already registered.';
+                return false;
+            }
+
+            // 3. Username and password are validated separately on the server.
+            //    We ONLY enforce min length here (3 chars).
+            if (username.length < 3) {
+                registerError.textContent = 'Username must be at least 3 characters.';
+                return false;
+            }
+            if (password.length < 3) {
+                registerError.textContent = 'Password must be at least 3 characters.';
+                return false;
+            }
 
             try {
                 const result = await API.register(username, password, fullPhone);
@@ -3268,7 +3293,7 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  DEPOSIT / WITHDRAW REQUESTS
+        //  DEPOSIT / WITHDRAW REQUESTS (with phone validation)
         // ─────────────────────────────────────────────────────────────────
 
         async function requestDeposit() {
@@ -3301,26 +3326,35 @@
             if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
             if (amt > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
 
+            // Validate phone number for withdrawal – must be exactly 9 digits
+            let phoneDigits = prompt('Enter your 9‑digit phone number (e.g. 911717171):', '');
+            if (phoneDigits === null) return;
+            phoneDigits = phoneDigits.trim();
+            if (!/^\d{9}$/.test(phoneDigits)) {
+                showToast('Phone must be exactly 9 digits.', 'error');
+                return;
+            }
+            const fullPhone = '+251' + phoneDigits;
+
             try {
-                // Deduct immediately (or you can keep pending)
+                // Deduct immediately
                 const newBalance = round2(currentUser.balance - amt);
                 await API.updateUser(currentUser.username, { balance: newBalance });
                 currentUser.balance = newBalance;
                 sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateBalanceUI();
 
-                const user = await API.getUser(currentUser.username);
                 await API.addTransaction({
                     username: currentUser.username,
-                    phone: user ? user.phone : 'N/A',
+                    phone: fullPhone,
                     type: 'withdraw',
                     amount: amt,
                     status: 'pending',
-                    details: 'Phone: ' + (prompt('Enter phone:', '09XXXXXXXX') || 'N/A'),
+                    details: 'Phone: ' + fullPhone,
                     timestamp: new Date().toISOString(),
                 });
                 await refreshData();
-                showToast('Withdrawal for ' + format(amt) + ' ETB submitted.', 'info');
+                showToast('Withdrawal for ' + format(amt) + ' ETB submitted to ' + fullPhone, 'info');
             } catch (e) {
                 showToast('Error: ' + e.message, 'error');
             }
@@ -3402,11 +3436,9 @@
         // ─────────────────────────────────────────────────────────────────
 
         (async function init() {
-            // Check server and load data
             await checkServer();
             if (serverOnline) {
                 await refreshData();
-                // Restore session if any
                 const savedUser = sessionStorage.getItem('currentUser');
                 if (savedUser) {
                     try {
@@ -3432,9 +3464,7 @@
             initAviator();
             initDice();
 
-            // Prefill admin if none exists (server will have admin seeded)
             if (allUsers.length === 0 && serverOnline) {
-                // Wait a bit and refresh
                 setTimeout(refreshData, 1000);
             }
         })();
