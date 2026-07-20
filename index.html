@@ -86,6 +86,20 @@
             flex-wrap: wrap;
         }
 
+        .user-area .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-right: 4px;
+        }
+
+        .user-area .user-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f7e05e;
+            line-height: 1.2;
+        }
+
         .user-area .balance {
             font-size: 14px;
             font-weight: 700;
@@ -1464,6 +1478,9 @@
             .user-area .balance {
                 font-size: 12px;
             }
+            .user-area .user-name {
+                font-size: 11px;
+            }
             .user-area .btn {
                 font-size: 9px;
                 padding: 3px 8px;
@@ -1685,7 +1702,11 @@
                 <button data-section="admin" id="adminNav" style="display:none;">Admin</button>
             </div>
             <div class="user-area" id="userArea">
-                <span class="balance" id="balanceDisplay">0.00 ETB</span>
+                <!-- Username displayed ABOVE balance -->
+                <div class="user-info">
+                    <span class="user-name" id="userNameDisplay"></span>
+                    <span class="balance" id="balanceDisplay">0.00 ETB</span>
+                </div>
                 <button class="btn" id="loginBtn">Login</button>
                 <button class="btn" id="registerBtn">Register</button>
                 <button class="btn btn-change-pw" id="changePwBtn" style="display:none;">🔑</button>
@@ -1867,7 +1888,7 @@
     <div class="modal-overlay" id="loginModal">
         <div class="modal">
             <h2>🔐 Login</h2>
-            <p class="sub">Enter credentials</p>
+            <p class="sub">Enter credentials (case‑insensitive)</p>
             <div class="error" id="loginError"></div>
             <input type="text" id="loginUsername" placeholder="Username" />
             <input type="password" id="loginPassword" placeholder="Password" />
@@ -1880,11 +1901,11 @@
     <div class="modal-overlay" id="registerModal">
         <div class="modal">
             <h2>📝 Register</h2>
-            <p class="sub">Create account</p>
+            <p class="sub">Create account — balance starts at 0</p>
             <div class="error" id="registerError"></div>
             <input type="text" id="registerUsername" placeholder="Username" />
             <input type="password" id="registerPassword" placeholder="Password" />
-            <input type="text" id="registerPhone" placeholder="9-digit phone (e.g. 912321221)" maxlength="9" />
+            <input type="text" id="registerPhone" placeholder="9-digit phone (e.g. 911717171)" maxlength="9" />
             <div class="actions">
                 <button class="btn btn-primary" id="registerSubmit">Register</button>
                 <button class="btn btn-sm" id="registerClose" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);">Cancel</button>
@@ -1962,7 +1983,7 @@
                         username,
                         password
                     }) }); },
-            // Now sends balance: 0 explicitly
+            // ✅ initial balance set to 0
             async register(username, password, phone) {
                 return this._fetch('/register', {
                     method: 'POST',
@@ -2001,6 +2022,7 @@
         //  DOM REFS
         // ─────────────────────────────────────────────────────────────────
 
+        const userNameDisplay = document.getElementById('userNameDisplay');
         const balanceDisplay = document.getElementById('balanceDisplay');
         const loginBtn = document.getElementById('loginBtn');
         const registerBtn = document.getElementById('registerBtn');
@@ -2067,6 +2089,7 @@
 
         function updateBalanceUI() {
             balanceDisplay.textContent = currentUser ? format(currentUser.balance) + ' ETB' : '0.00 ETB';
+            userNameDisplay.textContent = currentUser ? currentUser.username : '';
         }
 
         function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));
@@ -2138,12 +2161,12 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  AUTH
+        //  AUTH — with case‑insensitive login (username + password)
         // ─────────────────────────────────────────────────────────────────
 
         async function login(username, password) {
+            // 1) Try exact match with the backend first
             try {
-                // Sends the EXACT username and password as typed → backend must be case‑sensitive
                 const result = await API.login(username, password);
                 if (result.success) {
                     currentUser = result.user;
@@ -2158,22 +2181,51 @@
                     initAviator();
                     initDice();
                     return true;
-                } else {
-                    loginError.textContent = result.message || 'Login failed';
-                    return false;
+                }
+            } catch (e) {
+                // Exact match failed — fall through to case‑insensitive check
+            }
+
+            // 2) Case‑insensitive fallback: fetch all users and match
+            try {
+                const users = await API.getUsers();
+                const found = users.find(u =>
+                    u.username.toLowerCase() === username.toLowerCase() &&
+                    u.password.toLowerCase() === password.toLowerCase()
+                );
+                if (found) {
+                    // Use the stored (exact) username and password to login
+                    const result = await API.login(found.username, found.password);
+                    if (result.success) {
+                        currentUser = result.user;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        loginError.textContent = '';
+                        loginModal.classList.remove('open');
+                        showToast('Welcome, ' + currentUser.username + '! (case‑insensitive)', 'success');
+                        await refreshData();
+                        addPlayer(currentUser.username);
+                        updateUI();
+                        initKeno();
+                        initAviator();
+                        initDice();
+                        return true;
+                    }
                 }
             } catch (e) {
                 loginError.textContent = 'Server error: ' + e.message;
                 return false;
             }
+
+            loginError.textContent = 'Invalid username or password';
+            return false;
         }
 
-        // ── UPDATED REGISTER FUNCTION (FIXED: NO username===password check) ──
+        // ── REGISTER (balance = 0, phone format +251XXXXXXXXX) ──
         async function register(username, password, phoneInput) {
-            // 1. Validate phone digits
+            // 1. Validate phone digits (exactly 9)
             const phoneDigits = phoneInput.trim();
             if (!/^\d{9}$/.test(phoneDigits)) {
-                registerError.textContent = 'Phone must be exactly 9 digits (e.g. 912321221)';
+                registerError.textContent = 'Phone must be exactly 9 digits (e.g. 911717171)';
                 return false;
             }
             const fullPhone = '+251' + phoneDigits;
@@ -2184,8 +2236,7 @@
                 return false;
             }
 
-            // 3. Username and password are validated separately on the server.
-            //    We ONLY enforce min length here (3 chars).
+            // 3. Username and password min length
             if (username.length < 3) {
                 registerError.textContent = 'Username must be at least 3 characters.';
                 return false;
@@ -2196,6 +2247,7 @@
             }
 
             try {
+                // ✅ balance: 0 is sent explicitly
                 const result = await API.register(username, password, fullPhone);
                 if (result.success) {
                     registerError.textContent = '';
@@ -2228,6 +2280,7 @@
             try {
                 const user = await API.getUser(username);
                 if (!user) { changePwError.textContent = 'User not found'; return false; }
+                // Case‑sensitive check for current password (security)
                 if (user.password !== currentPw) { changePwError.textContent = 'Current password is incorrect'; return false; }
 
                 await API.updateUser(username, { password: newPw });
@@ -2311,9 +2364,10 @@
             let html = '';
             allUsers.forEach(u => {
                 const isAdmin = u.isAdmin ? '👑 Admin' : '👤 User';
+                const phoneDisplay = u.phone || 'N/A';
                 html += `
                     <div class="item">
-                        <span><strong>${u.username}</strong> — ${u.phone || 'N/A'} — ${format(u.balance)} ETB <span style="opacity:0.3;font-size:10px;">${isAdmin}</span></span>
+                        <span><strong>${u.username}</strong> — ${phoneDisplay} — ${format(u.balance)} ETB <span style="opacity:0.3;font-size:10px;">${isAdmin}</span></span>
                     </div>
                 `;
             });
@@ -3326,7 +3380,7 @@
             if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
             if (amt > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
 
-            // Validate phone number for withdrawal – must be exactly 9 digits
+            // Validate phone number for withdrawal – exactly 9 digits
             let phoneDigits = prompt('Enter your 9‑digit phone number (e.g. 911717171):', '');
             if (phoneDigits === null) return;
             phoneDigits = phoneDigits.trim();
