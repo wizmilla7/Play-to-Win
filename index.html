@@ -1284,34 +1284,6 @@
             box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2);
         }
 
-        /* Sync buttons styling */
-        .sync-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .sync-buttons .btn-sm {
-            font-size: 10px;
-            padding: 4px 12px;
-        }
-        .sync-buttons .btn-export {
-            background: rgba(0, 230, 118, 0.15);
-            color: #00e676;
-        }
-        .sync-buttons .btn-export:hover {
-            background: rgba(0, 230, 118, 0.25);
-        }
-        .sync-buttons .btn-import {
-            background: rgba(255, 215, 0, 0.15);
-            color: #f7e05e;
-        }
-        .sync-buttons .btn-import:hover {
-            background: rgba(255, 215, 0, 0.25);
-        }
-        .sync-buttons .btn-import input[type="file"] {
-            display: none;
-        }
-
         /* ── Buttons ── */
         .btn {
             padding: 8px 18px;
@@ -1649,10 +1621,6 @@
                 font-size: 12px;
                 padding: 6px 14px;
             }
-            .sync-buttons .btn-sm {
-                font-size: 9px;
-                padding: 3px 8px;
-            }
         }
 
         @media (max-width: 380px) {
@@ -1680,6 +1648,28 @@
                 font-size: 6px;
             }
         }
+
+        /* Server status indicator */
+        .server-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.3);
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .server-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            display: inline-block;
+        }
+        .server-status .dot.online {
+            background: #00e676;
+        }
     </style>
 </head>
 <body>
@@ -1700,6 +1690,7 @@
                 <button class="btn" id="registerBtn">Register</button>
                 <button class="btn btn-change-pw" id="changePwBtn" style="display:none;">🔑</button>
                 <button class="btn btn-logout" id="logoutBtn" style="display:none;">Logout</button>
+                <span class="server-status" id="serverStatus"><span class="dot" id="serverDot"></span> <span id="serverLabel">Connecting...</span></span>
             </div>
         </div>
 
@@ -1828,23 +1819,20 @@
         <div class="section" id="section-admin">
             <h2 style="font-size:18px;">🔧 Admin Panel</h2>
             <div class="admin-panel">
-                <!-- User List - with Sync buttons -->
+                <!-- User List -->
                 <div class="card" style="grid-column:1/-1;background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.08);">
                     <h3>
                         👥 Registered Users
-                        <span class="sync-buttons">
-                            <button class="btn btn-sm btn-export" id="exportUsersBtn">📤 Export</button>
-                            <button class="btn btn-sm btn-import" id="importUsersBtn">📥 Import</button>
-                            <input type="file" id="importFileInput" accept=".json" />
-                            <button class="btn btn-sm" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);" id="refreshUsersBtn">⟳ Refresh</button>
+                        <span style="font-size:10px;opacity:0.4;font-weight:400;">
+                            <span id="userCount">0</span> users
                         </span>
                     </h3>
                     <div id="userListContainer">
                         <p style="opacity:0.3;">Loading users...</p>
                     </div>
                     <p style="font-size:9px;opacity:0.3;margin-top:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:6px;">
-                        💡 Users are stored locally per device. Use <strong>Export</strong> on the device where users register,
-                        then <strong>Import</strong> on your admin device to sync all users.
+                        💡 All users, transactions and game history are stored on the server.
+                        The admin panel updates in real-time across all devices.
                     </p>
                 </div>
 
@@ -1921,66 +1909,95 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // ─────────────────────────────────────────────────────────────────
-        //  DATA LAYER (localStorage)
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
+        //  CONFIGURATION
+        // ================================================================
 
-        function getUsers() { return JSON.parse(localStorage.getItem('users') || '[]'); }
+        // 🔧 Change this to your server's IP/domain and port
+        // If running locally on the same device: http://localhost:3000
+        // For other devices on the same network: http://YOUR_COMPUTER_IP:3000
+        const SERVER_URL = 'http://localhost:3000';
 
-        function setUsers(users) { localStorage.setItem('users', JSON.stringify(users)); }
+        // ================================================================
+        //  API CLIENT (replaces localStorage)
+        // ================================================================
 
-        function getTransactions() { return JSON.parse(localStorage.getItem('transactions') || '[]'); }
+        const API = {
+            async _fetch(endpoint, options = {}) {
+                const url = `${SERVER_URL}${endpoint}`;
+                const res = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(options.headers || {}),
+                    },
+                });
+                if (!res.ok) {
+                    const err = await res.text();
+                    throw new Error(err || `HTTP ${res.status}`);
+                }
+                return res.json();
+            },
 
-        function setTransactions(txns) { localStorage.setItem('transactions', JSON.stringify(txns)); }
+            // Users
+            async getUsers() { return this._fetch('/users'); },
+            async getUser(username) { return this._fetch(`/users/${username}`); },
+            async createUser(userData) { return this._fetch('/users', { method: 'POST', body: JSON.stringify(userData) }); },
+            async updateUser(username, data) { return this._fetch(`/users/${username}`, { method: 'PUT', body: JSON
+                        .stringify(data) }); },
+            async deleteUser(username) { return this._fetch(`/users/${username}`, { method: 'DELETE' }); },
 
-        function getKenoHistory() { return JSON.parse(localStorage.getItem('kenoHistory') || '[]'); }
+            // Transactions
+            async getTransactions() { return this._fetch('/transactions'); },
+            async addTransaction(txn) { return this._fetch('/transactions', { method: 'POST', body: JSON.stringify(
+                        txn) }); },
+            async deleteTransaction(id) { return this._fetch(`/transactions/${id}`, { method: 'DELETE' }); },
+            async clearTransactions(type) { return this._fetch(`/transactions/clear/${type}`, { method: 'DELETE' }); },
 
-        function setKenoHistory(h) { localStorage.setItem('kenoHistory', JSON.stringify(h)); }
+            // Keno History
+            async getKenoHistory() { return this._fetch('/keno-history'); },
+            async addKenoRound(round) { return this._fetch('/keno-history', { method: 'POST', body: JSON.stringify(
+                        round) }); },
 
-        function getCurrentUser() { return JSON.parse(sessionStorage.getItem('currentUser') || 'null'); }
+            // Auth
+            async login(username, password) { return this._fetch('/login', { method: 'POST', body: JSON.stringify({
+                        username,
+                        password
+                    }) }); },
+            async register(username, password, phone) { return this._fetch('/register', { method: 'POST', body: JSON
+                        .stringify({ username, password, phone }) }); },
+        };
 
-        function setCurrentUser(user) { sessionStorage.setItem('currentUser', JSON.stringify(user)); }
-
-        function findUser(username) { return getUsers().find(u => u.username === username); }
-
-        function findUserByPhone(phone) {
-            const users = getUsers();
-            return users.find(u => u.phone === phone);
-        }
-
-        function updateUser(username, newData) {
-            const users = getUsers();
-            const idx = users.findIndex(u => u.username === username);
-            if (idx !== -1) {
-                users[idx] = { ...users[idx], ...newData };
-                setUsers(users);
-                const cur = getCurrentUser();
-                if (cur && cur.username === username) setCurrentUser(users[idx]);
-                return users[idx];
-            }
-            return null;
-        }
-
-        function addTransaction(txn) {
-            const txns = getTransactions();
-            txn.id = Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-            txns.push(txn);
-            setTransactions(txns);
-            return txn;
-        }
-
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
         //  STATE
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
 
-        let currentUser = getCurrentUser();
-        let allUsers = getUsers();
-        let transactions = getTransactions();
-        let kenoHistory = getKenoHistory();
+        let currentUser = null;
+        let allUsers = [];
+        let transactions = [];
+        let kenoHistory = [];
+        let serverOnline = false;
 
-        // ─────────────────────────────────────────────────────────────────
+        // Keno state
+        let kenoState = {
+            selected: new Set(),
+            drawn: new Set(),
+            matched: new Set(),
+            isDrawing: false,
+            bet: 5,
+            lastResult: null,
+            roundNumber: 0,
+        };
+
+        // Keno players (active selections in current session)
+        let kenoPlayers = {};
+
+        // Aviator instances
+        let aviatorGameInstances = [];
+
+        // ================================================================
         //  DOM REFS
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
 
         const balanceDisplay = document.getElementById('balanceDisplay');
         const loginBtn = document.getElementById('loginBtn');
@@ -2014,16 +2031,12 @@
         const adminExecuteBtn = document.getElementById('adminExecuteBtn');
         const adminManualResult = document.getElementById('adminManualResult');
         const userListContainer = document.getElementById('userListContainer');
-        const refreshUsersBtn = document.getElementById('refreshUsersBtn');
-        const exportUsersBtn = document.getElementById('exportUsersBtn');
-        const importUsersBtn = document.getElementById('importUsersBtn');
-        const importFileInput = document.getElementById('importFileInput');
+        const userCountSpan = document.getElementById('userCount');
 
         const winningBanner = document.getElementById('winningBanner');
         const winningBannerBalls = document.getElementById('winningBannerBalls');
         const bannerStatus = document.getElementById('bannerStatus');
 
-        // Aviator elements
         const aviatorGamesContainer = document.getElementById('aviatorGames');
         const aviatorDualCheck = document.getElementById('aviatorDual');
         const aviatorAutoPlayCheck = document.getElementById('aviatorAutoPlay');
@@ -2031,9 +2044,12 @@
         const aviatorAutoRounds = document.getElementById('aviatorAutoRounds');
         const aviatorAutoStart = document.getElementById('aviatorAutoStart');
 
-        // ─────────────────────────────────────────────────────────────────
+        const serverDot = document.getElementById('serverDot');
+        const serverLabel = document.getElementById('serverLabel');
+
+        // ================================================================
         //  HELPERS
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
 
         function round2(v) { return Math.round(v * 100) / 100; }
 
@@ -2050,6 +2066,167 @@
         function updateBalanceUI() {
             balanceDisplay.textContent = currentUser ? format(currentUser.balance) + ' ETB' : '0.00 ETB';
         }
+
+        function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+
+        function getMultiplier(matchCount) {
+            if (matchCount >= 10) return 500;
+            if (matchCount >= 9) return 100;
+            if (matchCount >= 8) return 30;
+            if (matchCount >= 7) return 10;
+            if (matchCount >= 6) return 4;
+            if (matchCount >= 5) return 1.5;
+            if (matchCount >= 4) return 0.5;
+            return 0;
+        }
+
+        // ================================================================
+        //  SERVER CONNECTION CHECK
+        // ================================================================
+
+        async function checkServer() {
+            try {
+                const res = await fetch(`${SERVER_URL}/ping`);
+                if (res.ok) {
+                    serverOnline = true;
+                    serverDot.className = 'dot online';
+                    serverLabel.textContent = 'Online';
+                    return true;
+                }
+            } catch (e) { /* ignore */ }
+            serverOnline = false;
+            serverDot.className = 'dot';
+            serverLabel.textContent = 'Offline';
+            return false;
+        }
+
+        // ================================================================
+        //  DATA LOADING & SYNC
+        // ================================================================
+
+        async function loadAllData() {
+            try {
+                const [users, txns, history] = await Promise.all([
+                    API.getUsers(),
+                    API.getTransactions(),
+                    API.getKenoHistory(),
+                ]);
+                allUsers = users;
+                transactions = txns;
+                kenoHistory = history;
+                return true;
+            } catch (e) {
+                console.error('Failed to load data:', e);
+                showToast('Cannot connect to server. Is it running?', 'error', 3000);
+                return false;
+            }
+        }
+
+        async function refreshData() {
+            await loadAllData();
+            updateUI();
+            renderAdminPanel();
+            renderUserList();
+            populateAdminUserSelect();
+            renderHistory();
+            renderResults();
+            renderStatistics();
+            applyHotColdToGrid();
+        }
+
+        // ================================================================
+        //  AUTH – with server
+        // ================================================================
+
+        async function login(username, password) {
+            try {
+                const result = await API.login(username, password);
+                if (result.success) {
+                    currentUser = result.user;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    loginError.textContent = '';
+                    loginModal.classList.remove('open');
+                    showToast('Welcome, ' + currentUser.username + '!', 'success');
+                    await refreshData();
+                    addPlayer(currentUser.username);
+                    updateUI();
+                    initKeno();
+                    initAviator();
+                    initDice();
+                    return true;
+                } else {
+                    loginError.textContent = result.message || 'Login failed';
+                    return false;
+                }
+            } catch (e) {
+                loginError.textContent = 'Server error: ' + e.message;
+                return false;
+            }
+        }
+
+        async function register(username, password, phoneInput) {
+            const phoneDigits = phoneInput.trim();
+            if (!/^\d{9}$/.test(phoneDigits)) {
+                registerError.textContent = 'Phone must be exactly 9 digits (e.g. 912321221)';
+                return false;
+            }
+            const fullPhone = '+251' + phoneDigits;
+
+            try {
+                const result = await API.register(username, password, fullPhone);
+                if (result.success) {
+                    registerError.textContent = '';
+                    registerModal.classList.remove('open');
+                    showToast('Account created! Please login.', 'success');
+                    await refreshData();
+                    return true;
+                } else {
+                    registerError.textContent = result.message || 'Registration failed';
+                    return false;
+                }
+            } catch (e) {
+                registerError.textContent = 'Server error: ' + e.message;
+                return false;
+            }
+        }
+
+        function logout() {
+            if (currentUser) removePlayer(currentUser.username);
+            sessionStorage.removeItem('currentUser');
+            currentUser = null;
+            updateUI();
+            showToast('Logged out', 'info');
+        }
+
+        async function changePassword(username, currentPw, newPw, confirmPw) {
+            if (newPw.length < 3) { changePwError.textContent = 'New password min 3 chars'; return false; }
+            if (newPw !== confirmPw) { changePwError.textContent = 'Passwords do not match'; return false; }
+
+            try {
+                const user = await API.getUser(username);
+                if (!user) { changePwError.textContent = 'User not found'; return false; }
+                if (user.password !== currentPw) { changePwError.textContent = 'Current password is incorrect'; return false; }
+
+                await API.updateUser(username, { password: newPw });
+                if (currentUser && currentUser.username === username) {
+                    currentUser.password = newPw;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                changePwError.textContent = '';
+                changePwModal.classList.remove('open');
+                showToast('Password updated!', 'success');
+                await refreshData();
+                return true;
+            } catch (e) {
+                changePwError.textContent = 'Server error: ' + e.message;
+                return false;
+            }
+        }
+
+        // ================================================================
+        //  UI UPDATE
+        // ================================================================
 
         function updateUI() {
             if (currentUser) {
@@ -2073,10 +2250,6 @@
             renderAdminPanel();
             updatePlayersList();
             updateKenoStats();
-            renderHistory();
-            renderResults();
-            renderStatistics();
-            applyHotColdToGrid();
         }
 
         function switchSection(sectionId) {
@@ -2102,205 +2275,32 @@
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────
-        //  AUTH – with phone validation and uniqueness
-        // ─────────────────────────────────────────────────────────────────
-
-        function login(username, password) {
-            const user = findUser(username);
-            if (!user) { loginError.textContent = 'User not found'; return false; }
-            if (user.password !== password) { loginError.textContent = 'Incorrect password'; return false; }
-            setCurrentUser(user);
-            currentUser = user;
-            loginError.textContent = '';
-            loginModal.classList.remove('open');
-            showToast('Welcome, ' + user.username + '!', 'success');
-            addPlayer(user.username);
-            updateUI();
-            initKeno();
-            initAviator();
-            initDice();
-            return true;
-        }
-
-        function register(username, password, phoneInput) {
-            const phoneDigits = phoneInput.trim();
-            if (!/^\d{9}$/.test(phoneDigits)) {
-                registerError.textContent = 'Phone must be exactly 9 digits (e.g. 912321221)';
-                return false;
-            }
-            const fullPhone = '+251' + phoneDigits;
-
-            if (findUser(username)) {
-                registerError.textContent = 'Username already exists';
-                return false;
-            }
-            if (findUserByPhone(fullPhone)) {
-                registerError.textContent = 'This phone number is already registered';
-                return false;
-            }
-
-            const newUser = {
-                username,
-                password,
-                phone: fullPhone,
-                balance: 100,
-                isAdmin: false,
-            };
-            const users = getUsers();
-            users.push(newUser);
-            setUsers(users);
-            registerError.textContent = '';
-            registerModal.classList.remove('open');
-            showToast('Account created! Please login.', 'success');
-            // Refresh admin lists if admin is logged in
-            if (currentUser && currentUser.isAdmin) {
-                populateAdminUserSelect();
-                renderUserList();
-            }
-            return true;
-        }
-
-        function logout() {
-            if (currentUser) removePlayer(currentUser.username);
-            sessionStorage.removeItem('currentUser');
-            currentUser = null;
-            updateUI();
-            showToast('Logged out', 'info');
-            location.reload();
-        }
-
-        function changePassword(username, currentPw, newPw, confirmPw) {
-            const user = findUser(username);
-            if (!user) { changePwError.textContent = 'User not found'; return false; }
-            if (user.password !== currentPw) { changePwError.textContent = 'Current password is incorrect'; return false; }
-            if (newPw.length < 3) { changePwError.textContent = 'New password min 3 chars'; return false; }
-            if (newPw !== confirmPw) { changePwError.textContent = 'Passwords do not match'; return false; }
-            updateUser(username, { password: newPw });
-            if (currentUser && currentUser.username === username) { currentUser.password = newPw;
-                setCurrentUser(currentUser); }
-            changePwError.textContent = '';
-            changePwModal.classList.remove('open');
-            showToast('Password updated!', 'success');
-            return true;
-        }
-
-        // ─────────────────────────────────────────────────────────────────
-        //  ADMIN – User List, Export, Import
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
+        //  ADMIN – User List
+        // ================================================================
 
         function renderUserList() {
-            const users = getUsers();
-            if (users.length === 0) {
+            if (allUsers.length === 0) {
                 userListContainer.innerHTML = '<p style="opacity:0.3;">No registered users yet</p>';
+                userCountSpan.textContent = '0';
                 return;
             }
+            userCountSpan.textContent = allUsers.length;
             let html = '';
-            users.forEach(u => {
+            allUsers.forEach(u => {
                 const isAdmin = u.isAdmin ? '👑 Admin' : '👤 User';
                 html += `
                     <div class="item">
-                        <span><strong>${u.username}</strong> — ${u.phone} — ${format(u.balance)} ETB <span style="opacity:0.3;font-size:10px;">${isAdmin}</span></span>
+                        <span><strong>${u.username}</strong> — ${u.phone || 'N/A'} — ${format(u.balance)} ETB <span style="opacity:0.3;font-size:10px;">${isAdmin}</span></span>
                     </div>
                 `;
             });
             userListContainer.innerHTML = html;
         }
 
-        // ─── EXPORT USERS ───
-        function exportUsers() {
-            const users = getUsers();
-            const data = {
-                version: '1.0',
-                exportedAt: new Date().toISOString(),
-                users: users,
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `gamehub_users_${new Date().toISOString().slice(0,10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast(`Exported ${users.length} users`, 'success');
-        }
-
-        // ─── IMPORT USERS ───
-        function importUsers(file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (!data.users || !Array.isArray(data.users)) {
-                        showToast('Invalid file format', 'error');
-                        return;
-                    }
-                    const importedUsers = data.users;
-                    const currentUsers = getUsers();
-                    // Merge: existing users by username get updated, new users added
-                    const merged = [...currentUsers];
-                    let added = 0,
-                        updated = 0;
-                    importedUsers.forEach(imported => {
-                        const existingIndex = merged.findIndex(u => u.username === imported.username);
-                        if (existingIndex !== -1) {
-                            // Update existing (preserve balance if higher? We'll just update all fields)
-                            merged[existingIndex] = { ...merged[existingIndex], ...imported };
-                            updated++;
-                        } else {
-                            // Check phone uniqueness
-                            const phoneExists = merged.some(u => u.phone === imported.phone);
-                            if (!phoneExists) {
-                                merged.push(imported);
-                                added++;
-                            } else {
-                                // If phone exists, skip this user but warn
-                                showToast(`Skipped ${imported.username}: phone ${imported.phone} already used`, 'info', 2000);
-                            }
-                        }
-                    });
-                    setUsers(merged);
-                    // Refresh UI
-                    populateAdminUserSelect();
-                    renderUserList();
-                    renderAdminPanel();
-                    updateUI();
-                    showToast(`Imported: ${added} new, ${updated} updated`, 'success');
-                } catch (err) {
-                    showToast('Error reading file: ' + err.message, 'error');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // ─── EVENT BINDINGS ───
-        exportUsersBtn.addEventListener('click', function() {
-            if (!currentUser || !currentUser.isAdmin) { showToast('Admin access required', 'error'); return; }
-            exportUsers();
-        });
-
-        importUsersBtn.addEventListener('click', function() {
-            if (!currentUser || !currentUser.isAdmin) { showToast('Admin access required', 'error'); return; }
-            importFileInput.click();
-        });
-
-        importFileInput.addEventListener('change', function(e) {
-            if (this.files && this.files[0]) {
-                importUsers(this.files[0]);
-                this.value = ''; // Reset so same file can be re-imported
-            }
-        });
-
-        refreshUsersBtn.addEventListener('click', function() {
-            populateAdminUserSelect();
-            renderUserList();
-            showToast('User list refreshed', 'info', 1500);
-        });
-
         function populateAdminUserSelect() {
-            const users = getUsers();
             adminUserSelect.innerHTML = '<option value="">— Select User —</option>';
-            users.forEach(u => {
+            allUsers.forEach(u => {
                 const opt = document.createElement('option');
                 opt.value = u.username;
                 opt.textContent = u.username + ' (' + format(u.balance) + ')';
@@ -2318,92 +2318,116 @@
             adminTypeDeposit.className = '';
             adminManualResult.textContent = ''; });
 
-        adminExecuteBtn.addEventListener('click', function() {
+        adminExecuteBtn.addEventListener('click', async function() {
             if (!currentUser || !currentUser.isAdmin) { showToast('Admin only', 'error'); return; }
             const username = adminUserSelect.value;
             if (!username) { adminManualResult.textContent = '⚠️ Select a user.'; return; }
             const amount = parseFloat(adminAmount.value);
             if (isNaN(amount) || amount <= 0) { adminManualResult.textContent = '⚠️ Valid amount.'; return; }
-            const user = findUser(username);
-            if (!user) { adminManualResult.textContent = '⚠️ User not found.'; return; }
-            if (adminTxType === 'withdraw' && amount > user.balance) { adminManualResult.textContent =
-                    '⚠️ Insufficient balance.'; return; }
-            const newBalance = adminTxType === 'deposit' ? round2(user.balance + amount) : round2(user.balance - amount);
-            updateUser(username, { balance: newBalance });
-            addTransaction({ username, type: adminTxType, amount, status: adminTxType === 'deposit' ? 'approved' :
-                    'sent', details: 'Manual by admin', timestamp: new Date().toISOString() });
-            if (currentUser && currentUser.username === username) { currentUser.balance = newBalance;
-                setCurrentUser(currentUser);
-                updateBalanceUI(); }
-            adminManualResult.textContent =
-                `✅ ${adminTxType==='deposit'?'Deposited':'Withdrew'} ${format(amount)} ETB ${adminTxType==='deposit'?'to':'from'} ${username}. New: ${format(newBalance)} ETB`;
-            showToast(
-                `✅ ${adminTxType==='deposit'?'Deposited':'Withdrew'} ${format(amount)} ETB ${adminTxType==='deposit'?'to':'from'} ${username}`,
-                'success');
-            populateAdminUserSelect();
-            renderUserList();
-            renderAdminPanel();
-            updateUI();
+
+            try {
+                const user = await API.getUser(username);
+                if (!user) { adminManualResult.textContent = '⚠️ User not found.'; return; }
+                if (adminTxType === 'withdraw' && amount > user.balance) {
+                    adminManualResult.textContent = '⚠️ Insufficient balance.';
+                    return;
+                }
+                const newBalance = adminTxType === 'deposit' ? round2(user.balance + amount) : round2(user.balance -
+                amount);
+                await API.updateUser(username, { balance: newBalance });
+                await API.addTransaction({
+                    username,
+                    type: adminTxType,
+                    amount,
+                    status: adminTxType === 'deposit' ? 'approved' : 'sent',
+                    details: 'Manual by admin',
+                    timestamp: new Date().toISOString(),
+                });
+
+                if (currentUser && currentUser.username === username) {
+                    currentUser.balance = newBalance;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateBalanceUI();
+                }
+
+                adminManualResult.textContent =
+                    `✅ ${adminTxType==='deposit'?'Deposited':'Withdrew'} ${format(amount)} ETB ${adminTxType==='deposit'?'to':'from'} ${username}. New: ${format(newBalance)} ETB`;
+                showToast(
+                    `✅ ${adminTxType==='deposit'?'Deposited':'Withdrew'} ${format(amount)} ETB ${adminTxType==='deposit'?'to':'from'} ${username}`,
+                    'success');
+                await refreshData();
+            } catch (e) {
+                adminManualResult.textContent = '⚠️ ' + e.message;
+            }
         });
+
+        // ================================================================
+        //  ADMIN – Transactions
+        // ================================================================
 
         function renderAdminPanel() {
             if (!currentUser || !currentUser.isAdmin) return;
             const depositTxns = transactions.filter(t => t.type === 'deposit');
             const withdrawTxns = transactions.filter(t => t.type === 'withdraw');
+
             const depDiv = document.getElementById('pendingDeposits');
             if (depositTxns.length === 0) { depDiv.innerHTML = '<p style="opacity:0.3;">No deposits</p>'; } else {
                 depDiv.innerHTML = depositTxns.map(t =>
                     `<div class="item"><span>${t.username} — ${format(t.amount)} ETB ${t.status==='approved'?'✅':t.status==='rejected'?'❌':'⏳'}</span><div class="actions"><button class="delete" data-id="${t.id}">🗑️</button></div></div>`
                     ).join('');
             }
+
             const wdDiv = document.getElementById('pendingWithdrawals');
             if (withdrawTxns.length === 0) { wdDiv.innerHTML = '<p style="opacity:0.3;">No withdrawals</p>'; } else {
                 wdDiv.innerHTML = withdrawTxns.map(t =>
                     `<div class="item"><span>${t.username} (${t.phone||'N/A'}) — ${format(t.amount)} ETB ${t.status==='sent'?'✅':t.status==='rejected'?'❌':'⏳'}</span><div class="actions"><button class="delete" data-id="${t.id}">🗑️</button></div></div>`
                     ).join('');
             }
+
             document.querySelectorAll('#pendingDeposits .delete, #pendingWithdrawals .delete').forEach(btn => {
                 btn.onclick = function() { deleteTransaction(this.dataset.id); };
             });
         }
 
-        function deleteTransaction(id) {
+        async function deleteTransaction(id) {
             if (!currentUser || !currentUser.isAdmin) return;
             if (!confirm('Delete transaction?')) return;
-            let txns = getTransactions();
-            txns = txns.filter(t => t.id !== id);
-            setTransactions(txns);
-            transactions = txns;
-            renderAdminPanel();
-            showToast('Deleted', 'info');
+            try {
+                await API.deleteTransaction(id);
+                await refreshData();
+                showToast('Deleted', 'info');
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            }
         }
 
-        document.getElementById('clearDepositsBtn').addEventListener('click', function() {
+        document.getElementById('clearDepositsBtn').addEventListener('click', async function() {
             if (!currentUser || !currentUser.isAdmin) return;
             if (!confirm('Delete ALL deposits?')) return;
-            let txns = getTransactions();
-            txns = txns.filter(t => t.type !== 'deposit');
-            setTransactions(txns);
-            transactions = txns;
-            renderAdminPanel();
-            showToast('Deposits cleared', 'info');
+            try {
+                await API.clearTransactions('deposit');
+                await refreshData();
+                showToast('Deposits cleared', 'info');
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            }
         });
-        document.getElementById('clearWithdrawalsBtn').addEventListener('click', function() {
+
+        document.getElementById('clearWithdrawalsBtn').addEventListener('click', async function() {
             if (!currentUser || !currentUser.isAdmin) return;
             if (!confirm('Delete ALL withdrawals?')) return;
-            let txns = getTransactions();
-            txns = txns.filter(t => t.type !== 'withdraw');
-            setTransactions(txns);
-            transactions = txns;
-            renderAdminPanel();
-            showToast('Withdrawals cleared', 'info');
+            try {
+                await API.clearTransactions('withdraw');
+                await refreshData();
+                showToast('Withdrawals cleared', 'info');
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            }
         });
 
-        // ─────────────────────────────────────────────────────────────────
-        //  KENO GAME – FAST, NO GRID BLINK, GREEN WINNING NUMBERS
-        // ─────────────────────────────────────────────────────────────────
-
-        let kenoPlayers = {};
+        // ================================================================
+        //  KENO GAME
+        // ================================================================
 
         function addPlayer(username) {
             if (!kenoPlayers[username]) { kenoPlayers[username] = new Set();
@@ -2453,27 +2477,6 @@
             }
         }
 
-        function getMultiplier(matchCount) {
-            if (matchCount >= 10) return 500;
-            if (matchCount >= 9) return 100;
-            if (matchCount >= 8) return 30;
-            if (matchCount >= 7) return 10;
-            if (matchCount >= 6) return 4;
-            if (matchCount >= 5) return 1.5;
-            if (matchCount >= 4) return 0.5;
-            return 0;
-        }
-
-        let kenoState = {
-            selected: new Set(),
-            drawn: new Set(),
-            matched: new Set(),
-            isDrawing: false,
-            bet: 5,
-            lastResult: null,
-            roundNumber: 0,
-        };
-
         const kenoGrid = document.getElementById('kenoGrid');
         const kenoBet = document.getElementById('kenoBet');
         const kenoDraw = document.getElementById('kenoDraw');
@@ -2481,38 +2484,6 @@
         const kenoClear = document.getElementById('kenoClear');
         const kenoCount = document.getElementById('kenoCount');
         const kenoResult = document.getElementById('kenoResult');
-
-        function initKeno() {
-            buildKenoGrid();
-            if (currentUser) addPlayer(currentUser.username);
-            updateKenoUI();
-            updatePlayersList();
-            updateKenoStats();
-            renderHistory();
-            renderResults();
-            renderStatistics();
-            applyHotColdToGrid();
-
-            kenoDraw.onclick = kenoDrawHandler;
-            kenoQuick.onclick = kenoQuickPick;
-            kenoClear.onclick = kenoClearPicks;
-            kenoBet.onchange = function() { kenoState.bet = parseFloat(this.value) || 5; };
-
-            document.querySelectorAll('.keno-tabs button').forEach(btn => {
-                btn.onclick = function() {
-                    document.querySelectorAll('.keno-tabs button').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    const tab = this.dataset.tab;
-                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-                    const panel = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-                    if (panel) panel.classList.add('active');
-                    if (tab === 'history') renderHistory();
-                    if (tab === 'results') renderResults();
-                    if (tab === 'statistics') { renderStatistics();
-                        applyHotColdToGrid(); }
-                };
-            });
-        }
 
         function buildKenoGrid() {
             kenoGrid.innerHTML = '';
@@ -2595,63 +2566,74 @@
             applyHotColdToGrid();
         }
 
-        function kenoDrawHandler() {
+        async function kenoDrawHandler() {
             if (!currentUser) { showToast('Please login', 'error'); return; }
             if (kenoState.isDrawing) return;
             if (kenoState.selected.size === 0) return;
+
             const bet = parseFloat(kenoBet.value) || 5;
             if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
-            currentUser.balance = round2(currentUser.balance - bet);
-            updateUser(currentUser.username, { balance: currentUser.balance });
-            setCurrentUser(currentUser);
-            updateBalanceUI();
 
-            kenoState.isDrawing = true;
-            kenoDraw.disabled = true;
-            kenoState.roundNumber++;
+            try {
+                // Deduct bet from user balance via server
+                const newBalance = round2(currentUser.balance - bet);
+                await API.updateUser(currentUser.username, { balance: newBalance });
+                currentUser.balance = newBalance;
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateBalanceUI();
 
-            const pool = [];
-            for (let i = 1; i <= 80; i++) pool.push(i);
-            shuffle(pool);
-            const drawn = pool.slice(0, 20);
-            kenoState.drawn = new Set(drawn);
+                kenoState.isDrawing = true;
+                kenoDraw.disabled = true;
+                kenoState.roundNumber++;
 
-            const playersSnapshot = {};
-            for (const [username, selections] of Object.entries(kenoPlayers)) {
-                if (selections.size > 0) playersSnapshot[username] = Array.from(selections);
-            }
+                const pool = [];
+                for (let i = 1; i <= 80; i++) pool.push(i);
+                shuffle(pool);
+                const drawn = pool.slice(0, 20);
+                kenoState.drawn = new Set(drawn);
 
-            winningBanner.classList.add('visible');
-            winningBannerBalls.innerHTML = '';
-            bannerStatus.textContent = 'Revealing...';
-
-            let idx = 0;
-            const total = drawn.length;
-            const delay = 80;
-
-            function animateNext() {
-                if (idx >= total) {
-                    bannerStatus.textContent = 'Complete!';
-                    evaluateAllPlayers(drawn, bet, playersSnapshot);
-                    return;
+                const playersSnapshot = {};
+                for (const [username, selections] of Object.entries(kenoPlayers)) {
+                    if (selections.size > 0) playersSnapshot[username] = Array.from(selections);
                 }
-                const num = drawn[idx];
-                const cell = kenoGrid.querySelector(`.keno-cell[data-num="${num}"]`);
-                if (cell) {
-                    cell.classList.remove('selected');
-                    cell.classList.add('drawn');
-                }
-                const ball = document.createElement('span');
-                ball.className = 'ball revealing';
-                ball.textContent = num;
-                winningBannerBalls.appendChild(ball);
-                idx++;
-                setTimeout(animateNext, delay);
+
+                winningBanner.classList.add('visible');
+                winningBannerBalls.innerHTML = '';
+                bannerStatus.textContent = 'Revealing...';
+
+                let idx = 0;
+                const total = drawn.length;
+                const delay = 80;
+
+                const animateNext = () => {
+                    if (idx >= total) {
+                        bannerStatus.textContent = 'Complete!';
+                        evaluateAllPlayers(drawn, bet, playersSnapshot);
+                        return;
+                    }
+                    const num = drawn[idx];
+                    const cell = kenoGrid.querySelector(`.keno-cell[data-num="${num}"]`);
+                    if (cell) {
+                        cell.classList.remove('selected');
+                        cell.classList.add('drawn');
+                    }
+                    const ball = document.createElement('span');
+                    ball.className = 'ball revealing';
+                    ball.textContent = num;
+                    winningBannerBalls.appendChild(ball);
+                    idx++;
+                    setTimeout(animateNext, delay);
+                };
+                animateNext();
+
+            } catch (e) {
+                showToast('Server error: ' + e.message, 'error');
+                kenoState.isDrawing = false;
+                kenoDraw.disabled = false;
             }
-            animateNext();
         }
 
-        function evaluateAllPlayers(drawnNumbers, bet, playersSnapshot) {
+        async function evaluateAllPlayers(drawnNumbers, bet, playersSnapshot) {
             const roundResults = {
                 round: kenoState.roundNumber,
                 time: new Date().toISOString(),
@@ -2670,33 +2652,53 @@
                 });
             }
 
+            // Process each player's results
             for (const [username, selections] of Object.entries(playersSnapshot)) {
                 if (selections.length === 0) continue;
                 const matches = selections.filter(n => drawnNumbers.includes(n));
                 const matchCount = matches.length;
                 const multiplier = getMultiplier(matchCount);
                 const win = round2(bet * multiplier);
-                const user = findUser(username);
-                if (win > 0 && user) {
-                    user.balance = round2(user.balance + win);
-                    updateUser(username, { balance: user.balance });
-                    if (currentUser && currentUser.username === username) { currentUser.balance = user.balance;
-                        setCurrentUser(currentUser);
-                        updateBalanceUI(); }
-                    addTransaction({ username, type: 'deposit', amount: win, status: 'approved',
-                        details: `Keno win: ${matchCount} matches (Round ${kenoState.roundNumber})`,
-                        timestamp: new Date().toISOString() });
-                    roundResults.totalWinners++;
-                    roundResults.totalPayout += win;
-                    showToast(`🎉 ${username} won ${format(win)} ETB (${matchCount} matches)`, 'success', 2500);
+
+                if (win > 0) {
+                    try {
+                        const user = await API.getUser(username);
+                        if (user) {
+                            const newBal = round2(user.balance + win);
+                            await API.updateUser(username, { balance: newBal });
+                            await API.addTransaction({
+                                username,
+                                type: 'deposit',
+                                amount: win,
+                                status: 'approved',
+                                details: `Keno win: ${matchCount} matches (Round ${kenoState.roundNumber})`,
+                                timestamp: new Date().toISOString(),
+                            });
+                            if (currentUser && currentUser.username === username) {
+                                currentUser.balance = newBal;
+                                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                                updateBalanceUI();
+                            }
+                            roundResults.totalWinners++;
+                            roundResults.totalPayout += win;
+                            showToast(`🎉 ${username} won ${format(win)} ETB (${matchCount} matches)`, 'success', 2500);
+                        }
+                    } catch (e) {
+                        console.error('Error processing win for', username, e);
+                    }
                 }
                 roundResults.players[username] = { selections, matches, matchCount, win };
             }
 
-            kenoHistory.push(roundResults);
-            if (kenoHistory.length > 100) kenoHistory.shift();
-            setKenoHistory(kenoHistory);
+            // Save round to server
+            try {
+                await API.addKenoRound(roundResults);
+                await refreshData();
+            } catch (e) {
+                console.error('Failed to save Keno round:', e);
+            }
 
+            // Update UI
             const cells = kenoGrid.querySelectorAll('.keno-cell');
             cells.forEach(cell => {
                 const num = parseInt(cell.dataset.num);
@@ -2761,18 +2763,9 @@
             }, 4000);
         }
 
-        function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
-
-        // ─────────────────────────────────────────────────────────────────
-        //  HOT/COLD GRID COLORING
-        // ─────────────────────────────────────────────────────────────────
-
         function applyHotColdToGrid() {
             const cells = kenoGrid.querySelectorAll('.keno-cell');
-            cells.forEach(cell => {
-                cell.classList.remove('hot', 'cold');
-            });
+            cells.forEach(cell => cell.classList.remove('hot', 'cold'));
 
             if (kenoHistory.length < 3) return;
 
@@ -2794,9 +2787,41 @@
             });
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        function initKeno() {
+            buildKenoGrid();
+            if (currentUser) addPlayer(currentUser.username);
+            updateKenoUI();
+            updatePlayersList();
+            updateKenoStats();
+            renderHistory();
+            renderResults();
+            renderStatistics();
+            applyHotColdToGrid();
+
+            kenoDraw.onclick = kenoDrawHandler;
+            kenoQuick.onclick = kenoQuickPick;
+            kenoClear.onclick = kenoClearPicks;
+            kenoBet.onchange = function() { kenoState.bet = parseFloat(this.value) || 5; };
+
+            document.querySelectorAll('.keno-tabs button').forEach(btn => {
+                btn.onclick = function() {
+                    document.querySelectorAll('.keno-tabs button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const tab = this.dataset.tab;
+                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                    const panel = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+                    if (panel) panel.classList.add('active');
+                    if (tab === 'history') renderHistory();
+                    if (tab === 'results') renderResults();
+                    if (tab === 'statistics') { renderStatistics();
+                        applyHotColdToGrid(); }
+                };
+            });
+        }
+
+        // ================================================================
         //  HISTORY / RESULTS / STATS
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
 
         function renderHistory() {
             const container = document.getElementById('historyContent');
@@ -2875,11 +2900,9 @@
             container.innerHTML = html;
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
         //  AVIATOR – DUAL GAMES + AUTO PLAY
-        // ─────────────────────────────────────────────────────────────────
-
-        const aviatorGames = [];
+        // ================================================================
 
         class AviatorGame {
             constructor(index) {
@@ -2988,41 +3011,45 @@
                 this.elements.cashoutBtn.disabled = !this.isPlaying || this.isCrashed;
             }
 
-            placeBet() {
+            async placeBet() {
                 if (!currentUser) { showToast('Please login', 'error'); return; }
                 if (this.isPlaying) return;
                 const bet = parseFloat(this.elements.betInput.value) || 20;
                 if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
                 if (bet <= 0) { showToast('Invalid bet', 'error'); return; }
                 this.bet = bet;
-                currentUser.balance = round2(currentUser.balance - bet);
-                updateUser(currentUser.username, { balance: currentUser.balance });
-                setCurrentUser(currentUser);
-                updateBalanceUI();
 
-                this.isPlaying = true;
-                this.isCrashed = false;
-                this.multiplier = 1.0;
-                this.profit = 0;
-                this.betPlaced = true;
+                try {
+                    const newBalance = round2(currentUser.balance - bet);
+                    await API.updateUser(currentUser.username, { balance: newBalance });
+                    currentUser.balance = newBalance;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateBalanceUI();
 
-                const r = Math.random();
-                let crash = 1.0;
-                if (r < 0.05) crash = 1.0 + Math.random() * 0.3;
-                else if (r < 0.15) crash = 1.3 + Math.random() * 0.5;
-                else if (r < 0.35) crash = 1.8 + Math.random() * 0.8;
-                else if (r < 0.60) crash = 2.6 + Math.random() * 1.5;
-                else if (r < 0.80) crash = 4.1 + Math.random() * 3.0;
-                else if (r < 0.94) crash = 7.1 + Math.random() * 6.0;
-                else crash = 13 + Math.random() * 20;
-                this.crashPoint = Math.min(Math.max(crash, 1.01), 40);
-                this.updateUI();
-                this.startLoop();
-                if (aviatorAutoPlayCheck.checked && aviatorAutoTarget.value) {
-                    const target = parseFloat(aviatorAutoTarget.value);
-                    if (!isNaN(target) && target > 1) {
-                        this.autoTarget = target;
+                    this.isPlaying = true;
+                    this.isCrashed = false;
+                    this.multiplier = 1.0;
+                    this.profit = 0;
+                    this.betPlaced = true;
+
+                    const r = Math.random();
+                    let crash = 1.0;
+                    if (r < 0.05) crash = 1.0 + Math.random() * 0.3;
+                    else if (r < 0.15) crash = 1.3 + Math.random() * 0.5;
+                    else if (r < 0.35) crash = 1.8 + Math.random() * 0.8;
+                    else if (r < 0.60) crash = 2.6 + Math.random() * 1.5;
+                    else if (r < 0.80) crash = 4.1 + Math.random() * 3.0;
+                    else if (r < 0.94) crash = 7.1 + Math.random() * 6.0;
+                    else crash = 13 + Math.random() * 20;
+                    this.crashPoint = Math.min(Math.max(crash, 1.01), 40);
+                    this.updateUI();
+                    this.startLoop();
+                    if (aviatorAutoPlayCheck.checked && aviatorAutoTarget.value) {
+                        const target = parseFloat(aviatorAutoTarget.value);
+                        if (!isNaN(target) && target > 1) this.autoTarget = target;
                     }
+                } catch (e) {
+                    showToast('Server error: ' + e.message, 'error');
                 }
             }
 
@@ -3056,7 +3083,7 @@
                 this.animId = requestAnimationFrame(tick);
             }
 
-            crash() {
+            async crash() {
                 this.isCrashed = true;
                 this.isPlaying = false;
                 this.betPlaced = false;
@@ -3065,24 +3092,33 @@
                 if (this.history.length > 30) this.history.shift();
                 this.updateUI();
                 showToast(`💥 Game ${this.index+1} crashed at ${this.crashPoint.toFixed(2)}×`, 'error');
-                updateBalanceUI();
                 this.elements.betBtn.disabled = false;
                 if (aviatorAutoPlayCheck.checked && this.autoRunning) {
                     setTimeout(() => { this.placeBet(); }, 1500);
                 }
             }
 
-            cashOut() {
+            async cashOut() {
                 if (!this.isPlaying || this.isCrashed) return;
                 this.isPlaying = false;
                 this.betPlaced = false;
                 const mult = this.multiplier;
                 const win = round2(this.bet * mult);
                 this.profit = round2(win - this.bet);
-                currentUser.balance = round2(currentUser.balance + win);
-                updateUser(currentUser.username, { balance: currentUser.balance });
-                setCurrentUser(currentUser);
-                updateBalanceUI();
+
+                try {
+                    const user = await API.getUser(currentUser.username);
+                    if (user) {
+                        const newBalance = round2(user.balance + win);
+                        await API.updateUser(currentUser.username, { balance: newBalance });
+                        currentUser.balance = newBalance;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        updateBalanceUI();
+                    }
+                } catch (e) {
+                    showToast('Error saving win: ' + e.message, 'error');
+                }
+
                 this.history.push(mult);
                 if (this.history.length > 30) this.history.shift();
                 this.updateUI();
@@ -3133,16 +3169,8 @@
                 setTimeout(() => { this.placeBet(); }, 500);
             }
 
-            stopAuto() {
-                this.autoRunning = false;
-            }
+            stopAuto() { this.autoRunning = false; }
         }
-
-        // ─────────────────────────────────────────────────────────────────
-        //  AVIATOR INIT
-        // ─────────────────────────────────────────────────────────────────
-
-        let aviatorGameInstances = [];
 
         function initAviator() {
             const container = document.getElementById('aviatorGames');
@@ -3166,9 +3194,7 @@
                 if (rounds < 1) { showToast('Rounds must be >= 1', 'error'); return; }
                 aviatorGameInstances.forEach(g => g.stopAuto());
                 aviatorGameInstances.forEach((g, idx) => {
-                    setTimeout(() => {
-                        g.startAuto(rounds, target);
-                    }, idx * 800);
+                    setTimeout(() => { g.startAuto(rounds, target); }, idx * 800);
                 });
                 showToast(`Auto-play started: ${rounds} rounds, target ${target.toFixed(1)}×`, 'info');
             };
@@ -3180,9 +3206,9 @@
             aviatorGameInstances.forEach(g => g.updateUI());
         }
 
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
         //  DICE
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
 
         let diceState = { bet: 5, choice: 'over', result: null };
         const diceResult = document.getElementById('diceResult');
@@ -3204,161 +3230,68 @@
             diceBet.value = diceState.bet;
         }
 
-        function diceRollHandler() {
+        async function diceRollHandler() {
             if (!currentUser) { showToast('Please login', 'error'); return; }
             const bet = parseFloat(diceBet.value) || 5;
             if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
             if (bet <= 0) { showToast('Invalid bet', 'error'); return; }
-            currentUser.balance = round2(currentUser.balance - bet);
-            updateUser(currentUser.username, { balance: currentUser.balance });
-            setCurrentUser(currentUser);
-            updateBalanceUI();
-            const roll = Math.floor(Math.random() * 6) + 1;
-            diceState.result = roll;
-            const isOver = roll > 3.5;
-            const win = (diceState.choice === 'over' && isOver) || (diceState.choice === 'under' && !isOver);
-            const winAmount = win ? round2(bet * 1.9) : 0;
-            if (win) {
-                currentUser.balance = round2(currentUser.balance + winAmount);
-                updateUser(currentUser.username, { balance: currentUser.balance });
-                setCurrentUser(currentUser);
+
+            try {
+                const newBalance = round2(currentUser.balance - bet);
+                await API.updateUser(currentUser.username, { balance: newBalance });
+                currentUser.balance = newBalance;
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateBalanceUI();
-                diceResultText.innerHTML = `🎉 Rolled ${roll}! Won ${format(winAmount)} ETB!`;
-                showToast(`🎲 Rolled ${roll} — Won ${format(winAmount)} ETB`, 'success');
-            } else {
-                diceResultText.innerHTML = `😔 Rolled ${roll}. Lost.`;
-                showToast(`🎲 Rolled ${roll} — Lost ${format(bet)} ETB`, 'error');
+
+                const roll = Math.floor(Math.random() * 6) + 1;
+                diceState.result = roll;
+                const isOver = roll > 3.5;
+                const win = (diceState.choice === 'over' && isOver) || (diceState.choice === 'under' && !isOver);
+                const winAmount = win ? round2(bet * 1.9) : 0;
+
+                if (win) {
+                    const user = await API.getUser(currentUser.username);
+                    if (user) {
+                        const newBal = round2(user.balance + winAmount);
+                        await API.updateUser(currentUser.username, { balance: newBal });
+                        currentUser.balance = newBal;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        updateBalanceUI();
+                    }
+                    diceResultText.innerHTML = `🎉 Rolled ${roll}! Won ${format(winAmount)} ETB!`;
+                    showToast(`🎲 Rolled ${roll} — Won ${format(winAmount)} ETB`, 'success');
+                } else {
+                    diceResultText.innerHTML = `😔 Rolled ${roll}. Lost.`;
+                    showToast(`🎲 Rolled ${roll} — Lost ${format(bet)} ETB`, 'error');
+                }
+                diceResult.textContent = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][roll - 1];
+            } catch (e) {
+                showToast('Server error: ' + e.message, 'error');
             }
-            diceResult.textContent = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][roll - 1];
         }
 
-        // ─────────────────────────────────────────────────────────────────
-        //  EVENT BINDINGS & INIT
-        // ─────────────────────────────────────────────────────────────────
+        // ================================================================
+        //  DEPOSIT / WITHDRAW REQUESTS
+        // ================================================================
 
-        loginBtn.onclick = () => { loginModal.classList.add('open');
-            loginError.textContent = ''; };
-        registerBtn.onclick = () => { registerModal.classList.add('open');
-            registerError.textContent = ''; };
-        changePwBtn.onclick = () => { changePwModal.classList.add('open');
-            changePwError.textContent = '';
-            changePwCurrent.value = '';
-            changePwNew.value = '';
-            changePwConfirm.value = ''; };
-        loginClose.onclick = () => loginModal.classList.remove('open');
-        registerClose.onclick = () => registerModal.classList.remove('open');
-        changePwClose.onclick = () => changePwModal.classList.remove('open');
-        loginModal.onclick = (e) => { if (e.target === loginModal) loginModal.classList.remove('open'); };
-        registerModal.onclick = (e) => { if (e.target === registerModal) registerModal.classList.remove('open'); };
-        changePwModal.onclick = (e) => { if (e.target === changePwModal) changePwModal.classList.remove('open'); };
-        loginSubmit.onclick = () => {
-            const u = loginUsername.value.trim(),
-                p = loginPassword.value.trim();
-            if (!u || !p) { loginError.textContent = 'Fill all fields'; return; }
-            login(u, p);
-        };
-        registerSubmit.onclick = () => {
-            const u = registerUsername.value.trim(),
-                p = registerPassword.value.trim(),
-                ph = registerPhone.value.trim();
-            if (!u || !p || !ph) { registerError.textContent = 'Fill all fields'; return; }
-            if (u.length < 3) { registerError.textContent = 'Username min 3 chars'; return; }
-            if (p.length < 3) { registerError.textContent = 'Password min 3 chars'; return; }
-            register(u, p, ph);
-        };
-        changePwSubmit.onclick = () => {
-            if (!currentUser) { showToast('Login required', 'error'); return; }
-            const cur = changePwCurrent.value.trim(),
-                newPw = changePwNew.value.trim(),
-                confirm = changePwConfirm.value.trim();
-            if (!cur || !newPw || !confirm) { changePwError.textContent = 'Fill all fields'; return; }
-            changePassword(currentUser.username, cur, newPw, confirm);
-        };
-        loginPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginSubmit.click(); });
-        registerPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') registerSubmit.click(); });
-        changePwConfirm.addEventListener('keydown', (e) => { if (e.key === 'Enter') changePwSubmit.click(); });
-        logoutBtn.onclick = logout;
-        navLinks.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-            const section = btn.dataset.section;
-            if (!section) return;
-            if (section === 'admin' && (!currentUser || !currentUser.isAdmin)) { showToast('Admin only', 'error'); return; }
-            switchSection(section);
-        });
-
-        // ─────────────────────────────────────────────────────────────────
-        //  INIT
-        // ─────────────────────────────────────────────────────────────────
-
-        if (!findUser('admin')) {
-            const users = getUsers();
-            users.push({ username: 'admin', password: 'admin', phone: '+251000000000', balance: 9999, isAdmin: true });
-            setUsers(users);
-        }
-
-        if (currentUser) {
-            const fresh = findUser(currentUser.username);
-            if (fresh) { currentUser = fresh;
-                setCurrentUser(currentUser);
-                addPlayer(currentUser.username); } else logout();
-        }
-
-        const depositReqBtn = document.createElement('button');
-        depositReqBtn.className = 'btn';
-        depositReqBtn.textContent = '💳 Deposit';
-        depositReqBtn.onclick = requestDeposit;
-        const withdrawReqBtn = document.createElement('button');
-        withdrawReqBtn.className = 'btn';
-        withdrawReqBtn.textContent = '🏦 Withdraw';
-        withdrawReqBtn.onclick = requestWithdraw;
-        const userAreaDiv = document.getElementById('userArea');
-        userAreaDiv.insertBefore(depositReqBtn, userAreaDiv.querySelector('.btn'));
-        userAreaDiv.insertBefore(withdrawReqBtn, userAreaDiv.querySelector('.btn'));
-
-        function requestDeposit() {
+        async function requestDeposit() {
             if (!currentUser) { showToast('Please login', 'error'); return; }
             const amount = prompt('Enter amount to deposit (ETB):', '50');
             if (amount === null) return;
             const amt = parseFloat(amount);
             if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
-            addTransaction({ username: currentUser.username, type: 'deposit', amount: amt, status: 'pending',
-                details: 'SMS pending', timestamp: new Date().toISOString() });
-            showToast('Deposit request for ' + format(amt) + ' ETB submitted.', 'info');
-            if (currentUser.isAdmin) renderAdminPanel();
+            try {
+                await API.addTransaction({
+                    username: currentUser.username,
+                    type: 'deposit',
+                    amount: amt,
+                    status: 'pending',
+                    details: 'SMS pending',
+                    timestamp: new Date().toISOString(),
+                });
+                await refreshData();
+                showToast('Deposit request for ' + format(amt) + ' ETB submitted.', 'info');
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            }
         }
-
-        function requestWithdraw() {
-            if (!currentUser) { showToast('Please login', 'error'); return; }
-            const amount = prompt('Enter amount to withdraw (ETB):', '20');
-            if (amount === null) return;
-            const amt = parseFloat(amount);
-            if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
-            if (amt > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
-            const user = findUser(currentUser.username);
-            currentUser.balance = round2(currentUser.balance - amt);
-            updateUser(currentUser.username, { balance: currentUser.balance });
-            setCurrentUser(currentUser);
-            updateBalanceUI();
-            addTransaction({ username: currentUser.username, phone: user ? user.phone : 'N/A', type: 'withdraw',
-                amount: amt, status: 'pending', details: 'Phone: ' + (prompt('Enter phone:', '09XXXXXXXX') || 'N/A'),
-                timestamp: new Date().toISOString() });
-            showToast('Withdrawal for ' + format(amt) + ' ETB submitted.', 'info');
-            if (currentUser.isAdmin) renderAdminPanel();
-        }
-
-        updateUI();
-        initKeno();
-        initAviator();
-        initDice();
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') { loginModal.classList.remove('open');
-                registerModal.classList.remove('open');
-                changePwModal.classList.remove('open'); }
-        });
-
-        console.log('🚀 Platform ready. Admin: admin/admin');
-    </script>
-</body>
-</html>
