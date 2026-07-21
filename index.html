@@ -1359,7 +1359,7 @@
             color: #ff6b6b;
         }
 
-        /* ── FRUIT GAME (4x4) ── */
+        /* ── FRUIT GAME (3x4) ── */
         .fruit-game-container {
             background: #0f0f2a;
             border-radius: 14px;
@@ -1379,9 +1379,9 @@
         }
         .fruit-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 6px;
-            max-width: 320px;
+            max-width: 240px;
             margin: 0 auto 12px auto;
         }
         .fruit-cell {
@@ -1389,7 +1389,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             background: rgba(255, 255, 255, 0.04);
             border-radius: 10px;
             border: 2px solid rgba(255, 255, 255, 0.06);
@@ -1896,10 +1896,10 @@
             }
             .fruit-grid {
                 gap: 4px;
-                max-width: 240px;
+                max-width: 180px;
             }
             .fruit-cell {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
                 border-radius: 6px;
             }
             .difficulty-selector button {
@@ -1933,10 +1933,10 @@
                 font-size: 6px;
             }
             .fruit-grid {
-                max-width: 200px;
+                max-width: 150px;
             }
             .fruit-cell {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
             }
         }
 
@@ -2106,12 +2106,12 @@
             </div>
         </div>
 
-        <!-- Fruit Game (4x4) -->
+        <!-- Fruit Game (3x4) -->
         <div class="section" id="section-fruit">
             <div class="game-container">
                 <div class="fruit-game-container">
-                    <h2>🍎 Fruit Slot (4x4)</h2>
-                    <div class="sub">Match 4 in a row, column, or diagonal to win!</div>
+                    <h2>🍎 Fruit Slot (3×4)</h2>
+                    <div class="sub">Match 3 identical fruits in a row to win!</div>
                     <div class="fruit-grid" id="fruitGrid"></div>
                     <div class="fruit-result" id="fruitResult">Press SPIN to play</div>
                     <div class="fruit-controls">
@@ -2141,7 +2141,7 @@
                         <button data-diff="hard" class="hard">🔴 Hard</button>
                     </div>
                     <p style="font-size:10px;opacity:0.3;margin-top:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:6px;">
-                        Affects Keno (drawn count & multipliers), Aviator (crash distribution), Dice (payout), and Fruit (payout multipliers).
+                        Affects Keno, Aviator, Dice, and Fruit (row payout multiplier).
                     </p>
                 </div>
 
@@ -2471,8 +2471,7 @@
             return dist[difficulty] || dist.medium;
         }
 
-        function getFruitLineMultiplier(difficulty) {
-            // per winning line (row, col, diag)
+        function getFruitRowMultiplier(difficulty) {
             const map = { easy: 3.0, medium: 2.0, hard: 1.2 };
             return map[difficulty] || 2.0;
         }
@@ -2505,12 +2504,10 @@
         }
 
         function updateFruitPaytable() {
-            const mult = getFruitLineMultiplier(gameDifficulty);
-            const emojis = ['🍎', '🍊', '🍇', '🍉', '🍓', '🍑'];
-            // Show that any matching line gives the base multiplier
+            const mult = getFruitRowMultiplier(gameDifficulty);
             fruitPaytable.innerHTML = `
-                <span>🎯 Any 4‑in‑a‑line <span class="mult">${mult}×</span></span>
-                <span>🌟 Multi‑line bonus: +${Math.round(mult*0.5)}× per extra line</span>
+                <span>🎯 Any matching row <span class="mult">${mult}×</span></span>
+                <span>🌟 Multiple rows: +${Math.round(mult*0.5)}× per extra row</span>
             `;
         }
 
@@ -3843,16 +3840,15 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  FRUIT GAME (4x4)
+        //  FRUIT GAME (3x4)
         // ─────────────────────────────────────────────────────────────────
 
         const FRUIT_EMOJIS = ['🍎', '🍊', '🍇', '🍉', '🍓', '🍑'];
 
         function initFruit() {
-            // Build grid
             fruitGrid.innerHTML = '';
             fruitCells = [];
-            for (let i = 0; i < 16; i++) {
+            for (let i = 0; i < 12; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'fruit-cell';
                 cell.dataset.index = i;
@@ -3868,41 +3864,24 @@
             updateFruitPaytable();
         }
 
-        function getFruitLineMultiplier(diff) {
-            const map = { easy: 3.0, medium: 2.0, hard: 1.2 };
-            return map[diff] || 2.0;
-        }
-
-        function checkFruitWins(grid) {
-            // grid is array of 16 emojis (row-major)
-            // Check rows (4), columns (4), diagonals (2)
-            const lines = [];
-            // rows
+        function checkFruitRows(grid) {
+            // grid is array of 12 emojis (row-major, 3 cols, 4 rows)
+            const rows = [];
             for (let r = 0; r < 4; r++) {
                 const row = [];
-                for (let c = 0; c < 4; c++) row.push(grid[r * 4 + c]);
-                lines.push(row);
+                for (let c = 0; c < 3; c++) {
+                    row.push(grid[r * 3 + c]);
+                }
+                rows.push(row);
             }
-            // columns
-            for (let c = 0; c < 4; c++) {
-                const col = [];
-                for (let r = 0; r < 4; r++) col.push(grid[r * 4 + c]);
-                lines.push(col);
-            }
-            // diagonals
-            const diag1 = [grid[0], grid[5], grid[10], grid[15]];
-            const diag2 = [grid[3], grid[6], grid[9], grid[12]];
-            lines.push(diag1, diag2);
-
-            // Check each line for all same emoji
-            const winningLines = [];
-            lines.forEach((line, idx) => {
-                const first = line[0];
-                if (line.every(emoji => emoji === first)) {
-                    winningLines.push({ line, idx });
+            const winningRows = [];
+            rows.forEach((row, idx) => {
+                const first = row[0];
+                if (row.every(emoji => emoji === first)) {
+                    winningRows.push({ row, idx });
                 }
             });
-            return winningLines;
+            return winningRows;
         }
 
         async function fruitSpinHandler() {
@@ -3924,62 +3903,49 @@
                 sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateBalanceUI();
 
-                // Animate: rapid random changes
+                // Animate
                 for (let spin = 0; spin < 12; spin++) {
-                    for (let i = 0; i < 16; i++) {
+                    for (let i = 0; i < 12; i++) {
                         fruitCells[i].textContent = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
                         fruitCells[i].classList.toggle('spinning', spin % 2 === 0);
                     }
                     await new Promise(r => setTimeout(r, 80 + spin * 10));
                 }
 
-                // Final result: generate random grid
+                // Final grid
                 const grid = [];
-                for (let i = 0; i < 16; i++) {
+                for (let i = 0; i < 12; i++) {
                     const emoji = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
                     grid.push(emoji);
                     fruitCells[i].textContent = emoji;
                     fruitCells[i].classList.remove('spinning', 'winner');
                 }
 
-                // Check wins
-                const winningLines = checkFruitWins(grid);
-                const baseMult = getFruitLineMultiplier(gameDifficulty);
+                // Check rows
+                const winningRows = checkFruitRows(grid);
+                const baseMult = getFruitRowMultiplier(gameDifficulty);
                 let totalWin = 0;
                 let winMessage = '';
 
-                if (winningLines.length > 0) {
+                if (winningRows.length > 0) {
                     // Highlight winning cells
                     const winningIndices = new Set();
-                    winningLines.forEach(({ line, idx }) => {
-                        // Find indices of this line in grid
-                        let indices = [];
-                        if (idx < 4) { // row
-                            for (let c = 0; c < 4; c++) indices.push(idx * 4 + c);
-                        } else if (idx < 8) { // col
-                            const col = idx - 4;
-                            for (let r = 0; r < 4; r++) indices.push(r * 4 + col);
-                        } else if (idx === 8) { // diag1
-                            indices = [0, 5, 10, 15];
-                        } else { // diag2
-                            indices = [3, 6, 9, 12];
+                    winningRows.forEach(({ idx }) => {
+                        for (let c = 0; c < 3; c++) {
+                            const index = idx * 3 + c;
+                            winningIndices.add(index);
+                            fruitCells[index].classList.add('winner');
                         }
-                        indices.forEach(i => {
-                            winningIndices.add(i);
-                            fruitCells[i].classList.add('winner');
-                        });
                     });
 
-                    const lineCount = winningLines.length;
-                    // Payout: baseMult per line, plus bonus for multiple lines
-                    let multiplier = baseMult * lineCount;
-                    if (lineCount > 1) multiplier += 0.5 * baseMult; // extra bonus
+                    const rowCount = winningRows.length;
+                    let multiplier = baseMult * rowCount;
+                    if (rowCount > 1) multiplier += 0.5 * baseMult;
                     totalWin = round2(bet * multiplier);
-                    winMessage = `🎉 ${winningLines.length} winning line${winningLines.length>1?'s':''}! ${format(totalWin)} ETB (${multiplier.toFixed(1)}×)`;
+                    winMessage = `🎉 ${rowCount} winning row${rowCount>1?'s':''}! ${format(totalWin)} ETB (${multiplier.toFixed(1)}×)`;
                     fruitResult.className = 'fruit-result win';
                     showToast(`🍎 Fruit win: ${format(totalWin)} ETB!`, 'success');
 
-                    // Credit win
                     const user = await API.getUser(currentUser.username);
                     if (user) {
                         const newBal = round2(user.balance + totalWin);
@@ -3989,7 +3955,7 @@
                         updateBalanceUI();
                     }
                 } else {
-                    winMessage = `😔 No match. Try again!`;
+                    winMessage = `😔 No matching row. Try again!`;
                     fruitResult.className = 'fruit-result lose';
                     showToast(`🍎 No match — lost ${format(bet)} ETB`, 'error');
                 }
