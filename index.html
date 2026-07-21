@@ -1359,7 +1359,7 @@
             color: #ff6b6b;
         }
 
-        /* ── FRUIT GAME (3x4) ── */
+        /* ── FRUIT GAME (dynamic) ── */
         .fruit-game-container {
             background: #0f0f2a;
             border-radius: 14px;
@@ -1375,14 +1375,48 @@
         .fruit-game-container .sub {
             opacity: 0.4;
             font-size: 11px;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
+        }
+        .fruit-mode-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .fruit-mode-selector button {
+            padding: 5px 16px;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.4);
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .fruit-mode-selector button:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        .fruit-mode-selector button.active-mode {
+            border-color: #f7e05e;
+            background: rgba(255,215,0,0.10);
+            color: #f7e05e;
         }
         .fruit-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
             gap: 6px;
-            max-width: 240px;
+            max-width: 320px;
             margin: 0 auto 12px auto;
+            justify-content: center;
+        }
+        .fruit-grid.mode-3x3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .fruit-grid.mode-5x4 {
+            grid-template-columns: repeat(5, 1fr);
         }
         .fruit-cell {
             aspect-ratio: 1;
@@ -1896,11 +1930,13 @@
             }
             .fruit-grid {
                 gap: 4px;
-                max-width: 180px;
+                max-width: 240px;
             }
-            .fruit-cell {
+            .fruit-grid.mode-3x3 .fruit-cell {
                 font-size: 1.8rem;
-                border-radius: 6px;
+            }
+            .fruit-grid.mode-5x4 .fruit-cell {
+                font-size: 1.6rem;
             }
             .difficulty-selector button {
                 font-size: 10px;
@@ -1933,10 +1969,13 @@
                 font-size: 6px;
             }
             .fruit-grid {
-                max-width: 150px;
+                max-width: 200px;
             }
-            .fruit-cell {
+            .fruit-grid.mode-3x3 .fruit-cell {
                 font-size: 1.4rem;
+            }
+            .fruit-grid.mode-5x4 .fruit-cell {
+                font-size: 1.2rem;
             }
         }
 
@@ -2106,13 +2145,17 @@
             </div>
         </div>
 
-        <!-- Fruit Game (3x4) -->
+        <!-- Fruit Game (dynamic) -->
         <div class="section" id="section-fruit">
             <div class="game-container">
                 <div class="fruit-game-container">
-                    <h2>🍎 Fruit Slot (3×4)</h2>
-                    <div class="sub">Match 3 identical fruits in a row to win!</div>
-                    <div class="fruit-grid" id="fruitGrid"></div>
+                    <h2>🍎 Fruit Slot</h2>
+                    <div class="sub">Match identical fruits in each row to win!</div>
+                    <div class="fruit-mode-selector">
+                        <button data-mode="3x3" class="active-mode">3×3</button>
+                        <button data-mode="5x4">5×4</button>
+                    </div>
+                    <div class="fruit-grid mode-3x3" id="fruitGrid"></div>
                     <div class="fruit-result" id="fruitResult">Press SPIN to play</div>
                     <div class="fruit-controls">
                         <input type="number" id="fruitBet" value="5" step="1" min="1" />
@@ -2192,7 +2235,7 @@
     <div class="modal-overlay" id="loginModal">
         <div class="modal">
             <h2>🔐 Login</h2>
-            <p class="sub">Enter credentials (case‑insensitive)</p>
+            <p class="sub">Enter credentials (case‑sensitive)</p>
             <div class="error" id="loginError"></div>
             <input type="text" id="loginUsername" placeholder="Username" />
             <input type="password" id="loginPassword" placeholder="Password" />
@@ -2212,8 +2255,8 @@
             <h2>📝 Register</h2>
             <p class="sub">Create account — balance starts at <strong>0</strong></p>
             <div class="error" id="registerError"></div>
-            <input type="text" id="registerUsername" placeholder="Username" />
-            <input type="password" id="registerPassword" placeholder="Password" />
+            <input type="text" id="registerUsername" placeholder="Username (case‑sensitive)" />
+            <input type="password" id="registerPassword" placeholder="Password (case‑sensitive)" />
             <input type="text" id="registerPhone" placeholder="9-digit phone (e.g. 911717171)" maxlength="9" />
             <div class="actions">
                 <button class="btn btn-primary" id="registerSubmit">Register</button>
@@ -2342,6 +2385,7 @@
             isSpinning: false,
             bet: 5,
             result: null,
+            mode: '3x3', // or '5x4'
         };
         let fruitCells = [];
 
@@ -2416,6 +2460,7 @@
         const fruitSpin = document.getElementById('fruitSpin');
         const fruitResult = document.getElementById('fruitResult');
         const fruitPaytable = document.getElementById('fruitPaytable');
+        const fruitModeButtons = document.querySelectorAll('.fruit-mode-selector button');
 
         // ─────────────────────────────────────────────────────────────────
         //  HELPERS
@@ -2566,10 +2611,11 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  AUTH
+        //  AUTH (case‑sensitive)
         // ─────────────────────────────────────────────────────────────────
 
         async function login(username, password, remember = false) {
+            // Exact match only – no case‑insensitive fallback
             try {
                 const result = await API.login(username, password);
                 if (result.success) {
@@ -2593,46 +2639,12 @@
                     initDice();
                     initFruit();
                     return true;
-                }
-            } catch (e) {
-                // Fallback case‑insensitive
-                try {
-                    const users = await API.getUsers();
-                    const found = users.find(u =>
-                        u.username.toLowerCase() === username.toLowerCase() &&
-                        u.password.toLowerCase() === password.toLowerCase()
-                    );
-                    if (found) {
-                        const result = await API.login(found.username, found.password);
-                        if (result.success) {
-                            currentUser = result.user;
-                            if (remember) {
-                                localStorage.setItem('gamehub_user', JSON.stringify(currentUser));
-                                localStorage.setItem('gamehub_creds', JSON.stringify({ username: found.username,
-                                    password: found.password }));
-                            } else {
-                                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                                localStorage.removeItem('gamehub_user');
-                                localStorage.removeItem('gamehub_creds');
-                            }
-                            loginError.textContent = '';
-                            loginModal.classList.remove('open');
-                            showToast('Welcome, ' + currentUser.username + '!', 'success');
-                            await refreshData();
-                            addPlayer(currentUser.username);
-                            updateUI();
-                            initKeno();
-                            initAviator();
-                            initDice();
-                            initFruit();
-                            return true;
-                        }
-                    }
-                } catch (e2) {
-                    loginError.textContent = 'Server error: ' + e2.message;
+                } else {
+                    loginError.textContent = 'Invalid username or password';
                     return false;
                 }
-                loginError.textContent = 'Invalid username or password';
+            } catch (e) {
+                loginError.textContent = 'Server error: ' + e.message;
                 return false;
             }
         }
@@ -2644,12 +2656,18 @@
                 return false;
             }
             const fullPhone = '+251' + phoneDigits;
+            // Check if phone already used (case‑sensitive username already handled by server)
             if (allUsers.some(u => u.phone === fullPhone)) {
                 registerError.textContent = 'Phone number already registered.';
                 return false;
             }
             if (username.length < 3) { registerError.textContent = 'Username min 3 chars.'; return false; }
             if (password.length < 3) { registerError.textContent = 'Password min 3 chars.'; return false; }
+            // Check for duplicate username (case‑sensitive)
+            if (allUsers.some(u => u.username === username)) {
+                registerError.textContent = 'Username already taken.';
+                return false;
+            }
             try {
                 const result = await API.register(username, password, fullPhone);
                 if (result.success) {
@@ -3840,15 +3858,44 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  FRUIT GAME (3x4)
+        //  FRUIT GAME (dynamic mode)
         // ─────────────────────────────────────────────────────────────────
 
         const FRUIT_EMOJIS = ['🍎', '🍊', '🍇', '🍉', '🍓', '🍑'];
 
         function initFruit() {
+            // Set mode from fruitState
+            setFruitMode(fruitState.mode || '3x3');
+            // Event listeners for mode buttons
+            fruitModeButtons.forEach(btn => {
+                btn.onclick = function() {
+                    const mode = this.dataset.mode;
+                    if (mode && mode !== fruitState.mode) {
+                        setFruitMode(mode);
+                    }
+                };
+            });
+            fruitBet.value = fruitState.bet || 5;
+            fruitSpin.onclick = fruitSpinHandler;
+            fruitBet.onchange = function() { fruitState.bet = parseFloat(this.value) || 5; };
+            updateFruitPaytable();
+        }
+
+        function setFruitMode(mode) {
+            fruitState.mode = mode;
+            // Update active button
+            fruitModeButtons.forEach(btn => {
+                btn.classList.toggle('active-mode', btn.dataset.mode === mode);
+            });
+            // Update grid class
+            fruitGrid.className = 'fruit-grid mode-' + mode;
+            // Rebuild grid
+            const cols = mode === '3x3' ? 3 : 5;
+            const rows = mode === '3x3' ? 3 : 4;
+            const total = cols * rows;
             fruitGrid.innerHTML = '';
             fruitCells = [];
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < total; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'fruit-cell';
                 cell.dataset.index = i;
@@ -3858,19 +3905,16 @@
             }
             fruitResult.textContent = 'Press SPIN to play';
             fruitResult.className = 'fruit-result';
-            fruitBet.value = fruitState.bet || 5;
-            fruitSpin.onclick = fruitSpinHandler;
-            fruitBet.onchange = function() { fruitState.bet = parseFloat(this.value) || 5; };
-            updateFruitPaytable();
         }
 
-        function checkFruitRows(grid) {
-            // grid is array of 12 emojis (row-major, 3 cols, 4 rows)
+        function checkFruitRows(grid, cols) {
+            // grid is array of emojis, cols = number of columns
             const rows = [];
-            for (let r = 0; r < 4; r++) {
+            const totalRows = grid.length / cols;
+            for (let r = 0; r < totalRows; r++) {
                 const row = [];
-                for (let c = 0; c < 3; c++) {
-                    row.push(grid[r * 3 + c]);
+                for (let c = 0; c < cols; c++) {
+                    row.push(grid[r * cols + c]);
                 }
                 rows.push(row);
             }
@@ -3903,9 +3947,13 @@
                 sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateBalanceUI();
 
+                const total = fruitCells.length;
+                const cols = fruitState.mode === '3x3' ? 3 : 5;
+                const spinDuration = 12;
+
                 // Animate
-                for (let spin = 0; spin < 12; spin++) {
-                    for (let i = 0; i < 12; i++) {
+                for (let spin = 0; spin < spinDuration; spin++) {
+                    for (let i = 0; i < total; i++) {
                         fruitCells[i].textContent = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
                         fruitCells[i].classList.toggle('spinning', spin % 2 === 0);
                     }
@@ -3914,7 +3962,7 @@
 
                 // Final grid
                 const grid = [];
-                for (let i = 0; i < 12; i++) {
+                for (let i = 0; i < total; i++) {
                     const emoji = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
                     grid.push(emoji);
                     fruitCells[i].textContent = emoji;
@@ -3922,7 +3970,7 @@
                 }
 
                 // Check rows
-                const winningRows = checkFruitRows(grid);
+                const winningRows = checkFruitRows(grid, cols);
                 const baseMult = getFruitRowMultiplier(gameDifficulty);
                 let totalWin = 0;
                 let winMessage = '';
@@ -3931,8 +3979,8 @@
                     // Highlight winning cells
                     const winningIndices = new Set();
                     winningRows.forEach(({ idx }) => {
-                        for (let c = 0; c < 3; c++) {
-                            const index = idx * 3 + c;
+                        for (let c = 0; c < cols; c++) {
+                            const index = idx * cols + c;
                             winningIndices.add(index);
                             fruitCells[index].classList.add('winner');
                         }
