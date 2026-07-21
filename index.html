@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>🎰 Multi‑Game Platform</title>
+    <title>🎰 GameHub – Multi‑Game Platform</title>
     <style>
         /* ── reset & base ── */
         * {
@@ -163,122 +163,6 @@
             padding: 12px 12px 16px;
         }
 
-        /* ── Winning Numbers Banner ── */
-        .winning-banner {
-            display: none;
-            background: linear-gradient(135deg, rgba(0, 230, 118, 0.06), rgba(0, 200, 80, 0.02));
-            border: 1px solid rgba(0, 230, 118, 0.12);
-            border-radius: 10px;
-            padding: 3px 8px;
-            margin-bottom: 8px;
-            align-items: center;
-            flex-wrap: nowrap;
-            gap: 3px 8px;
-            min-height: 26px;
-        }
-        .winning-banner.visible {
-            display: flex;
-        }
-        .winning-banner .label {
-            font-size: 9px;
-            font-weight: 700;
-            color: #00e676;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .winning-banner .balls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2px 3px;
-            align-items: center;
-            flex: 1 1 auto;
-            padding: 1px 0;
-        }
-        .winning-banner .ball {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 18px;
-            height: 18px;
-            background: linear-gradient(135deg, #00e676, #00c853);
-            color: #0b0b1a;
-            border-radius: 50%;
-            font-weight: 700;
-            font-size: 8px;
-            box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
-            padding: 0 1px;
-            animation: popIn 0.25s ease forwards, blinkWin 0.8s ease 4;
-            opacity: 0;
-            transform: scale(0.4);
-            flex-shrink: 0;
-            transition: all 0.15s;
-            line-height: 1;
-        }
-        .winning-banner .ball.matched {
-            background: linear-gradient(135deg, #f7e05e, #d4a800);
-            box-shadow: 0 0 16px rgba(255, 215, 0, 0.35);
-            border: 1.5px solid #f7e05e;
-            transform: scale(1.05);
-            min-width: 20px;
-            height: 20px;
-            font-size: 9px;
-            animation: popIn 0.25s ease forwards, blinkWinGold 0.8s ease 4;
-        }
-        .winning-banner .ball.revealing {
-            animation: popIn 0.25s ease forwards, blinkWin 0.8s ease 4;
-        }
-        @keyframes popIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3) rotate(-6deg);
-            }
-            60% {
-                transform: scale(1.1) rotate(2deg);
-                opacity: 1;
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) rotate(0deg);
-            }
-        }
-        @keyframes blinkWin {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-                box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
-            }
-            50% {
-                opacity: 0.2;
-                transform: scale(0.85);
-                box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
-            }
-        }
-        @keyframes blinkWinGold {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1.05);
-                box-shadow: 0 0 16px rgba(255, 215, 0, 0.35);
-            }
-            50% {
-                opacity: 0.2;
-                transform: scale(0.9);
-                box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-            }
-        }
-
-        .winning-banner .status-text {
-            font-size: 8px;
-            opacity: 0.4;
-            font-weight: 500;
-            white-space: nowrap;
-            flex-shrink: 0;
-            margin-left: auto;
-        }
-
         .keno-header {
             display: flex;
             justify-content: space-between;
@@ -362,7 +246,6 @@
             transform: scale(1.06);
         }
 
-        /* Hot & Cold text colors */
         .keno-cell.hot {
             color: #ff4444 !important;
             font-weight: 700;
@@ -647,7 +530,123 @@
             margin-left: auto;
         }
 
-        /* ── History / Results / Stats ── */
+        /* ── Winning Numbers Banner ── */
+        .winning-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.06), rgba(0, 200, 80, 0.02));
+            border: 1px solid rgba(0, 230, 118, 0.12);
+            border-radius: 10px;
+            padding: 3px 8px;
+            margin-bottom: 8px;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 3px 8px;
+            min-height: 26px;
+        }
+        .winning-banner.visible {
+            display: flex;
+        }
+        .winning-banner .label {
+            font-size: 9px;
+            font-weight: 700;
+            color: #00e676;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .winning-banner .balls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px 3px;
+            align-items: center;
+            flex: 1 1 auto;
+            padding: 1px 0;
+        }
+        .winning-banner .ball {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, #00e676, #00c853);
+            color: #0b0b1a;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 8px;
+            box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
+            padding: 0 1px;
+            animation: popIn 0.25s ease forwards, blinkWin 0.8s ease 4;
+            opacity: 0;
+            transform: scale(0.4);
+            flex-shrink: 0;
+            transition: all 0.15s;
+            line-height: 1;
+        }
+        .winning-banner .ball.matched {
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            box-shadow: 0 0 16px rgba(255, 215, 0, 0.35);
+            border: 1.5px solid #f7e05e;
+            transform: scale(1.05);
+            min-width: 20px;
+            height: 20px;
+            font-size: 9px;
+            animation: popIn 0.25s ease forwards, blinkWinGold 0.8s ease 4;
+        }
+        .winning-banner .ball.revealing {
+            animation: popIn 0.25s ease forwards, blinkWin 0.8s ease 4;
+        }
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotate(-6deg);
+            }
+            60% {
+                transform: scale(1.1) rotate(2deg);
+                opacity: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+        @keyframes blinkWin {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
+            }
+            50% {
+                opacity: 0.2;
+                transform: scale(0.85);
+                box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+            }
+        }
+        @keyframes blinkWinGold {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1.05);
+                box-shadow: 0 0 16px rgba(255, 215, 0, 0.35);
+            }
+            50% {
+                opacity: 0.2;
+                transform: scale(0.9);
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        .winning-banner .status-text {
+            font-size: 8px;
+            opacity: 0.4;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        /* ── HISTORY / RESULTS / STATS ── */
         .history-entry {
             padding: 5px 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
@@ -692,7 +691,6 @@
             font-size: 10px;
         }
 
-        /* Results tab */
         .results-round-header {
             display: flex;
             flex-wrap: wrap;
@@ -781,7 +779,6 @@
             gap: 12px;
         }
 
-        /* Statistics */
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -817,7 +814,6 @@
             color: #ff6b6b;
         }
 
-        /* Hot & Cold numbers in stats panel */
         .hot-cold-row {
             display: flex;
             flex-wrap: wrap;
@@ -858,7 +854,6 @@
             color: #4488ff;
             border: 1px solid #4488ff;
         }
-
         .top-numbers {
             display: flex;
             flex-wrap: wrap;
@@ -881,7 +876,7 @@
             font-size: 9px;
         }
 
-        /* ── AVIATOR (dual) ── */
+        /* ── AVIATOR ── */
         .aviator-container {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 16px;
@@ -1298,6 +1293,208 @@
             box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2);
         }
 
+        /* ── Difficulty selector in admin ── */
+        .difficulty-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 6px 0 2px 0;
+        }
+        .difficulty-selector button {
+            padding: 6px 18px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .difficulty-selector button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        .difficulty-selector button.active-diff {
+            border-color: #f7e05e;
+            background: rgba(255, 215, 0, 0.12);
+            color: #f7e05e;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.08);
+        }
+        .difficulty-selector button.active-diff.easy {
+            border-color: #00e676;
+            background: rgba(0, 230, 118, 0.10);
+            color: #00e676;
+        }
+        .difficulty-selector button.active-diff.medium {
+            border-color: #f7e05e;
+            background: rgba(255, 215, 0, 0.10);
+            color: #f7e05e;
+        }
+        .difficulty-selector button.active-diff.hard {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.10);
+            color: #ff6b6b;
+        }
+        .diff-label {
+            font-size: 11px;
+            opacity: 0.3;
+            margin-right: 4px;
+        }
+        .diff-status {
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+        .diff-status.easy {
+            color: #00e676;
+        }
+        .diff-status.medium {
+            color: #f7e05e;
+        }
+        .diff-status.hard {
+            color: #ff6b6b;
+        }
+
+        /* ── FRUIT GAME ── */
+        .fruit-game-container {
+            background: #0f0f2a;
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+        .fruit-game-container h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #f7e05e;
+            margin-bottom: 2px;
+        }
+        .fruit-game-container .sub {
+            opacity: 0.4;
+            font-size: 11px;
+            margin-bottom: 12px;
+        }
+        .fruit-reels {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 10px 0 14px 0;
+        }
+        .fruit-reel {
+            width: 70px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .fruit-reel.spinning {
+            animation: reelSpin 0.08s steps(1) infinite;
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+        @keyframes reelSpin {
+            0% {
+                transform: scale(1.02);
+            }
+            50% {
+                transform: scale(0.98);
+            }
+            100% {
+                transform: scale(1.02);
+            }
+        }
+        .fruit-reel.winner {
+            border-color: #00e676;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.15);
+        }
+        .fruit-result {
+            font-size: 15px;
+            font-weight: 700;
+            min-height: 28px;
+            margin: 4px 0 8px 0;
+        }
+        .fruit-result.win {
+            color: #00e676;
+        }
+        .fruit-result.lose {
+            color: #ff6b6b;
+        }
+        .fruit-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .fruit-controls input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 6px 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            width: 70px;
+            font-family: inherit;
+            outline: none;
+            text-align: center;
+        }
+        .fruit-controls input:focus {
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+        .fruit-controls .btn-spin {
+            padding: 8px 28px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, #f7e05e, #d4a800);
+            color: #0b0b1a;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .fruit-controls .btn-spin:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.25);
+        }
+        .fruit-controls .btn-spin:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .fruit-paytable {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 11px;
+            opacity: 0.5;
+        }
+        .fruit-paytable span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .fruit-paytable .emoji {
+            font-size: 16px;
+        }
+        .fruit-paytable .mult {
+            font-weight: 700;
+            color: #f7e05e;
+        }
+
         /* ── Buttons ── */
         .btn {
             padding: 8px 18px;
@@ -1357,7 +1554,7 @@
             background: linear-gradient(145deg, #1a1a3a, #0f0f28);
             border-radius: 24px;
             padding: 24px 20px;
-            max-width: 380px;
+            max-width: 420px;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.06);
             animation: modalIn 0.25s ease;
@@ -1381,7 +1578,8 @@
             margin-bottom: 14px;
             font-size: 12px;
         }
-        .modal input {
+        .modal input,
+        .modal select {
             width: 100%;
             padding: 10px 14px;
             background: rgba(0, 0, 0, 0.3);
@@ -1393,8 +1591,12 @@
             font-family: inherit;
             outline: none;
         }
-        .modal input:focus {
+        .modal input:focus,
+        .modal select:focus {
             border-color: rgba(255, 215, 0, 0.2);
+        }
+        .modal select option {
+            background: #1a1a3a;
         }
         .modal .actions {
             display: flex;
@@ -1411,14 +1613,51 @@
             margin-bottom: 6px;
             min-height: 16px;
         }
-        /* Remember me checkbox */
+        .modal .method-group {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .modal .method-group button {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            min-width: 60px;
+        }
+        .modal .method-group button:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .modal .method-group button.active-method {
+            border-color: #f7e05e;
+            background: rgba(255, 215, 0, 0.08);
+            color: #f7e05e;
+        }
+        .modal .method-group button.active-method.cbe {
+            border-color: #00e676;
+            background: rgba(0, 230, 118, 0.06);
+            color: #00e676;
+        }
+        .modal .method-group button.active-method.telebirr {
+            border-color: #4488ff;
+            background: rgba(68, 136, 255, 0.06);
+            color: #4488ff;
+        }
         .modal .remember-group {
             display: flex;
             align-items: center;
             gap: 8px;
             margin-bottom: 10px;
             font-size: 13px;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
         }
         .modal .remember-group input[type="checkbox"] {
             width: auto;
@@ -1475,7 +1714,7 @@
             }
         }
 
-        /* ── Responsive fine-tune ── */
+        /* ── Responsive ── */
         @media (max-width: 480px) {
             .app {
                 padding: 8px 10px 12px;
@@ -1655,6 +1894,18 @@
                 font-size: 12px;
                 padding: 6px 14px;
             }
+            .fruit-reels {
+                gap: 8px;
+            }
+            .fruit-reel {
+                width: 56px;
+                height: 64px;
+                font-size: 36px;
+            }
+            .difficulty-selector button {
+                font-size: 10px;
+                padding: 4px 12px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -1681,9 +1932,13 @@
             .winning-banner .label {
                 font-size: 6px;
             }
+            .fruit-reel {
+                width: 44px;
+                height: 50px;
+                font-size: 28px;
+            }
         }
 
-        /* Server status indicator */
         .server-status {
             display: inline-flex;
             align-items: center;
@@ -1716,10 +1971,10 @@
                 <button class="active" data-section="keno">Keno</button>
                 <button data-section="aviator">Aviator</button>
                 <button data-section="dice">Dice</button>
+                <button data-section="fruit">🍎 Fruit</button>
                 <button data-section="admin" id="adminNav" style="display:none;">Admin</button>
             </div>
             <div class="user-area" id="userArea">
-                <!-- Username displayed ABOVE balance -->
                 <div class="user-info">
                     <span class="user-name" id="userNameDisplay"></span>
                     <span class="balance" id="balanceDisplay">0.00 ETB</span>
@@ -1736,7 +1991,6 @@
         <div class="section active" id="section-keno">
             <div class="game-container">
                 <div class="keno-wrapper">
-                    <!-- WINNING BANNER -->
                     <div id="winningBanner" class="winning-banner">
                         <span class="label">🎯 WINNING NUMBERS</span>
                         <div class="balls" id="winningBannerBalls"></div>
@@ -1806,7 +2060,7 @@
             </div>
         </div>
 
-        <!-- Aviator (dual) -->
+        <!-- Aviator -->
         <div class="section" id="section-aviator">
             <div class="game-container aviator-container">
                 <div class="aviator-header">
@@ -1827,9 +2081,7 @@
                         <button class="btn btn-sm btn-primary" id="aviatorAutoStart" style="padding:2px 12px;">Start</button>
                     </div>
                 </div>
-                <div class="aviator-games" id="aviatorGames">
-                    <!-- Two game instances will be generated by JS -->
-                </div>
+                <div class="aviator-games" id="aviatorGames"></div>
             </div>
         </div>
 
@@ -1853,10 +2105,54 @@
             </div>
         </div>
 
+        <!-- Fruit Game -->
+        <div class="section" id="section-fruit">
+            <div class="game-container">
+                <div class="fruit-game-container">
+                    <h2>🍎 Fruit Slot</h2>
+                    <div class="sub">Match 3 fruits to win big!</div>
+                    <div class="fruit-reels" id="fruitReels">
+                        <div class="fruit-reel" id="fruitReel0">🍎</div>
+                        <div class="fruit-reel" id="fruitReel1">🍊</div>
+                        <div class="fruit-reel" id="fruitReel2">🍇</div>
+                    </div>
+                    <div class="fruit-result" id="fruitResult">Press SPIN to play</div>
+                    <div class="fruit-controls">
+                        <input type="number" id="fruitBet" value="5" step="1" min="1" />
+                        <button class="btn-spin" id="fruitSpin">🎰 SPIN</button>
+                    </div>
+                    <div class="fruit-paytable">
+                        <span><span class="emoji">🍎🍎🍎</span> <span class="mult">5×</span></span>
+                        <span><span class="emoji">🍊🍊🍊</span> <span class="mult">4×</span></span>
+                        <span><span class="emoji">🍇🍇🍇</span> <span class="mult">3×</span></span>
+                        <span><span class="emoji">🍉🍉🍉</span> <span class="mult">2.5×</span></span>
+                        <span><span class="emoji">🍓🍓🍓</span> <span class="mult">2×</span></span>
+                        <span><span class="emoji">🍑🍑🍑</span> <span class="mult">1.5×</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Admin -->
         <div class="section" id="section-admin">
             <h2 style="font-size:18px;">🔧 Admin Panel</h2>
             <div class="admin-panel">
+                <!-- Difficulty Settings -->
+                <div class="card" style="grid-column:1/-1;background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.08);">
+                    <h3>
+                        🎯 Game Difficulty
+                        <span class="diff-status" id="diffStatusDisplay">Medium</span>
+                    </h3>
+                    <div class="difficulty-selector" id="difficultySelector">
+                        <button data-diff="easy" class="easy">🟢 Easy</button>
+                        <button data-diff="medium" class="medium active-diff medium">🟡 Medium</button>
+                        <button data-diff="hard" class="hard">🔴 Hard</button>
+                    </div>
+                    <p style="font-size:10px;opacity:0.3;margin-top:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:6px;">
+                        Affects Keno (drawn count & multipliers), Aviator (crash distribution), Dice (payout), and Fruit (payout multipliers).
+                    </p>
+                </div>
+
                 <!-- User List -->
                 <div class="card" style="grid-column:1/-1;background:rgba(255,215,0,0.04);border:1px solid rgba(255,215,0,0.08);">
                     <h3>
@@ -1870,7 +2166,6 @@
                     </div>
                     <p style="font-size:9px;opacity:0.3;margin-top:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:6px;">
                         💡 All users, transactions and game history are stored on the server.
-                        The admin panel updates in real-time across all devices.
                     </p>
                 </div>
 
@@ -1919,6 +2214,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal-overlay" id="registerModal">
         <div class="modal">
             <h2>📝 Register</h2>
@@ -1933,6 +2229,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal-overlay" id="changePwModal">
         <div class="modal">
             <h2>🔑 Change Password</h2>
@@ -1948,6 +2245,25 @@
         </div>
     </div>
 
+    <!-- Deposit/Withdraw Modal -->
+    <div class="modal-overlay" id="txModal">
+        <div class="modal">
+            <h2 id="txModalTitle">💰 Deposit</h2>
+            <p class="sub" id="txModalSub">Choose your payment method</p>
+            <div class="error" id="txModalError"></div>
+            <div class="method-group" id="txMethodGroup">
+                <button data-method="cbe" class="active-method cbe">🏦 CBE</button>
+                <button data-method="telebirr" class="telebirr">📱 Telebirr</button>
+            </div>
+            <input type="number" id="txModalAmount" placeholder="Amount (ETB)" value="50" step="1" min="1" />
+            <input type="text" id="txModalAccount" placeholder="Account number" />
+            <div class="actions">
+                <button class="btn btn-primary" id="txModalSubmit">Submit</button>
+                <button class="btn btn-sm" id="txModalClose" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -1955,7 +2271,6 @@
         //  CONFIGURATION
         // ─────────────────────────────────────────────────────────────────
 
-        // 🔧 This is the URL of your Render backend
         const SERVER_URL = 'https://gamehub-backend-o3bv.onrender.com';
 
         // ─────────────────────────────────────────────────────────────────
@@ -1978,33 +2293,24 @@
                 }
                 return res.json();
             },
-
-            // Users
             async getUsers() { return this._fetch('/users'); },
             async getUser(username) { return this._fetch(`/users/${username}`); },
             async createUser(userData) { return this._fetch('/users', { method: 'POST', body: JSON.stringify(userData) }); },
             async updateUser(username, data) { return this._fetch(`/users/${username}`, { method: 'PUT', body: JSON
                         .stringify(data) }); },
             async deleteUser(username) { return this._fetch(`/users/${username}`, { method: 'DELETE' }); },
-
-            // Transactions
             async getTransactions() { return this._fetch('/transactions'); },
             async addTransaction(txn) { return this._fetch('/transactions', { method: 'POST', body: JSON.stringify(
                         txn) }); },
             async deleteTransaction(id) { return this._fetch(`/transactions/${id}`, { method: 'DELETE' }); },
             async clearTransactions(type) { return this._fetch(`/transactions/clear/${type}`, { method: 'DELETE' }); },
-
-            // Keno History
             async getKenoHistory() { return this._fetch('/keno-history'); },
             async addKenoRound(round) { return this._fetch('/keno-history', { method: 'POST', body: JSON.stringify(
                         round) }); },
-
-            // Auth
             async login(username, password) { return this._fetch('/login', { method: 'POST', body: JSON.stringify({
                         username,
                         password
                     }) }); },
-            // ✅ initial balance set to 0
             async register(username, password, phone) {
                 return this._fetch('/register', {
                     method: 'POST',
@@ -2022,6 +2328,7 @@
         let transactions = [];
         let kenoHistory = [];
         let serverOnline = false;
+        let gameDifficulty = 'medium'; // 'easy', 'medium', 'hard'
 
         // Keno state
         let kenoState = {
@@ -2033,11 +2340,17 @@
             lastResult: null,
             roundNumber: 0,
         };
-
         let kenoPlayers = {};
 
         // Aviator instances
         let aviatorGameInstances = [];
+
+        // Fruit state
+        let fruitState = {
+            isSpinning: false,
+            bet: 5,
+            result: null,
+        };
 
         // ─────────────────────────────────────────────────────────────────
         //  DOM REFS
@@ -2055,9 +2368,11 @@
         const loginModal = document.getElementById('loginModal');
         const registerModal = document.getElementById('registerModal');
         const changePwModal = document.getElementById('changePwModal');
+        const txModal = document.getElementById('txModal');
         const loginError = document.getElementById('loginError');
         const registerError = document.getElementById('registerError');
         const changePwError = document.getElementById('changePwError');
+        const txModalError = document.getElementById('txModalError');
         const loginUsername = document.getElementById('loginUsername');
         const loginPassword = document.getElementById('loginPassword');
         const loginRemember = document.getElementById('loginRemember');
@@ -2067,6 +2382,13 @@
         const changePwCurrent = document.getElementById('changePwCurrent');
         const changePwNew = document.getElementById('changePwNew');
         const changePwConfirm = document.getElementById('changePwConfirm');
+        const txModalTitle = document.getElementById('txModalTitle');
+        const txModalSub = document.getElementById('txModalSub');
+        const txModalAmount = document.getElementById('txModalAmount');
+        const txModalAccount = document.getElementById('txModalAccount');
+        const txModalSubmit = document.getElementById('txModalSubmit');
+        const txModalClose = document.getElementById('txModalClose');
+        const txMethodGroup = document.getElementById('txMethodGroup');
         const toast = document.getElementById('toast');
         let toastTimer = null;
 
@@ -2093,6 +2415,18 @@
         const serverDot = document.getElementById('serverDot');
         const serverLabel = document.getElementById('serverLabel');
 
+        const diffStatusDisplay = document.getElementById('diffStatusDisplay');
+        const difficultySelector = document.getElementById('difficultySelector');
+
+        const fruitReels = [
+            document.getElementById('fruitReel0'),
+            document.getElementById('fruitReel1'),
+            document.getElementById('fruitReel2'),
+        ];
+        const fruitBet = document.getElementById('fruitBet');
+        const fruitSpin = document.getElementById('fruitSpin');
+        const fruitResult = document.getElementById('fruitResult');
+
         // ─────────────────────────────────────────────────────────────────
         //  HELPERS
         // ─────────────────────────────────────────────────────────────────
@@ -2117,19 +2451,87 @@
         function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));
                 [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
 
-        function getMultiplier(matchCount) {
-            if (matchCount >= 10) return 500;
-            if (matchCount >= 9) return 100;
-            if (matchCount >= 8) return 30;
-            if (matchCount >= 7) return 10;
-            if (matchCount >= 6) return 4;
-            if (matchCount >= 5) return 1.5;
-            if (matchCount >= 4) return 0.5;
-            return 0;
+        function getKenoMultiplier(matchCount, difficulty) {
+            const multipliers = {
+                easy: { 10: 600, 9: 120, 8: 40, 7: 14, 6: 5, 5: 2, 4: 0.7, 0: 0 },
+                medium: { 10: 500, 9: 100, 8: 30, 7: 10, 6: 4, 5: 1.5, 4: 0.5, 0: 0 },
+                hard: { 10: 350, 9: 70, 8: 20, 7: 6, 6: 2.5, 5: 1, 4: 0.3, 0: 0 },
+            };
+            const diff = difficulty || 'medium';
+            const map = multipliers[diff] || multipliers.medium;
+            return map[matchCount] || 0;
+        }
+
+        function getKenoDrawCount(difficulty) {
+            const map = { easy: 25, medium: 20, hard: 15 };
+            return map[difficulty] || 20;
+        }
+
+        function getDiceMultiplier(difficulty) {
+            const map = { easy: 2.8, medium: 1.9, hard: 1.3 };
+            return map[difficulty] || 1.9;
+        }
+
+        function getAviatorCrashDistribution(difficulty) {
+            // Returns adjusted crash point generation
+            const dist = {
+                easy: { low: 0.02, midLow: 0.08, mid: 0.25, midHigh: 0.55, high: 0.82, veryHigh: 0.96 },
+                medium: { low: 0.05, midLow: 0.15, mid: 0.35, midHigh: 0.60, high: 0.80, veryHigh: 0.94 },
+                hard: { low: 0.10, midLow: 0.25, mid: 0.45, midHigh: 0.70, high: 0.88, veryHigh: 0.96 },
+            };
+            return dist[difficulty] || dist.medium;
+        }
+
+        function getFruitMultiplier(difficulty) {
+            const map = {
+                easy: { apple: 6, orange: 5, grape: 4, watermelon: 3.5, strawberry: 2.5, peach: 2 },
+                medium: { apple: 5, orange: 4, grape: 3, watermelon: 2.5, strawberry: 2, peach: 1.5 },
+                hard: { apple: 4, orange: 3.2, grape: 2.4, watermelon: 2, strawberry: 1.6, peach: 1.2 },
+            };
+            return map[difficulty] || map.medium;
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  SERVER CONNECTION CHECK
+        //  DIFFICULTY CONTROL
+        // ─────────────────────────────────────────────────────────────────
+
+        function setDifficulty(diff) {
+            gameDifficulty = diff;
+            document.querySelectorAll('.difficulty-selector button').forEach(btn => {
+                btn.classList.remove('active-diff', 'easy', 'medium', 'hard');
+                if (btn.dataset.diff === diff) {
+                    btn.classList.add('active-diff', diff);
+                }
+            });
+            const labels = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' };
+            diffStatusDisplay.textContent = labels[diff] || 'Medium';
+            diffStatusDisplay.className = 'diff-status ' + diff;
+            showToast('Difficulty set to: ' + labels[diff], 'info', 1500);
+            // Update game behaviors
+            updateKenoUI();
+            applyHotColdToGrid();
+            // Update aviator crash distribution for future games
+            aviatorGameInstances.forEach(g => { g.crashDist = getAviatorCrashDistribution(gameDifficulty); });
+            // Update dice display
+            const dm = getDiceMultiplier(gameDifficulty);
+            document.querySelector('.dice-options').dataset.payout = dm;
+            // Update fruit paytable display
+            updateFruitPaytable();
+        }
+
+        function updateFruitPaytable() {
+            const m = getFruitMultiplier(gameDifficulty);
+            const paytable = document.querySelector('.fruit-paytable');
+            if (!paytable) return;
+            const emojis = ['🍎', '🍊', '🍇', '🍉', '🍓', '🍑'];
+            const keys = ['apple', 'orange', 'grape', 'watermelon', 'strawberry', 'peach'];
+            paytable.innerHTML = keys.map((k, i) =>
+                `<span><span class="emoji">${emojis[i]}${emojis[i]}${emojis[i]}</span> <span class="mult">${m[k]}×</span></span>`
+            ).join('');
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  SERVER CONNECTION
         // ─────────────────────────────────────────────────────────────────
 
         async function checkServer() {
@@ -2149,7 +2551,7 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  DATA LOADING & SYNC
+        //  DATA LOADING
         // ─────────────────────────────────────────────────────────────────
 
         async function loadAllData() {
@@ -2165,7 +2567,7 @@
                 return true;
             } catch (e) {
                 console.error('Failed to load data:', e);
-                showToast('Cannot connect to server. Is it running?', 'error', 3000);
+                showToast('Cannot connect to server.', 'error', 3000);
                 return false;
             }
         }
@@ -2183,22 +2585,19 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  AUTH — with case‑insensitive login + "Remember me"
+        //  AUTH
         // ─────────────────────────────────────────────────────────────────
 
         async function login(username, password, remember = false) {
-            // 1) Try exact match with the backend first
             try {
                 const result = await API.login(username, password);
                 if (result.success) {
                     currentUser = result.user;
-                    // Store according to "remember"
                     if (remember) {
                         localStorage.setItem('gamehub_user', JSON.stringify(currentUser));
                         localStorage.setItem('gamehub_creds', JSON.stringify({ username, password }));
                     } else {
                         sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        // Clear any saved credentials
                         localStorage.removeItem('gamehub_user');
                         localStorage.removeItem('gamehub_creds');
                     }
@@ -2211,82 +2610,66 @@
                     initKeno();
                     initAviator();
                     initDice();
+                    initFruit();
                     return true;
                 }
             } catch (e) {
-                // Exact match failed — fall through to case‑insensitive check
-            }
-
-            // 2) Case‑insensitive fallback: fetch all users and match
-            try {
-                const users = await API.getUsers();
-                const found = users.find(u =>
-                    u.username.toLowerCase() === username.toLowerCase() &&
-                    u.password.toLowerCase() === password.toLowerCase()
-                );
-                if (found) {
-                    // Use the stored (exact) username and password to login
-                    const result = await API.login(found.username, found.password);
-                    if (result.success) {
-                        currentUser = result.user;
-                        if (remember) {
-                            localStorage.setItem('gamehub_user', JSON.stringify(currentUser));
-                            localStorage.setItem('gamehub_creds', JSON.stringify({ username: found.username, password: found
-                                    .password }));
-                        } else {
-                            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                            localStorage.removeItem('gamehub_user');
-                            localStorage.removeItem('gamehub_creds');
+                // Fallback case‑insensitive
+                try {
+                    const users = await API.getUsers();
+                    const found = users.find(u =>
+                        u.username.toLowerCase() === username.toLowerCase() &&
+                        u.password.toLowerCase() === password.toLowerCase()
+                    );
+                    if (found) {
+                        const result = await API.login(found.username, found.password);
+                        if (result.success) {
+                            currentUser = result.user;
+                            if (remember) {
+                                localStorage.setItem('gamehub_user', JSON.stringify(currentUser));
+                                localStorage.setItem('gamehub_creds', JSON.stringify({ username: found.username,
+                                    password: found.password }));
+                            } else {
+                                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                                localStorage.removeItem('gamehub_user');
+                                localStorage.removeItem('gamehub_creds');
+                            }
+                            loginError.textContent = '';
+                            loginModal.classList.remove('open');
+                            showToast('Welcome, ' + currentUser.username + '!', 'success');
+                            await refreshData();
+                            addPlayer(currentUser.username);
+                            updateUI();
+                            initKeno();
+                            initAviator();
+                            initDice();
+                            initFruit();
+                            return true;
                         }
-                        loginError.textContent = '';
-                        loginModal.classList.remove('open');
-                        showToast('Welcome, ' + currentUser.username + '! (case‑insensitive)', 'success');
-                        await refreshData();
-                        addPlayer(currentUser.username);
-                        updateUI();
-                        initKeno();
-                        initAviator();
-                        initDice();
-                        return true;
                     }
+                } catch (e2) {
+                    loginError.textContent = 'Server error: ' + e2.message;
+                    return false;
                 }
-            } catch (e) {
-                loginError.textContent = 'Server error: ' + e.message;
+                loginError.textContent = 'Invalid username or password';
                 return false;
             }
-
-            loginError.textContent = 'Invalid username or password';
-            return false;
         }
 
-        // ── REGISTER (balance = 0, phone format +251XXXXXXXXX) ──
         async function register(username, password, phoneInput) {
-            // 1. Validate phone digits (exactly 9)
             const phoneDigits = phoneInput.trim();
             if (!/^\d{9}$/.test(phoneDigits)) {
                 registerError.textContent = 'Phone must be exactly 9 digits (e.g. 911717171)';
                 return false;
             }
             const fullPhone = '+251' + phoneDigits;
-
-            // 2. Check duplicate phone number
             if (allUsers.some(u => u.phone === fullPhone)) {
                 registerError.textContent = 'Phone number already registered.';
                 return false;
             }
-
-            // 3. Username and password min length
-            if (username.length < 3) {
-                registerError.textContent = 'Username must be at least 3 characters.';
-                return false;
-            }
-            if (password.length < 3) {
-                registerError.textContent = 'Password must be at least 3 characters.';
-                return false;
-            }
-
+            if (username.length < 3) { registerError.textContent = 'Username min 3 chars.'; return false; }
+            if (password.length < 3) { registerError.textContent = 'Password min 3 chars.'; return false; }
             try {
-                // ✅ balance: 0 is sent explicitly
                 const result = await API.register(username, password, fullPhone);
                 if (result.success) {
                     registerError.textContent = '';
@@ -2317,17 +2700,13 @@
         async function changePassword(username, currentPw, newPw, confirmPw) {
             if (newPw.length < 3) { changePwError.textContent = 'New password min 3 chars'; return false; }
             if (newPw !== confirmPw) { changePwError.textContent = 'Passwords do not match'; return false; }
-
             try {
                 const user = await API.getUser(username);
                 if (!user) { changePwError.textContent = 'User not found'; return false; }
-                // Case‑sensitive check for current password (security)
                 if (user.password !== currentPw) { changePwError.textContent = 'Current password is incorrect'; return false; }
-
                 await API.updateUser(username, { password: newPw });
                 if (currentUser && currentUser.username === username) {
                     currentUser.password = newPw;
-                    // Update stored credentials if remembered
                     if (localStorage.getItem('gamehub_user')) {
                         localStorage.setItem('gamehub_user', JSON.stringify(currentUser));
                         const creds = JSON.parse(localStorage.getItem('gamehub_creds') || '{}');
@@ -2345,6 +2724,100 @@
             } catch (e) {
                 changePwError.textContent = 'Server error: ' + e.message;
                 return false;
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  DEPOSIT / WITHDRAW (CBE & Telebirr)
+        // ─────────────────────────────────────────────────────────────────
+
+        let txMethod = 'cbe';
+        let txType = 'deposit';
+
+        function openTxModal(type) {
+            if (!currentUser) { showToast('Please login', 'error'); return; }
+            txType = type;
+            txModalTitle.textContent = type === 'deposit' ? '💰 Deposit' : '🏦 Withdraw';
+            txModalSub.textContent = type === 'deposit' ? 'Choose payment method to deposit' :
+                'Choose method to receive funds';
+            txModalError.textContent = '';
+            txModalAmount.value = type === 'deposit' ? '50' : '20';
+            txModalAccount.value = '';
+            txMethod = 'cbe';
+            updateTxMethodUI();
+            txModal.classList.add('open');
+        }
+
+        function updateTxMethodUI() {
+            document.querySelectorAll('#txMethodGroup button').forEach(btn => {
+                btn.classList.remove('active-method', 'cbe', 'telebirr');
+                if (btn.dataset.method === txMethod) {
+                    btn.classList.add('active-method', txMethod);
+                }
+            });
+            const placeholder = txMethod === 'cbe' ? '13-digit CBE account number' : 'Telebirr phone number (9 digits)';
+            txModalAccount.placeholder = placeholder;
+            const maxLen = txMethod === 'cbe' ? 13 : 9;
+            txModalAccount.maxLength = maxLen;
+            txModalAccount.type = txMethod === 'cbe' ? 'text' : 'text';
+        }
+
+        async function submitTx() {
+            const amount = parseFloat(txModalAmount.value);
+            const account = txModalAccount.value.trim();
+            if (isNaN(amount) || amount <= 0) { txModalError.textContent = 'Invalid amount'; return; }
+            if (txType === 'withdraw' && amount > currentUser.balance) {
+                txModalError.textContent = 'Insufficient balance';
+                return;
+            }
+
+            // Validate account
+            if (txMethod === 'cbe') {
+                if (!/^\d{13}$/.test(account)) {
+                    txModalError.textContent = 'CBE account must be exactly 13 digits';
+                    return;
+                }
+            } else { // telebirr
+                if (!/^\d{9}$/.test(account)) {
+                    txModalError.textContent = 'Telebirr phone must be exactly 9 digits';
+                    return;
+                }
+            }
+
+            const fullAccount = txMethod === 'telebirr' ? '+251' + account : account;
+
+            try {
+                if (txType === 'deposit') {
+                    await API.addTransaction({
+                        username: currentUser.username,
+                        type: 'deposit',
+                        amount: amount,
+                        status: 'pending',
+                        details: `${txMethod.toUpperCase()}: ${fullAccount}`,
+                        timestamp: new Date().toISOString(),
+                    });
+                    showToast(`Deposit request for ${format(amount)} ETB via ${txMethod.toUpperCase()} submitted.`,
+                    'info');
+                } else {
+                    const newBalance = round2(currentUser.balance - amount);
+                    await API.updateUser(currentUser.username, { balance: newBalance });
+                    currentUser.balance = newBalance;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateBalanceUI();
+                    await API.addTransaction({
+                        username: currentUser.username,
+                        type: 'withdraw',
+                        amount: amount,
+                        status: 'pending',
+                        details: `${txMethod.toUpperCase()}: ${fullAccount}`,
+                        timestamp: new Date().toISOString(),
+                    });
+                    showToast(`Withdrawal of ${format(amount)} ETB to ${txMethod.toUpperCase()} requested.`, 'info');
+                }
+                txModal.classList.remove('open');
+                await refreshData();
+            } catch (e) {
+                txModalError.textContent = 'Error: ' + e.message;
             }
         }
 
@@ -2396,6 +2869,9 @@
                 populateAdminUserSelect();
                 renderUserList();
                 renderAdminPanel();
+            }
+            if (sectionId === 'fruit') {
+                updateFruitPaytable();
             }
         }
 
@@ -2449,7 +2925,6 @@
             if (!username) { adminManualResult.textContent = '⚠️ Select a user.'; return; }
             const amount = parseFloat(adminAmount.value);
             if (isNaN(amount) || amount <= 0) { adminManualResult.textContent = '⚠️ Valid amount.'; return; }
-
             try {
                 const user = await API.getUser(username);
                 if (!user) { adminManualResult.textContent = '⚠️ User not found.'; return; }
@@ -2468,13 +2943,11 @@
                     details: 'Manual by admin',
                     timestamp: new Date().toISOString(),
                 });
-
                 if (currentUser && currentUser.username === username) {
                     currentUser.balance = newBalance;
                     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                     updateBalanceUI();
                 }
-
                 adminManualResult.textContent =
                     `✅ ${adminTxType==='deposit'?'Deposited':'Withdrew'} ${format(amount)} ETB ${adminTxType==='deposit'?'to':'from'} ${username}. New: ${format(newBalance)} ETB`;
                 showToast(
@@ -2505,7 +2978,7 @@
             const wdDiv = document.getElementById('pendingWithdrawals');
             if (withdrawTxns.length === 0) { wdDiv.innerHTML = '<p style="opacity:0.3;">No withdrawals</p>'; } else {
                 wdDiv.innerHTML = withdrawTxns.map(t =>
-                    `<div class="item"><span>${t.username} (${t.phone||'N/A'}) — ${format(t.amount)} ETB ${t.status==='sent'?'✅':t.status==='rejected'?'❌':'⏳'}</span><div class="actions"><button class="delete" data-id="${t.id}">🗑️</button></div></div>`
+                    `<div class="item"><span>${t.username} (${t.details||'N/A'}) — ${format(t.amount)} ETB ${t.status==='sent'?'✅':t.status==='rejected'?'❌':'⏳'}</span><div class="actions"><button class="delete" data-id="${t.id}">🗑️</button></div></div>`
                     ).join('');
             }
 
@@ -2551,7 +3024,7 @@
         });
 
         // ─────────────────────────────────────────────────────────────────
-        //  KENO GAME
+        //  KENO
         // ─────────────────────────────────────────────────────────────────
 
         function addPlayer(username) {
@@ -2700,7 +3173,6 @@
             if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
 
             try {
-                // Deduct bet from user balance via server
                 const newBalance = round2(currentUser.balance - bet);
                 await API.updateUser(currentUser.username, { balance: newBalance });
                 currentUser.balance = newBalance;
@@ -2714,7 +3186,8 @@
                 const pool = [];
                 for (let i = 1; i <= 80; i++) pool.push(i);
                 shuffle(pool);
-                const drawn = pool.slice(0, 20);
+                const drawCount = getKenoDrawCount(gameDifficulty);
+                const drawn = pool.slice(0, drawCount);
                 kenoState.drawn = new Set(drawn);
 
                 const playersSnapshot = {};
@@ -2728,12 +3201,12 @@
 
                 let idx = 0;
                 const total = drawn.length;
-                const delay = 80;
+                const delay = 70;
 
                 const animateNext = () => {
                     if (idx >= total) {
                         bannerStatus.textContent = 'Complete!';
-                        evaluateAllPlayers(drawn, bet, playersSnapshot);
+                        evaluateAllPlayersKeno(drawn, bet, playersSnapshot);
                         return;
                     }
                     const num = drawn[idx];
@@ -2758,7 +3231,7 @@
             }
         }
 
-        async function evaluateAllPlayers(drawnNumbers, bet, playersSnapshot) {
+        async function evaluateAllPlayersKeno(drawnNumbers, bet, playersSnapshot) {
             const roundResults = {
                 round: kenoState.roundNumber,
                 time: new Date().toISOString(),
@@ -2777,12 +3250,11 @@
                 });
             }
 
-            // Process each player's results
             for (const [username, selections] of Object.entries(playersSnapshot)) {
                 if (selections.length === 0) continue;
                 const matches = selections.filter(n => drawnNumbers.includes(n));
                 const matchCount = matches.length;
-                const multiplier = getMultiplier(matchCount);
+                const multiplier = getKenoMultiplier(matchCount, gameDifficulty);
                 const win = round2(bet * multiplier);
 
                 if (win > 0) {
@@ -2806,24 +3278,18 @@
                             }
                             roundResults.totalWinners++;
                             roundResults.totalPayout += win;
-                            showToast(`🎉 ${username} won ${format(win)} ETB (${matchCount} matches)`, 'success', 2500);
+                            showToast(`🎉 ${username} won ${format(win)} ETB (${matchCount} matches)`, 'success', 2200);
                         }
-                    } catch (e) {
-                        console.error('Error processing win for', username, e);
-                    }
+                    } catch (e) { console.error(e); }
                 }
                 roundResults.players[username] = { selections, matches, matchCount, win };
             }
 
-            // Save round to server
             try {
                 await API.addKenoRound(roundResults);
                 await refreshData();
-            } catch (e) {
-                console.error('Failed to save Keno round:', e);
-            }
+            } catch (e) { console.error(e); }
 
-            // Update UI
             const cells = kenoGrid.querySelectorAll('.keno-cell');
             cells.forEach(cell => {
                 const num = parseInt(cell.dataset.num);
@@ -2845,7 +3311,7 @@
                         kenoState.matched.add(n); }
                 }
                 const matchCount = myMatches.length;
-                const multiplier = getMultiplier(matchCount);
+                const multiplier = getKenoMultiplier(matchCount, gameDifficulty);
                 const win = round2(bet * multiplier);
                 let resultHtml = '';
                 if (win > 0) {
@@ -2885,15 +3351,13 @@
                 bannerStatus.textContent = 'Done';
                 winningBanner.classList.remove('visible');
                 applyHotColdToGrid();
-            }, 4000);
+            }, 3500);
         }
 
         function applyHotColdToGrid() {
             const cells = kenoGrid.querySelectorAll('.keno-cell');
             cells.forEach(cell => cell.classList.remove('hot', 'cold'));
-
             if (kenoHistory.length < 3) return;
-
             const freq = {};
             for (let i = 1; i <= 80; i++) freq[i] = 0;
             kenoHistory.forEach(h => {
@@ -2904,7 +3368,6 @@
             const hot = sorted.slice(0, 5).map(item => item.num);
             const withCount = sorted.filter(item => item.count > 0);
             const cold = withCount.slice(-5).map(item => item.num);
-
             cells.forEach(cell => {
                 const num = parseInt(cell.dataset.num);
                 if (hot.includes(num)) cell.classList.add('hot');
@@ -2945,7 +3408,7 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  HISTORY / RESULTS / STATS
+        //  KENO HISTORY / RESULTS / STATS
         // ─────────────────────────────────────────────────────────────────
 
         function renderHistory() {
@@ -2972,677 +3435,4 @@
                 `<div class="results-round-header"><span class="r-title">Round #${last.round}</span><span class="r-time">${timeStr}</span></div><div style="font-size:10px;opacity:0.4;padding:0 8px 2px 8px;">🎯 Winning Numbers</div><div class="results-winning-numbers">${last.winningNumbers.sort((a,b)=>a-b).map(n=>`<span class="wnum">${n}</span>`).join('')}</div><div style="font-size:10px;opacity:0.4;padding:2px 8px;">👤 Players</div><div class="results-players">`;
             const entries = Object.entries(last.players);
             if (entries.length === 0) html +=
-                '<div style="padding:4px 8px;opacity:0.3;font-size:11px;">No players this round</div>';
-            else {
-                entries.forEach(([username, data]) => {
-                    const winClass = data.win > 0 ? 'positive' : 'zero';
-                    const winText = data.win > 0 ? `+${format(data.win)} ETB` : '—';
-                    html +=
-                        `<div class="rp-row"><span class="rp-name">${username}</span><span class="rp-matches">${data.matchCount} matches</span><span class="rp-win ${winClass}">${winText}</span></div>`;
-                });
-            }
-            html +=
-                `</div><div class="results-summary"><span>🏆 Winners: ${last.totalWinners||0}</span><span>💰 Payout: ${format(last.totalPayout||0)} ETB</span></div>`;
-            container.innerHTML = html;
-        }
-
-        function renderStatistics() {
-            const container = document.getElementById('statsContent');
-            if (kenoHistory.length === 0) { container.innerHTML = '<span class="empty">No stats</span>'; return; }
-            const totalGames = kenoHistory.length;
-            const freq = {};
-            for (let i = 1; i <= 80; i++) freq[i] = 0;
-            kenoHistory.forEach(h => { h.winningNumbers.forEach(n => { freq[n] = (freq[n] || 0) + 1; }); });
-
-            const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-            const top10 = sorted.slice(0, 10);
-            const hot = sorted.slice(0, 5).map(([num, count]) => ({ num: parseInt(num), count }));
-            const sortedByCount = sorted.filter(([_, c]) => c > 0).sort((a, b) => a[1] - b[1]);
-            const cold = sortedByCount.slice(0, 5).map(([num, count]) => ({ num: parseInt(num), count }));
-
-            let totalWinners = 0,
-                totalPayout = 0;
-            kenoHistory.forEach(h => { totalWinners += h.totalWinners || 0;
-                totalPayout += h.totalPayout || 0; });
-
-            let html =
-                `<div class="stat-grid"><div class="stat-card gold"><div class="stat-value">${totalGames}</div><div class="stat-label">Games</div></div><div class="stat-card green"><div class="stat-value">${totalWinners}</div><div class="stat-label">Winners</div></div><div class="stat-card pink"><div class="stat-value">${format(totalPayout)}</div><div class="stat-label">Payout (ETB)</div></div><div class="stat-card"><div class="stat-value">${kenoHistory.length>0?Math.round(totalWinners/kenoHistory.length):0}</div><div class="stat-label">Avg Winners</div></div></div>`;
-
-            html += `<div class="hot-cold-row">`;
-            if (hot.length > 0) {
-                html +=
-                    `<div class="hot-cold-group"><span class="label">🔥 HOT</span> ${hot.map(h=>`<span class="num hot">${h.num}</span>`).join('')}</div>`;
-            }
-            if (cold.length > 0) {
-                html +=
-                    `<div class="hot-cold-group"><span class="label">❄️ COLD</span> ${cold.map(c=>`<span class="num cold">${c.num}</span>`).join('')}</div>`;
-            }
-            html += `</div>`;
-
-            html +=
-                `<div style="margin-top:6px;opacity:0.4;font-size:10px;margin-bottom:3px;">📊 Most Frequent (all)</div><div class="top-numbers">${top10.map(([num,count])=>`<span class="num-badge">${num} <span class="count">(${count}x)</span></span>`).join('')}</div>`;
-
-            container.innerHTML = html;
-        }
-
-        // ─────────────────────────────────────────────────────────────────
-        //  AVIATOR – DUAL GAMES + AUTO PLAY
-        // ─────────────────────────────────────────────────────────────────
-
-        class AviatorGame {
-            constructor(index) {
-                this.index = index;
-                this.isPlaying = false;
-                this.isCrashed = false;
-                this.multiplier = 1.0;
-                this.crashPoint = 0;
-                this.bet = 20.00;
-                this.profit = 0;
-                this.history = [];
-                this.animId = null;
-                this.betPlaced = false;
-                this.container = null;
-                this.elements = {};
-                this.autoRunning = false;
-                this.autoTarget = 2.0;
-            }
-
-            init(container) {
-                this.container = container;
-                container.innerHTML = `
-                    <div class="game-label">Game ${this.index+1}</div>
-                    <div class="aviator-history" id="aviatorHistory${this.index}"></div>
-                    <div class="aviator-main">
-                        <div class="big-multiplier" id="aviatorBigMult${this.index}">1.00x</div>
-                        <div class="game-status" id="aviatorStatus${this.index}">Waiting...</div>
-                    </div>
-                    <div class="aviator-betslip">
-                        <div class="bet-label">Bet</div>
-                        <div class="bet-input-group">
-                            <input type="number" id="aviatorBet${this.index}" value="20.00" step="0.50" min="0.50" />
-                            <div class="bet-presets">
-                                <button data-amount="20">20</button>
-                                <button data-amount="80">80</button>
-                                <button data-amount="40">40</button>
-                                <button data-amount="400">400</button>
-                            </div>
-                        </div>
-                        <button class="bet-btn" id="aviatorBetBtn${this.index}">Bet 20.00 ETB</button>
-                        <button class="cashout-btn" id="aviatorCashout${this.index}" disabled>Cash Out</button>
-                    </div>
-                `;
-                this.elements = {
-                    history: document.getElementById(`aviatorHistory${this.index}`),
-                    bigMult: document.getElementById(`aviatorBigMult${this.index}`),
-                    status: document.getElementById(`aviatorStatus${this.index}`),
-                    betInput: document.getElementById(`aviatorBet${this.index}`),
-                    betBtn: document.getElementById(`aviatorBetBtn${this.index}`),
-                    cashoutBtn: document.getElementById(`aviatorCashout${this.index}`),
-                };
-                container.querySelectorAll('.bet-presets button').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const val = parseFloat(btn.dataset.amount);
-                        if (!isNaN(val)) { this.elements.betInput.value = val;
-                            this.bet = val;
-                            this.updateBetBtn(); }
-                    });
-                });
-                this.elements.betInput.addEventListener('input', () => {
-                    const val = parseFloat(this.elements.betInput.value);
-                    if (!isNaN(val) && val > 0) { this.bet = val;
-                        this.updateBetBtn(); }
-                });
-                this.elements.betBtn.addEventListener('click', () => this.placeBet());
-                this.elements.cashoutBtn.addEventListener('click', () => this.cashOut());
-                this.updateUI();
-            }
-
-            updateBetBtn() {
-                this.elements.betBtn.textContent = `Bet ${format(this.bet)} ETB`;
-                if (currentUser && currentUser.balance < this.bet) this.elements.betBtn.disabled = true;
-                else this.elements.betBtn.disabled = this.isPlaying;
-            }
-
-            updateUI() {
-                const mult = this.multiplier;
-                const display = mult.toFixed(2) + 'x';
-                this.elements.bigMult.textContent = display;
-                this.elements.bigMult.classList.toggle('crashed', this.isCrashed);
-                this.elements.status.textContent = this.isPlaying ? (this.isCrashed ? '💥 Crashed' : '✈️ Flying…') :
-                    'Waiting...';
-
-                this.elements.history.innerHTML = '';
-                if (this.history.length > 0) {
-                    const hist = [...this.history].reverse().slice(0, 10);
-                    hist.forEach(val => {
-                        const span = document.createElement('span');
-                        span.className = 'history-item';
-                        span.textContent = val.toFixed(2) + 'x';
-                        if (val >= 2.0) span.classList.add('high');
-                        else if (val < 1.5) span.classList.add('low');
-                        this.elements.history.appendChild(span);
-                    });
-                } else {
-                    [1.77, 1.11, 1.19, 3.09, 2.93].forEach(val => {
-                        const span = document.createElement('span');
-                        span.className = 'history-item';
-                        span.textContent = val.toFixed(2) + 'x';
-                        if (val >= 2.0) span.classList.add('high');
-                        else if (val < 1.5) span.classList.add('low');
-                        this.elements.history.appendChild(span);
-                    });
-                }
-                this.updateBetBtn();
-                this.elements.cashoutBtn.disabled = !this.isPlaying || this.isCrashed;
-            }
-
-            async placeBet() {
-                if (!currentUser) { showToast('Please login', 'error'); return; }
-                if (this.isPlaying) return;
-                const bet = parseFloat(this.elements.betInput.value) || 20;
-                if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
-                if (bet <= 0) { showToast('Invalid bet', 'error'); return; }
-                this.bet = bet;
-
-                try {
-                    const newBalance = round2(currentUser.balance - bet);
-                    await API.updateUser(currentUser.username, { balance: newBalance });
-                    currentUser.balance = newBalance;
-                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateBalanceUI();
-
-                    this.isPlaying = true;
-                    this.isCrashed = false;
-                    this.multiplier = 1.0;
-                    this.profit = 0;
-                    this.betPlaced = true;
-
-                    const r = Math.random();
-                    let crash = 1.0;
-                    if (r < 0.05) crash = 1.0 + Math.random() * 0.3;
-                    else if (r < 0.15) crash = 1.3 + Math.random() * 0.5;
-                    else if (r < 0.35) crash = 1.8 + Math.random() * 0.8;
-                    else if (r < 0.60) crash = 2.6 + Math.random() * 1.5;
-                    else if (r < 0.80) crash = 4.1 + Math.random() * 3.0;
-                    else if (r < 0.94) crash = 7.1 + Math.random() * 6.0;
-                    else crash = 13 + Math.random() * 20;
-                    this.crashPoint = Math.min(Math.max(crash, 1.01), 40);
-                    this.updateUI();
-                    this.startLoop();
-                    if (aviatorAutoPlayCheck.checked && aviatorAutoTarget.value) {
-                        const target = parseFloat(aviatorAutoTarget.value);
-                        if (!isNaN(target) && target > 1) this.autoTarget = target;
-                    }
-                } catch (e) {
-                    showToast('Server error: ' + e.message, 'error');
-                }
-            }
-
-            startLoop() {
-                if (this.animId) cancelAnimationFrame(this.animId);
-                let lastTime = performance.now();
-                let elapsed = 0;
-
-                const tick = (timestamp) => {
-                    if (!this.isPlaying) { this.animId = null; return; }
-                    const dt = (timestamp - lastTime) / 1000;
-                    lastTime = timestamp;
-                    elapsed += dt;
-                    const baseMult = 1 + elapsed * 0.12;
-                    const mult = Math.min(baseMult + Math.sin(elapsed * 0.8) * 0.02 * elapsed, 50);
-                    this.multiplier = Math.min(mult, this.crashPoint);
-
-                    if (aviatorAutoPlayCheck.checked && this.autoTarget && this.multiplier >= this.autoTarget) {
-                        this.cashOut();
-                        return;
-                    }
-
-                    if (this.multiplier >= this.crashPoint) {
-                        this.crash();
-                        return;
-                    }
-                    this.profit = round2(this.bet * this.multiplier - this.bet);
-                    this.updateUI();
-                    this.animId = requestAnimationFrame(tick);
-                };
-                this.animId = requestAnimationFrame(tick);
-            }
-
-            async crash() {
-                this.isCrashed = true;
-                this.isPlaying = false;
-                this.betPlaced = false;
-                this.profit = -this.bet;
-                this.history.push(this.crashPoint);
-                if (this.history.length > 30) this.history.shift();
-                this.updateUI();
-                showToast(`💥 Game ${this.index+1} crashed at ${this.crashPoint.toFixed(2)}×`, 'error');
-                this.elements.betBtn.disabled = false;
-                if (aviatorAutoPlayCheck.checked && this.autoRunning) {
-                    setTimeout(() => { this.placeBet(); }, 1500);
-                }
-            }
-
-            async cashOut() {
-                if (!this.isPlaying || this.isCrashed) return;
-                this.isPlaying = false;
-                this.betPlaced = false;
-                const mult = this.multiplier;
-                const win = round2(this.bet * mult);
-                this.profit = round2(win - this.bet);
-
-                try {
-                    const user = await API.getUser(currentUser.username);
-                    if (user) {
-                        const newBalance = round2(user.balance + win);
-                        await API.updateUser(currentUser.username, { balance: newBalance });
-                        currentUser.balance = newBalance;
-                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        updateBalanceUI();
-                    }
-                } catch (e) {
-                    showToast('Error saving win: ' + e.message, 'error');
-                }
-
-                this.history.push(mult);
-                if (this.history.length > 30) this.history.shift();
-                this.updateUI();
-                showToast(`✅ Game ${this.index+1} cashed out at ${mult.toFixed(2)}× +${format(this.profit)}`, 'success');
-                this.elements.betBtn.disabled = false;
-                if (aviatorAutoPlayCheck.checked && this.autoRunning) {
-                    setTimeout(() => { this.placeBet(); }, 1200);
-                }
-            }
-
-            startAuto(rounds, target) {
-                this.autoRunning = true;
-                this.autoTarget = target;
-                let count = 0;
-                const playNext = () => {
-                    if (!this.autoRunning || count >= rounds) {
-                        this.autoRunning = false;
-                        showToast(`Auto-play finished (${this.index+1})`, 'info');
-                        return;
-                    }
-                    if (!this.isPlaying) {
-                        this.placeBet();
-                        count++;
-                    }
-                };
-                const origCashout = this.cashOut.bind(this);
-                const origCrash = this.crash.bind(this);
-                this.cashOut = function() {
-                    origCashout();
-                    if (this.autoRunning && count < rounds) {
-                        setTimeout(() => { this.placeBet(); }, 1200);
-                        count++;
-                    } else {
-                        this.autoRunning = false;
-                        showToast(`Auto-play finished (${this.index+1})`, 'info');
-                    }
-                };
-                this.crash = function() {
-                    origCrash();
-                    if (this.autoRunning && count < rounds) {
-                        setTimeout(() => { this.placeBet(); }, 1500);
-                        count++;
-                    } else {
-                        this.autoRunning = false;
-                        showToast(`Auto-play finished (${this.index+1})`, 'info');
-                    }
-                };
-                setTimeout(() => { this.placeBet(); }, 500);
-            }
-
-            stopAuto() { this.autoRunning = false; }
-        }
-
-        function initAviator() {
-            const container = document.getElementById('aviatorGames');
-            container.innerHTML = '';
-            const dual = aviatorDualCheck.checked;
-            const count = dual ? 2 : 1;
-            aviatorGameInstances = [];
-            for (let i = 0; i < count; i++) {
-                const gameDiv = document.createElement('div');
-                gameDiv.className = 'aviator-game';
-                container.appendChild(gameDiv);
-                const game = new AviatorGame(i);
-                game.init(gameDiv);
-                aviatorGameInstances.push(game);
-            }
-            aviatorAutoStart.onclick = function() {
-                if (!currentUser) { showToast('Login first', 'error'); return; }
-                const target = parseFloat(aviatorAutoTarget.value);
-                const rounds = parseInt(aviatorAutoRounds.value) || 5;
-                if (isNaN(target) || target <= 1) { showToast('Target must be > 1.0', 'error'); return; }
-                if (rounds < 1) { showToast('Rounds must be >= 1', 'error'); return; }
-                aviatorGameInstances.forEach(g => g.stopAuto());
-                aviatorGameInstances.forEach((g, idx) => {
-                    setTimeout(() => { g.startAuto(rounds, target); }, idx * 800);
-                });
-                showToast(`Auto-play started: ${rounds} rounds, target ${target.toFixed(1)}×`, 'info');
-            };
-            aviatorDualCheck.onchange = initAviator;
-            updateAviatorUI();
-        }
-
-        function updateAviatorUI() {
-            aviatorGameInstances.forEach(g => g.updateUI());
-        }
-
-        // ─────────────────────────────────────────────────────────────────
-        //  DICE
-        // ─────────────────────────────────────────────────────────────────
-
-        let diceState = { bet: 5, choice: 'over', result: null };
-        const diceResult = document.getElementById('diceResult');
-        const diceBet = document.getElementById('diceBet');
-        const diceRoll = document.getElementById('diceRoll');
-        const diceResultText = document.getElementById('diceResultText');
-        const diceOptions = document.querySelectorAll('.dice-options button');
-
-        function initDice() {
-            diceOptions.forEach(btn => {
-                btn.onclick = function() {
-                    diceOptions.forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                    diceState.choice = this.dataset.bet;
-                };
-            });
-            diceRoll.onclick = diceRollHandler;
-            diceBet.onchange = function() { diceState.bet = parseFloat(this.value) || 5; };
-            diceBet.value = diceState.bet;
-        }
-
-        async function diceRollHandler() {
-            if (!currentUser) { showToast('Please login', 'error'); return; }
-            const bet = parseFloat(diceBet.value) || 5;
-            if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
-            if (bet <= 0) { showToast('Invalid bet', 'error'); return; }
-
-            try {
-                const newBalance = round2(currentUser.balance - bet);
-                await API.updateUser(currentUser.username, { balance: newBalance });
-                currentUser.balance = newBalance;
-                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                updateBalanceUI();
-
-                const roll = Math.floor(Math.random() * 6) + 1;
-                diceState.result = roll;
-                const isOver = roll > 3.5;
-                const win = (diceState.choice === 'over' && isOver) || (diceState.choice === 'under' && !isOver);
-                const winAmount = win ? round2(bet * 1.9) : 0;
-
-                if (win) {
-                    const user = await API.getUser(currentUser.username);
-                    if (user) {
-                        const newBal = round2(user.balance + winAmount);
-                        await API.updateUser(currentUser.username, { balance: newBal });
-                        currentUser.balance = newBal;
-                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        updateBalanceUI();
-                    }
-                    diceResultText.innerHTML = `🎉 Rolled ${roll}! Won ${format(winAmount)} ETB!`;
-                    showToast(`🎲 Rolled ${roll} — Won ${format(winAmount)} ETB`, 'success');
-                } else {
-                    diceResultText.innerHTML = `😔 Rolled ${roll}. Lost.`;
-                    showToast(`🎲 Rolled ${roll} — Lost ${format(bet)} ETB`, 'error');
-                }
-                diceResult.textContent = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][roll - 1];
-            } catch (e) {
-                showToast('Server error: ' + e.message, 'error');
-            }
-        }
-
-        // ─────────────────────────────────────────────────────────────────
-        //  DEPOSIT / WITHDRAW REQUESTS (with phone validation)
-        // ─────────────────────────────────────────────────────────────────
-
-        async function requestDeposit() {
-            if (!currentUser) { showToast('Please login', 'error'); return; }
-            const amount = prompt('Enter amount to deposit (ETB):', '50');
-            if (amount === null) return;
-            const amt = parseFloat(amount);
-            if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
-            try {
-                await API.addTransaction({
-                    username: currentUser.username,
-                    type: 'deposit',
-                    amount: amt,
-                    status: 'pending',
-                    details: 'SMS pending',
-                    timestamp: new Date().toISOString(),
-                });
-                await refreshData();
-                showToast('Deposit request for ' + format(amt) + ' ETB submitted.', 'info');
-            } catch (e) {
-                showToast('Error: ' + e.message, 'error');
-            }
-        }
-
-        async function requestWithdraw() {
-            if (!currentUser) { showToast('Please login', 'error'); return; }
-            const amount = prompt('Enter amount to withdraw (ETB):', '20');
-            if (amount === null) return;
-            const amt = parseFloat(amount);
-            if (isNaN(amt) || amt <= 0) { showToast('Invalid amount', 'error'); return; }
-            if (amt > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
-
-            // Validate phone number for withdrawal – exactly 9 digits
-            let phoneDigits = prompt('Enter your 9‑digit phone number (e.g. 911717171):', '');
-            if (phoneDigits === null) return;
-            phoneDigits = phoneDigits.trim();
-            if (!/^\d{9}$/.test(phoneDigits)) {
-                showToast('Phone must be exactly 9 digits.', 'error');
-                return;
-            }
-            const fullPhone = '+251' + phoneDigits;
-
-            try {
-                // Deduct immediately
-                const newBalance = round2(currentUser.balance - amt);
-                await API.updateUser(currentUser.username, { balance: newBalance });
-                currentUser.balance = newBalance;
-                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                updateBalanceUI();
-
-                await API.addTransaction({
-                    username: currentUser.username,
-                    phone: fullPhone,
-                    type: 'withdraw',
-                    amount: amt,
-                    status: 'pending',
-                    details: 'Phone: ' + fullPhone,
-                    timestamp: new Date().toISOString(),
-                });
-                await refreshData();
-                showToast('Withdrawal for ' + format(amt) + ' ETB submitted to ' + fullPhone, 'info');
-            } catch (e) {
-                showToast('Error: ' + e.message, 'error');
-            }
-        }
-
-        // ─────────────────────────────────────────────────────────────────
-        //  EVENT BINDINGS & INIT
-        // ─────────────────────────────────────────────────────────────────
-
-        loginBtn.onclick = () => {
-            loginModal.classList.add('open');
-            loginError.textContent = '';
-            // Pre-fill if saved credentials exist
-            const creds = localStorage.getItem('gamehub_creds');
-            if (creds) {
-                try {
-                    const { username, password } = JSON.parse(creds);
-                    loginUsername.value = username;
-                    loginPassword.value = password;
-                    loginRemember.checked = true;
-                } catch (e) {}
-            } else {
-                loginUsername.value = '';
-                loginPassword.value = '';
-                loginRemember.checked = false;
-            }
-        };
-        registerBtn.onclick = () => { registerModal.classList.add('open');
-            registerError.textContent = ''; };
-        changePwBtn.onclick = () => { changePwModal.classList.add('open');
-            changePwError.textContent = '';
-            changePwCurrent.value = '';
-            changePwNew.value = '';
-            changePwConfirm.value = ''; };
-        loginClose.onclick = () => loginModal.classList.remove('open');
-        registerClose.onclick = () => registerModal.classList.remove('open');
-        changePwClose.onclick = () => changePwModal.classList.remove('open');
-        loginModal.onclick = (e) => { if (e.target === loginModal) loginModal.classList.remove('open'); };
-        registerModal.onclick = (e) => { if (e.target === registerModal) registerModal.classList.remove('open'); };
-        changePwModal.onclick = (e) => { if (e.target === changePwModal) changePwModal.classList.remove('open'); };
-        loginSubmit.onclick = () => {
-            const u = loginUsername.value.trim(),
-                p = loginPassword.value.trim();
-            if (!u || !p) { loginError.textContent = 'Fill all fields'; return; }
-            login(u, p, loginRemember.checked);
-        };
-        registerSubmit.onclick = () => {
-            const u = registerUsername.value.trim(),
-                p = registerPassword.value.trim(),
-                ph = registerPhone.value.trim();
-            if (!u || !p || !ph) { registerError.textContent = 'Fill all fields'; return; }
-            if (u.length < 3) { registerError.textContent = 'Username min 3 chars'; return; }
-            if (p.length < 3) { registerError.textContent = 'Password min 3 chars'; return; }
-            register(u, p, ph);
-        };
-        changePwSubmit.onclick = () => {
-            if (!currentUser) { showToast('Login required', 'error'); return; }
-            const cur = changePwCurrent.value.trim(),
-                newPw = changePwNew.value.trim(),
-                confirm = changePwConfirm.value.trim();
-            if (!cur || !newPw || !confirm) { changePwError.textContent = 'Fill all fields'; return; }
-            changePassword(currentUser.username, cur, newPw, confirm);
-        };
-        loginPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginSubmit.click(); });
-        registerPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') registerSubmit.click(); });
-        changePwConfirm.addEventListener('keydown', (e) => { if (e.key === 'Enter') changePwSubmit.click(); });
-        logoutBtn.onclick = logout;
-        navLinks.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-            const section = btn.dataset.section;
-            if (!section) return;
-            if (section === 'admin' && (!currentUser || !currentUser.isAdmin)) { showToast('Admin only', 'error'); return; }
-            switchSection(section);
-        });
-
-        // ─────────────────────────────────────────────────────────────────
-        //  ADD DEPOSIT/WITHDRAW BUTTONS TO USER AREA
-        // ─────────────────────────────────────────────────────────────────
-
-        const depositReqBtn = document.createElement('button');
-        depositReqBtn.className = 'btn';
-        depositReqBtn.textContent = '💳 Deposit';
-        depositReqBtn.onclick = requestDeposit;
-        const withdrawReqBtn = document.createElement('button');
-        withdrawReqBtn.className = 'btn';
-        withdrawReqBtn.textContent = '🏦 Withdraw';
-        withdrawReqBtn.onclick = requestWithdraw;
-        const userAreaDiv = document.getElementById('userArea');
-        userAreaDiv.insertBefore(depositReqBtn, userAreaDiv.querySelector('.btn'));
-        userAreaDiv.insertBefore(withdrawReqBtn, userAreaDiv.querySelector('.btn'));
-
-        // ─────────────────────────────────────────────────────────────────
-        //  AUTO-LOGIN on page load (if remembered)
-        // ─────────────────────────────────────────────────────────────────
-
-        async function tryAutoLogin() {
-            // Check localStorage for remembered user
-            const storedUser = localStorage.getItem('gamehub_user');
-            const storedCreds = localStorage.getItem('gamehub_creds');
-            if (storedUser && storedCreds) {
-                try {
-                    const user = JSON.parse(storedUser);
-                    const creds = JSON.parse(storedCreds);
-                    // Attempt login with stored credentials
-                    const result = await API.login(creds.username, creds.password);
-                    if (result.success) {
-                        currentUser = result.user;
-                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        showToast('Auto‑login: ' + currentUser.username, 'success');
-                        await refreshData();
-                        addPlayer(currentUser.username);
-                        updateUI();
-                        initKeno();
-                        initAviator();
-                        initDice();
-                        return true;
-                    } else {
-                        // Credentials invalid, clear localStorage
-                        localStorage.removeItem('gamehub_user');
-                        localStorage.removeItem('gamehub_creds');
-                    }
-                } catch (e) {
-                    localStorage.removeItem('gamehub_user');
-                    localStorage.removeItem('gamehub_creds');
-                }
-            }
-            // Otherwise check sessionStorage
-            const savedUser = sessionStorage.getItem('currentUser');
-            if (savedUser) {
-                try {
-                    const parsed = JSON.parse(savedUser);
-                    const user = await API.getUser(parsed.username);
-                    if (user) {
-                        currentUser = user;
-                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        addPlayer(currentUser.username);
-                        updateUI();
-                        initKeno();
-                        initAviator();
-                        initDice();
-                        return true;
-                    }
-                } catch (e) { /* ignore */ }
-            }
-            return false;
-        }
-
-        // ─────────────────────────────────────────────────────────────────
-        //  INIT
-        // ─────────────────────────────────────────────────────────────────
-
-        (async function init() {
-            await checkServer();
-            if (serverOnline) {
-                await refreshData();
-                // Try auto-login
-                const loggedIn = await tryAutoLogin();
-                if (!loggedIn) {
-                    // No auto-login, just show UI
-                    updateUI();
-                    initKeno();
-                    initAviator();
-                    initDice();
-                }
-            } else {
-                showToast('Server offline – please start the backend', 'error', 5000);
-                updateUI();
-                initKeno();
-                initAviator();
-                initDice();
-            }
-
-            if (allUsers.length === 0 && serverOnline) {
-                setTimeout(refreshData, 1000);
-            }
-        })();
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') { loginModal.classList.remove('open');
-                registerModal.classList.remove('open');
-                changePwModal.classList.remove('open'); }
-        });
-
-        console.log('🚀 Platform ready. Server URL:', SERVER_URL);
-    </script>
-</body>
-</html>
+                '<div style="padding:4px 8px;opacity
