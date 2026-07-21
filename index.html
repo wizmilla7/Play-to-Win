@@ -1379,13 +1379,27 @@
         }
         .fruit-mode-selector {
             display: flex;
-            gap: 8px;
+            align-items: center;
             justify-content: center;
+            gap: 12px;
             margin-bottom: 10px;
             flex-wrap: wrap;
+            background: rgba(255,255,255,0.03);
+            padding: 6px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.04);
+            max-width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .fruit-mode-selector .mode-label {
+            font-size: 11px;
+            opacity: 0.5;
+            font-weight: 600;
+            margin-right: 4px;
         }
         .fruit-mode-selector button {
-            padding: 5px 16px;
+            padding: 4px 14px;
             border-radius: 20px;
             border: 2px solid rgba(255,255,255,0.06);
             background: rgba(255,255,255,0.04);
@@ -1942,6 +1956,17 @@
                 font-size: 10px;
                 padding: 4px 12px;
             }
+            .fruit-mode-selector {
+                padding: 4px 8px;
+                gap: 6px;
+            }
+            .fruit-mode-selector button {
+                font-size: 11px;
+                padding: 3px 10px;
+            }
+            .fruit-mode-selector .mode-label {
+                font-size: 9px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -1969,7 +1994,7 @@
                 font-size: 6px;
             }
             .fruit-grid {
-                max-width: 200px;
+                max-width: 180px;
             }
             .fruit-grid.mode-3x3 .fruit-cell {
                 font-size: 1.4rem;
@@ -2040,7 +2065,7 @@
                     <div class="keno-header">
                         <span class="keno-title">FAST KENO</span>
                     </div>
-                    <div class="keno-sub">Pick up to 10 · 1–80</div>
+                    <div class="keno-sub">Pick up to 10 · 1–80 · 20 numbers drawn</div>
                     <div class="keno-grid-wrap">
                         <div class="keno-grid" id="kenoGrid"></div>
                     </div>
@@ -2151,10 +2176,13 @@
                 <div class="fruit-game-container">
                     <h2>🍎 Fruit Slot</h2>
                     <div class="sub">Match identical fruits in each row to win!</div>
+                    
                     <div class="fruit-mode-selector">
+                        <span class="mode-label">📐 Grid:</span>
                         <button data-mode="3x3" class="active-mode">3×3</button>
                         <button data-mode="5x4">5×4</button>
                     </div>
+
                     <div class="fruit-grid mode-3x3" id="fruitGrid"></div>
                     <div class="fruit-result" id="fruitResult">Press SPIN to play</div>
                     <div class="fruit-controls">
@@ -2184,7 +2212,7 @@
                         <button data-diff="hard" class="hard">🔴 Hard</button>
                     </div>
                     <p style="font-size:10px;opacity:0.3;margin-top:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:6px;">
-                        Affects Keno, Aviator, Dice, and Fruit (row payout multiplier).
+                        Affects payout multipliers for Keno, Aviator, Dice, and Fruit.
                     </p>
                 </div>
 
@@ -2497,9 +2525,9 @@
             return map[matchCount] || 0;
         }
 
-        function getKenoDrawCount(difficulty) {
-            const map = { easy: 25, medium: 20, hard: 15 };
-            return map[difficulty] || 20;
+        // ALWAYS DRAW 20 NUMBERS (unchanged by difficulty)
+        function getKenoDrawCount() {
+            return 20;
         }
 
         function getDiceMultiplier(difficulty) {
@@ -3181,7 +3209,7 @@
                 const pool = [];
                 for (let i = 1; i <= 80; i++) pool.push(i);
                 shuffle(pool);
-                const drawCount = getKenoDrawCount(gameDifficulty);
+                const drawCount = getKenoDrawCount(); // Always 20
                 const drawn = pool.slice(0, drawCount);
                 kenoState.drawn = new Set(drawn);
 
