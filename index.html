@@ -3435,4 +3435,735 @@
                 `<div class="results-round-header"><span class="r-title">Round #${last.round}</span><span class="r-time">${timeStr}</span></div><div style="font-size:10px;opacity:0.4;padding:0 8px 2px 8px;">🎯 Winning Numbers</div><div class="results-winning-numbers">${last.winningNumbers.sort((a,b)=>a-b).map(n=>`<span class="wnum">${n}</span>`).join('')}</div><div style="font-size:10px;opacity:0.4;padding:2px 8px;">👤 Players</div><div class="results-players">`;
             const entries = Object.entries(last.players);
             if (entries.length === 0) html +=
-                '<div style="padding:4px 8px;opacity
+                '<div style="padding:4px 8px;opacity:0.3;font-size:11px;">No players this round</div>';
+            else {
+                entries.forEach(([username, data]) => {
+                    const winClass = data.win > 0 ? 'positive' : 'zero';
+                    const winText = data.win > 0 ? `+${format(data.win)} ETB` : '—';
+                    html +=
+                        `<div class="rp-row"><span class="rp-name">${username}</span><span class="rp-matches">${data.matchCount} matches</span><span class="rp-win ${winClass}">${winText}</span></div>`;
+                });
+            }
+            html +=
+                `</div><div class="results-summary"><span>🏆 Winners: ${last.totalWinners||0}</span><span>💰 Payout: ${format(last.totalPayout||0)} ETB</span></div>`;
+            container.innerHTML = html;
+        }
+
+        function renderStatistics() {
+            const container = document.getElementById('statsContent');
+            if (kenoHistory.length === 0) { container.innerHTML = '<span class="empty">No stats</span>'; return; }
+            const totalGames = kenoHistory.length;
+            const freq = {};
+            for (let i = 1; i <= 80; i++) freq[i] = 0;
+            kenoHistory.forEach(h => { h.winningNumbers.forEach(n => { freq[n] = (freq[n] || 0) + 1; }); });
+
+            const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+            const top10 = sorted.slice(0, 10);
+            const hot = sorted.slice(0, 5).map(([num, count]) => ({ num: parseInt(num), count }));
+            const sortedByCount = sorted.filter(([_, c]) => c > 0).sort((a, b) => a[1] - b[1]);
+            const cold = sortedByCount.slice(0, 5).map(([num, count]) => ({ num: parseInt(num), count }));
+
+            let totalWinners = 0,
+                totalPayout = 0;
+            kenoHistory.forEach(h => { totalWinners += h.totalWinners || 0;
+                totalPayout += h.totalPayout || 0; });
+
+            let html =
+                `<div class="stat-grid"><div class="stat-card gold"><div class="stat-value">${totalGames}</div><div class="stat-label">Games</div></div><div class="stat-card green"><div class="stat-value">${totalWinners}</div><div class="stat-label">Winners</div></div><div class="stat-card pink"><div class="stat-value">${format(totalPayout)}</div><div class="stat-label">Payout (ETB)</div></div><div class="stat-card"><div class="stat-value">${kenoHistory.length>0?Math.round(totalWinners/kenoHistory.length):0}</div><div class="stat-label">Avg Winners</div></div></div>`;
+
+            html += `<div class="hot-cold-row">`;
+            if (hot.length > 0) {
+                html +=
+                    `<div class="hot-cold-group"><span class="label">🔥 HOT</span> ${hot.map(h=>`<span class="num hot">${h.num}</span>`).join('')}</div>`;
+            }
+            if (cold.length > 0) {
+                html +=
+                    `<div class="hot-cold-group"><span class="label">❄️ COLD</span> ${cold.map(c=>`<span class="num cold">${c.num}</span>`).join('')}</div>`;
+            }
+            html += `</div>`;
+
+            html +=
+                `<div style="margin-top:6px;opacity:0.4;font-size:10px;margin-bottom:3px;">📊 Most Frequent (all)</div><div class="top-numbers">${top10.map(([num,count])=>`<span class="num-badge">${num} <span class="count">(${count}x)</span></span>`).join('')}</div>`;
+
+            container.innerHTML = html;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  AVIATOR
+        // ─────────────────────────────────────────────────────────────────
+
+        class AviatorGame {
+            constructor(index) {
+                this.index = index;
+                this.isPlaying = false;
+                this.isCrashed = false;
+                this.multiplier = 1.0;
+                this.crashPoint = 0;
+                this.bet = 20.00;
+                this.profit = 0;
+                this.history = [];
+                this.animId = null;
+                this.betPlaced = false;
+                this.container = null;
+                this.elements = {};
+                this.autoRunning = false;
+                this.autoTarget = 2.0;
+                this.crashDist = getAviatorCrashDistribution(gameDifficulty);
+            }
+
+            init(container) {
+                this.container = container;
+                container.innerHTML = `
+                    <div class="game-label">Game ${this.index+1}</div>
+                    <div class="aviator-history" id="aviatorHistory${this.index}"></div>
+                    <div class="aviator-main">
+                        <div class="big-multiplier" id="aviatorBigMult${this.index}">1.00x</div>
+                        <div class="game-status" id="aviatorStatus${this.index}">Waiting...</div>
+                    </div>
+                    <div class="aviator-betslip">
+                        <div class="bet-label">Bet</div>
+                        <div class="bet-input-group">
+                            <input type="number" id="aviatorBet${this.index}" value="20.00" step="0.50" min="0.50" />
+                            <div class="bet-presets">
+                                <button data-amount="20">20</button>
+                                <button data-amount="80">80</button>
+                                <button data-amount="40">40</button>
+                                <button data-amount="400">400</button>
+                            </div>
+                        </div>
+                        <button class="bet-btn" id="aviatorBetBtn${this.index}">Bet 20.00 ETB</button>
+                        <button class="cashout-btn" id="aviatorCashout${this.index}" disabled>Cash Out</button>
+                    </div>
+                `;
+                this.elements = {
+                    history: document.getElementById(`aviatorHistory${this.index}`),
+                    bigMult: document.getElementById(`aviatorBigMult${this.index}`),
+                    status: document.getElementById(`aviatorStatus${this.index}`),
+                    betInput: document.getElementById(`aviatorBet${this.index}`),
+                    betBtn: document.getElementById(`aviatorBetBtn${this.index}`),
+                    cashoutBtn: document.getElementById(`aviatorCashout${this.index}`),
+                };
+                container.querySelectorAll('.bet-presets button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const val = parseFloat(btn.dataset.amount);
+                        if (!isNaN(val)) { this.elements.betInput.value = val;
+                            this.bet = val;
+                            this.updateBetBtn(); }
+                    });
+                });
+                this.elements.betInput.addEventListener('input', () => {
+                    const val = parseFloat(this.elements.betInput.value);
+                    if (!isNaN(val) && val > 0) { this.bet = val;
+                        this.updateBetBtn(); }
+                });
+                this.elements.betBtn.addEventListener('click', () => this.placeBet());
+                this.elements.cashoutBtn.addEventListener('click', () => this.cashOut());
+                this.updateUI();
+            }
+
+            updateBetBtn() {
+                this.elements.betBtn.textContent = `Bet ${format(this.bet)} ETB`;
+                if (currentUser && currentUser.balance < this.bet) this.elements.betBtn.disabled = true;
+                else this.elements.betBtn.disabled = this.isPlaying;
+            }
+
+            updateUI() {
+                const mult = this.multiplier;
+                const display = mult.toFixed(2) + 'x';
+                this.elements.bigMult.textContent = display;
+                this.elements.bigMult.classList.toggle('crashed', this.isCrashed);
+                this.elements.status.textContent = this.isPlaying ? (this.isCrashed ? '💥 Crashed' : '✈️ Flying…') :
+                    'Waiting...';
+
+                this.elements.history.innerHTML = '';
+                if (this.history.length > 0) {
+                    const hist = [...this.history].reverse().slice(0, 10);
+                    hist.forEach(val => {
+                        const span = document.createElement('span');
+                        span.className = 'history-item';
+                        span.textContent = val.toFixed(2) + 'x';
+                        if (val >= 2.0) span.classList.add('high');
+                        else if (val < 1.5) span.classList.add('low');
+                        this.elements.history.appendChild(span);
+                    });
+                } else {
+                    [1.77, 1.11, 1.19, 3.09, 2.93].forEach(val => {
+                        const span = document.createElement('span');
+                        span.className = 'history-item';
+                        span.textContent = val.toFixed(2) + 'x';
+                        if (val >= 2.0) span.classList.add('high');
+                        else if (val < 1.5) span.classList.add('low');
+                        this.elements.history.appendChild(span);
+                    });
+                }
+                this.updateBetBtn();
+                this.elements.cashoutBtn.disabled = !this.isPlaying || this.isCrashed;
+            }
+
+            async placeBet() {
+                if (!currentUser) { showToast('Please login', 'error'); return; }
+                if (this.isPlaying) return;
+                const bet = parseFloat(this.elements.betInput.value) || 20;
+                if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
+                if (bet <= 0) { showToast('Invalid bet', 'error'); return; }
+                this.bet = bet;
+
+                try {
+                    const newBalance = round2(currentUser.balance - bet);
+                    await API.updateUser(currentUser.username, { balance: newBalance });
+                    currentUser.balance = newBalance;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateBalanceUI();
+
+                    this.isPlaying = true;
+                    this.isCrashed = false;
+                    this.multiplier = 1.0;
+                    this.profit = 0;
+                    this.betPlaced = true;
+
+                    // Use difficulty-based crash distribution
+                    const d = this.crashDist;
+                    const r = Math.random();
+                    let crash = 1.0;
+                    if (r < d.low) crash = 1.0 + Math.random() * 0.3;
+                    else if (r < d.midLow) crash = 1.3 + Math.random() * 0.5;
+                    else if (r < d.mid) crash = 1.8 + Math.random() * 0.8;
+                    else if (r < d.midHigh) crash = 2.6 + Math.random() * 1.5;
+                    else if (r < d.high) crash = 4.1 + Math.random() * 3.0;
+                    else if (r < d.veryHigh) crash = 7.1 + Math.random() * 6.0;
+                    else crash = 13 + Math.random() * 20;
+                    this.crashPoint = Math.min(Math.max(crash, 1.01), 40);
+                    this.updateUI();
+                    this.startLoop();
+                    if (aviatorAutoPlayCheck.checked && aviatorAutoTarget.value) {
+                        const target = parseFloat(aviatorAutoTarget.value);
+                        if (!isNaN(target) && target > 1) this.autoTarget = target;
+                    }
+                } catch (e) {
+                    showToast('Server error: ' + e.message, 'error');
+                }
+            }
+
+            startLoop() {
+                if (this.animId) cancelAnimationFrame(this.animId);
+                let lastTime = performance.now();
+                let elapsed = 0;
+
+                const tick = (timestamp) => {
+                    if (!this.isPlaying) { this.animId = null; return; }
+                    const dt = (timestamp - lastTime) / 1000;
+                    lastTime = timestamp;
+                    elapsed += dt;
+                    const baseMult = 1 + elapsed * 0.12;
+                    const mult = Math.min(baseMult + Math.sin(elapsed * 0.8) * 0.02 * elapsed, 50);
+                    this.multiplier = Math.min(mult, this.crashPoint);
+
+                    if (aviatorAutoPlayCheck.checked && this.autoTarget && this.multiplier >= this.autoTarget) {
+                        this.cashOut();
+                        return;
+                    }
+
+                    if (this.multiplier >= this.crashPoint) {
+                        this.crash();
+                        return;
+                    }
+                    this.profit = round2(this.bet * this.multiplier - this.bet);
+                    this.updateUI();
+                    this.animId = requestAnimationFrame(tick);
+                };
+                this.animId = requestAnimationFrame(tick);
+            }
+
+            async crash() {
+                this.isCrashed = true;
+                this.isPlaying = false;
+                this.betPlaced = false;
+                this.profit = -this.bet;
+                this.history.push(this.crashPoint);
+                if (this.history.length > 30) this.history.shift();
+                this.updateUI();
+                showToast(`💥 Game ${this.index+1} crashed at ${this.crashPoint.toFixed(2)}×`, 'error');
+                this.elements.betBtn.disabled = false;
+                if (aviatorAutoPlayCheck.checked && this.autoRunning) {
+                    setTimeout(() => { this.placeBet(); }, 1500);
+                }
+            }
+
+            async cashOut() {
+                if (!this.isPlaying || this.isCrashed) return;
+                this.isPlaying = false;
+                this.betPlaced = false;
+                const mult = this.multiplier;
+                const win = round2(this.bet * mult);
+                this.profit = round2(win - this.bet);
+
+                try {
+                    const user = await API.getUser(currentUser.username);
+                    if (user) {
+                        const newBalance = round2(user.balance + win);
+                        await API.updateUser(currentUser.username, { balance: newBalance });
+                        currentUser.balance = newBalance;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        updateBalanceUI();
+                    }
+                } catch (e) {
+                    showToast('Error saving win: ' + e.message, 'error');
+                }
+
+                this.history.push(mult);
+                if (this.history.length > 30) this.history.shift();
+                this.updateUI();
+                showToast(`✅ Game ${this.index+1} cashed out at ${mult.toFixed(2)}× +${format(this.profit)}`, 'success');
+                this.elements.betBtn.disabled = false;
+                if (aviatorAutoPlayCheck.checked && this.autoRunning) {
+                    setTimeout(() => { this.placeBet(); }, 1200);
+                }
+            }
+
+            startAuto(rounds, target) {
+                this.autoRunning = true;
+                this.autoTarget = target;
+                let count = 0;
+                const playNext = () => {
+                    if (!this.autoRunning || count >= rounds) {
+                        this.autoRunning = false;
+                        showToast(`Auto-play finished (${this.index+1})`, 'info');
+                        return;
+                    }
+                    if (!this.isPlaying) {
+                        this.placeBet();
+                        count++;
+                    }
+                };
+                const origCashout = this.cashOut.bind(this);
+                const origCrash = this.crash.bind(this);
+                this.cashOut = function() {
+                    origCashout();
+                    if (this.autoRunning && count < rounds) {
+                        setTimeout(() => { this.placeBet(); }, 1200);
+                        count++;
+                    } else {
+                        this.autoRunning = false;
+                        showToast(`Auto-play finished (${this.index+1})`, 'info');
+                    }
+                };
+                this.crash = function() {
+                    origCrash();
+                    if (this.autoRunning && count < rounds) {
+                        setTimeout(() => { this.placeBet(); }, 1500);
+                        count++;
+                    } else {
+                        this.autoRunning = false;
+                        showToast(`Auto-play finished (${this.index+1})`, 'info');
+                    }
+                };
+                setTimeout(() => { this.placeBet(); }, 500);
+            }
+
+            stopAuto() { this.autoRunning = false; }
+        }
+
+        function initAviator() {
+            const container = document.getElementById('aviatorGames');
+            container.innerHTML = '';
+            const dual = aviatorDualCheck.checked;
+            const count = dual ? 2 : 1;
+            aviatorGameInstances = [];
+            for (let i = 0; i < count; i++) {
+                const gameDiv = document.createElement('div');
+                gameDiv.className = 'aviator-game';
+                container.appendChild(gameDiv);
+                const game = new AviatorGame(i);
+                game.crashDist = getAviatorCrashDistribution(gameDifficulty);
+                game.init(gameDiv);
+                aviatorGameInstances.push(game);
+            }
+            aviatorAutoStart.onclick = function() {
+                if (!currentUser) { showToast('Login first', 'error'); return; }
+                const target = parseFloat(aviatorAutoTarget.value);
+                const rounds = parseInt(aviatorAutoRounds.value) || 5;
+                if (isNaN(target) || target <= 1) { showToast('Target must be > 1.0', 'error'); return; }
+                if (rounds < 1) { showToast('Rounds must be >= 1', 'error'); return; }
+                aviatorGameInstances.forEach(g => g.stopAuto());
+                aviatorGameInstances.forEach((g, idx) => {
+                    setTimeout(() => { g.startAuto(rounds, target); }, idx * 800);
+                });
+                showToast(`Auto-play started: ${rounds} rounds, target ${target.toFixed(1)}×`, 'info');
+            };
+            aviatorDualCheck.onchange = initAviator;
+            updateAviatorUI();
+        }
+
+        function updateAviatorUI() {
+            aviatorGameInstances.forEach(g => g.updateUI());
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  DICE
+        // ─────────────────────────────────────────────────────────────────
+
+        let diceState = { bet: 5, choice: 'over', result: null };
+        const diceResult = document.getElementById('diceResult');
+        const diceBet = document.getElementById('diceBet');
+        const diceRoll = document.getElementById('diceRoll');
+        const diceResultText = document.getElementById('diceResultText');
+        const diceOptions = document.querySelectorAll('.dice-options button');
+
+        function initDice() {
+            diceOptions.forEach(btn => {
+                btn.onclick = function() {
+                    diceOptions.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    diceState.choice = this.dataset.bet;
+                };
+            });
+            diceRoll.onclick = diceRollHandler;
+            diceBet.onchange = function() { diceState.bet = parseFloat(this.value) || 5; };
+            diceBet.value = diceState.bet;
+        }
+
+        async function diceRollHandler() {
+            if (!currentUser) { showToast('Please login', 'error'); return; }
+            const bet = parseFloat(diceBet.value) || 5;
+            if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
+            if (bet <= 0) { showToast('Invalid bet', 'error'); return; }
+
+            try {
+                const newBalance = round2(currentUser.balance - bet);
+                await API.updateUser(currentUser.username, { balance: newBalance });
+                currentUser.balance = newBalance;
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateBalanceUI();
+
+                const roll = Math.floor(Math.random() * 6) + 1;
+                diceState.result = roll;
+                const isOver = roll > 3.5;
+                const win = (diceState.choice === 'over' && isOver) || (diceState.choice === 'under' && !isOver);
+                const mult = getDiceMultiplier(gameDifficulty);
+                const winAmount = win ? round2(bet * mult) : 0;
+
+                if (win) {
+                    const user = await API.getUser(currentUser.username);
+                    if (user) {
+                        const newBal = round2(user.balance + winAmount);
+                        await API.updateUser(currentUser.username, { balance: newBal });
+                        currentUser.balance = newBal;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        updateBalanceUI();
+                    }
+                    diceResultText.innerHTML = `🎉 Rolled ${roll}! Won ${format(winAmount)} ETB! (${mult}×)`;
+                    showToast(`🎲 Rolled ${roll} — Won ${format(winAmount)} ETB`, 'success');
+                } else {
+                    diceResultText.innerHTML = `😔 Rolled ${roll}. Lost.`;
+                    showToast(`🎲 Rolled ${roll} — Lost ${format(bet)} ETB`, 'error');
+                }
+                diceResult.textContent = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][roll - 1];
+            } catch (e) {
+                showToast('Server error: ' + e.message, 'error');
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  FRUIT GAME
+        // ─────────────────────────────────────────────────────────────────
+
+        const FRUIT_EMOJIS = ['🍎', '🍊', '🍇', '🍉', '🍓', '🍑'];
+        const FRUIT_KEYS = ['apple', 'orange', 'grape', 'watermelon', 'strawberry', 'peach'];
+
+        function initFruit() {
+            fruitSpin.onclick = fruitSpinHandler;
+            fruitBet.onchange = function() { fruitState.bet = parseFloat(this.value) || 5; };
+            fruitBet.value = fruitState.bet;
+            updateFruitPaytable();
+            // Set initial random fruits
+            for (let i = 0; i < 3; i++) {
+                fruitReels[i].textContent = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
+            }
+            fruitResult.textContent = 'Press SPIN to play';
+            fruitResult.className = 'fruit-result';
+        }
+
+        async function fruitSpinHandler() {
+            if (!currentUser) { showToast('Please login', 'error'); return; }
+            if (fruitState.isSpinning) return;
+            const bet = parseFloat(fruitBet.value) || 5;
+            if (bet > currentUser.balance) { showToast('Insufficient balance', 'error'); return; }
+            if (bet <= 0) { showToast('Invalid bet', 'error'); return; }
+
+            fruitState.isSpinning = true;
+            fruitSpin.disabled = true;
+            fruitResult.textContent = '🎰 Spinning...';
+            fruitResult.className = 'fruit-result';
+
+            try {
+                const newBalance = round2(currentUser.balance - bet);
+                await API.updateUser(currentUser.username, { balance: newBalance });
+                currentUser.balance = newBalance;
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateBalanceUI();
+
+                // Animate spinning
+                for (let spin = 0; spin < 10; spin++) {
+                    for (let i = 0; i < 3; i++) {
+                        fruitReels[i].textContent = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
+                    }
+                    await new Promise(r => setTimeout(r, 80 + spin * 15));
+                }
+
+                // Final result
+                const results = [];
+                for (let i = 0; i < 3; i++) {
+                    results.push(FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)]);
+                    fruitReels[i].textContent = results[i];
+                }
+
+                // Check win
+                const allSame = results[0] === results[1] && results[1] === results[2];
+                const fruitIdx = FRUIT_EMOJIS.indexOf(results[0]);
+                const multipliers = getFruitMultiplier(gameDifficulty);
+                const mult = allSame ? multipliers[FRUIT_KEYS[fruitIdx]] || 0 : 0;
+                const winAmount = round2(bet * mult);
+
+                if (winAmount > 0) {
+                    const user = await API.getUser(currentUser.username);
+                    if (user) {
+                        const newBal = round2(user.balance + winAmount);
+                        await API.updateUser(currentUser.username, { balance: newBal });
+                        currentUser.balance = newBal;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        updateBalanceUI();
+                    }
+                    fruitResult.textContent = `🎉 ${results.join(' ')} — Won ${format(winAmount)} ETB! (${mult}×)`;
+                    fruitResult.className = 'fruit-result win';
+                    showToast(`🍎 Fruit win: ${format(winAmount)} ETB`, 'success');
+                    fruitReels.forEach(el => el.classList.add('winner'));
+                    setTimeout(() => fruitReels.forEach(el => el.classList.remove('winner')), 1500);
+                } else {
+                    fruitResult.textContent = `😔 ${results.join(' ')} — No match. Try again!`;
+                    fruitResult.className = 'fruit-result lose';
+                    showToast(`🍎 No match — lost ${format(bet)} ETB`, 'error');
+                }
+
+                // Update paytable to reflect difficulty
+                updateFruitPaytable();
+
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            }
+
+            fruitState.isSpinning = false;
+            fruitSpin.disabled = false;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  EVENT BINDINGS & INIT
+        // ─────────────────────────────────────────────────────────────────
+
+        loginBtn.onclick = () => {
+            loginModal.classList.add('open');
+            loginError.textContent = '';
+            const creds = localStorage.getItem('gamehub_creds');
+            if (creds) {
+                try {
+                    const { username, password } = JSON.parse(creds);
+                    loginUsername.value = username;
+                    loginPassword.value = password;
+                    loginRemember.checked = true;
+                } catch (e) {}
+            } else {
+                loginUsername.value = '';
+                loginPassword.value = '';
+                loginRemember.checked = false;
+            }
+        };
+        registerBtn.onclick = () => { registerModal.classList.add('open');
+            registerError.textContent = ''; };
+        changePwBtn.onclick = () => { changePwModal.classList.add('open');
+            changePwError.textContent = '';
+            changePwCurrent.value = '';
+            changePwNew.value = '';
+            changePwConfirm.value = ''; };
+        loginClose.onclick = () => loginModal.classList.remove('open');
+        registerClose.onclick = () => registerModal.classList.remove('open');
+        changePwClose.onclick = () => changePwModal.classList.remove('open');
+        txModalClose.onclick = () => txModal.classList.remove('open');
+        loginModal.onclick = (e) => { if (e.target === loginModal) loginModal.classList.remove('open'); };
+        registerModal.onclick = (e) => { if (e.target === registerModal) registerModal.classList.remove('open'); };
+        changePwModal.onclick = (e) => { if (e.target === changePwModal) changePwModal.classList.remove('open'); };
+        txModal.onclick = (e) => { if (e.target === txModal) txModal.classList.remove('open'); };
+
+        loginSubmit.onclick = () => {
+            const u = loginUsername.value.trim(),
+                p = loginPassword.value.trim();
+            if (!u || !p) { loginError.textContent = 'Fill all fields'; return; }
+            login(u, p, loginRemember.checked);
+        };
+        registerSubmit.onclick = () => {
+            const u = registerUsername.value.trim(),
+                p = registerPassword.value.trim(),
+                ph = registerPhone.value.trim();
+            if (!u || !p || !ph) { registerError.textContent = 'Fill all fields'; return; }
+            if (u.length < 3) { registerError.textContent = 'Username min 3 chars'; return; }
+            if (p.length < 3) { registerError.textContent = 'Password min 3 chars'; return; }
+            register(u, p, ph);
+        };
+        changePwSubmit.onclick = () => {
+            if (!currentUser) { showToast('Login required', 'error'); return; }
+            const cur = changePwCurrent.value.trim(),
+                newPw = changePwNew.value.trim(),
+                confirm = changePwConfirm.value.trim();
+            if (!cur || !newPw || !confirm) { changePwError.textContent = 'Fill all fields'; return; }
+            changePassword(currentUser.username, cur, newPw, confirm);
+        };
+        txModalSubmit.onclick = submitTx;
+
+        loginPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') loginSubmit.click(); });
+        registerPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') registerSubmit.click(); });
+        changePwConfirm.addEventListener('keydown', (e) => { if (e.key === 'Enter') changePwSubmit.click(); });
+        txModalAccount.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitTx(); });
+
+        logoutBtn.onclick = logout;
+
+        // Method selection for deposit/withdraw modal
+        txMethodGroup.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            txMethod = btn.dataset.method;
+            updateTxMethodUI();
+        });
+
+        navLinks.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const section = btn.dataset.section;
+            if (!section) return;
+            if (section === 'admin' && (!currentUser || !currentUser.isAdmin)) { showToast('Admin only', 'error'); return; }
+            switchSection(section);
+        });
+
+        // Difficulty selector
+        difficultySelector.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const diff = btn.dataset.diff;
+            if (diff && diff !== gameDifficulty) {
+                setDifficulty(diff);
+            }
+        });
+
+        // ─────────────────────────────────────────────────────────────────
+        //  ADD DEPOSIT/WITHDRAW BUTTONS TO USER AREA
+        // ─────────────────────────────────────────────────────────────────
+
+        const depositReqBtn = document.createElement('button');
+        depositReqBtn.className = 'btn';
+        depositReqBtn.textContent = '💳 Deposit';
+        depositReqBtn.onclick = () => openTxModal('deposit');
+
+        const withdrawReqBtn = document.createElement('button');
+        withdrawReqBtn.className = 'btn';
+        withdrawReqBtn.textContent = '🏦 Withdraw';
+        withdrawReqBtn.onclick = () => openTxModal('withdraw');
+
+        const userAreaDiv = document.getElementById('userArea');
+        userAreaDiv.insertBefore(depositReqBtn, userAreaDiv.querySelector('.btn'));
+        userAreaDiv.insertBefore(withdrawReqBtn, userAreaDiv.querySelector('.btn'));
+
+        // ─────────────────────────────────────────────────────────────────
+        //  AUTO-LOGIN
+        // ─────────────────────────────────────────────────────────────────
+
+        async function tryAutoLogin() {
+            const storedUser = localStorage.getItem('gamehub_user');
+            const storedCreds = localStorage.getItem('gamehub_creds');
+            if (storedUser && storedCreds) {
+                try {
+                    const creds = JSON.parse(storedCreds);
+                    const result = await API.login(creds.username, creds.password);
+                    if (result.success) {
+                        currentUser = result.user;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        showToast('Auto‑login: ' + currentUser.username, 'success');
+                        await refreshData();
+                        addPlayer(currentUser.username);
+                        updateUI();
+                        initKeno();
+                        initAviator();
+                        initDice();
+                        initFruit();
+                        return true;
+                    } else {
+                        localStorage.removeItem('gamehub_user');
+                        localStorage.removeItem('gamehub_creds');
+                    }
+                } catch (e) {
+                    localStorage.removeItem('gamehub_user');
+                    localStorage.removeItem('gamehub_creds');
+                }
+            }
+            const savedUser = sessionStorage.getItem('currentUser');
+            if (savedUser) {
+                try {
+                    const parsed = JSON.parse(savedUser);
+                    const user = await API.getUser(parsed.username);
+                    if (user) {
+                        currentUser = user;
+                        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        addPlayer(currentUser.username);
+                        updateUI();
+                        initKeno();
+                        initAviator();
+                        initDice();
+                        initFruit();
+                        return true;
+                    }
+                } catch (e) { /* ignore */ }
+            }
+            return false;
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        //  INIT
+        // ─────────────────────────────────────────────────────────────────
+
+        (async function init() {
+            await checkServer();
+            if (serverOnline) {
+                await refreshData();
+                const loggedIn = await tryAutoLogin();
+                if (!loggedIn) {
+                    updateUI();
+                    initKeno();
+                    initAviator();
+                    initDice();
+                    initFruit();
+                }
+                // Set default difficulty
+                setDifficulty('medium');
+            } else {
+                showToast('Server offline – please start the backend', 'error', 5000);
+                updateUI();
+                initKeno();
+                initAviator();
+                initDice();
+                initFruit();
+            }
+            if (allUsers.length === 0 && serverOnline) {
+                setTimeout(refreshData, 1000);
+            }
+        })();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                loginModal.classList.remove('open');
+                registerModal.classList.remove('open');
+                changePwModal.classList.remove('open');
+                txModal.classList.remove('open');
+            }
+        });
+
+        console.log('🚀 Platform ready. Server URL:', SERVER_URL);
+        console.log('🎯 Initial difficulty:', gameDifficulty);
+    </script>
+</body>
+</html>
