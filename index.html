@@ -1293,7 +1293,7 @@
             box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2);
         }
 
-        /* ── Difficulty selector in admin ── */
+        /* ── Difficulty selector ── */
         .difficulty-selector {
             display: flex;
             gap: 8px;
@@ -1359,7 +1359,7 @@
             color: #ff6b6b;
         }
 
-        /* ── FRUIT GAME ── */
+        /* ── FRUIT GAME (4x4) ── */
         .fruit-game-container {
             background: #0f0f2a;
             border-radius: 14px;
@@ -1377,26 +1377,26 @@
             font-size: 11px;
             margin-bottom: 12px;
         }
-        .fruit-reels {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: 10px 0 14px 0;
+        .fruit-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            max-width: 320px;
+            margin: 0 auto 12px auto;
         }
-        .fruit-reel {
-            width: 70px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.06);
+        .fruit-cell {
+            aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
+            font-size: 2.2rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.06);
             transition: all 0.15s;
             user-select: none;
         }
-        .fruit-reel.spinning {
+        .fruit-cell.spinning {
             animation: reelSpin 0.08s steps(1) infinite;
             border-color: rgba(255, 215, 0, 0.2);
         }
@@ -1411,9 +1411,9 @@
                 transform: scale(1.02);
             }
         }
-        .fruit-reel.winner {
+        .fruit-cell.winner {
             border-color: #00e676;
-            box-shadow: 0 0 30px rgba(0, 230, 118, 0.15);
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.15);
         }
         .fruit-result {
             font-size: 15px;
@@ -1474,7 +1474,7 @@
         .fruit-paytable {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
             margin-top: 10px;
             padding-top: 10px;
@@ -1894,13 +1894,13 @@
                 font-size: 12px;
                 padding: 6px 14px;
             }
-            .fruit-reels {
-                gap: 8px;
+            .fruit-grid {
+                gap: 4px;
+                max-width: 240px;
             }
-            .fruit-reel {
-                width: 56px;
-                height: 64px;
-                font-size: 36px;
+            .fruit-cell {
+                font-size: 1.6rem;
+                border-radius: 6px;
             }
             .difficulty-selector button {
                 font-size: 10px;
@@ -1932,10 +1932,11 @@
             .winning-banner .label {
                 font-size: 6px;
             }
-            .fruit-reel {
-                width: 44px;
-                height: 50px;
-                font-size: 28px;
+            .fruit-grid {
+                max-width: 200px;
+            }
+            .fruit-cell {
+                font-size: 1.3rem;
             }
         }
 
@@ -2105,29 +2106,20 @@
             </div>
         </div>
 
-        <!-- Fruit Game -->
+        <!-- Fruit Game (4x4) -->
         <div class="section" id="section-fruit">
             <div class="game-container">
                 <div class="fruit-game-container">
-                    <h2>🍎 Fruit Slot</h2>
-                    <div class="sub">Match 3 fruits to win big!</div>
-                    <div class="fruit-reels" id="fruitReels">
-                        <div class="fruit-reel" id="fruitReel0">🍎</div>
-                        <div class="fruit-reel" id="fruitReel1">🍊</div>
-                        <div class="fruit-reel" id="fruitReel2">🍇</div>
-                    </div>
+                    <h2>🍎 Fruit Slot (4x4)</h2>
+                    <div class="sub">Match 4 in a row, column, or diagonal to win!</div>
+                    <div class="fruit-grid" id="fruitGrid"></div>
                     <div class="fruit-result" id="fruitResult">Press SPIN to play</div>
                     <div class="fruit-controls">
                         <input type="number" id="fruitBet" value="5" step="1" min="1" />
                         <button class="btn-spin" id="fruitSpin">🎰 SPIN</button>
                     </div>
-                    <div class="fruit-paytable">
-                        <span><span class="emoji">🍎🍎🍎</span> <span class="mult">5×</span></span>
-                        <span><span class="emoji">🍊🍊🍊</span> <span class="mult">4×</span></span>
-                        <span><span class="emoji">🍇🍇🍇</span> <span class="mult">3×</span></span>
-                        <span><span class="emoji">🍉🍉🍉</span> <span class="mult">2.5×</span></span>
-                        <span><span class="emoji">🍓🍓🍓</span> <span class="mult">2×</span></span>
-                        <span><span class="emoji">🍑🍑🍑</span> <span class="mult">1.5×</span></span>
+                    <div class="fruit-paytable" id="fruitPaytable">
+                        <!-- dynamically filled -->
                     </div>
                 </div>
             </div>
@@ -2328,7 +2320,7 @@
         let transactions = [];
         let kenoHistory = [];
         let serverOnline = false;
-        let gameDifficulty = 'medium'; // 'easy', 'medium', 'hard'
+        let gameDifficulty = 'medium';
 
         // Keno state
         let kenoState = {
@@ -2351,6 +2343,7 @@
             bet: 5,
             result: null,
         };
+        let fruitCells = [];
 
         // ─────────────────────────────────────────────────────────────────
         //  DOM REFS
@@ -2418,14 +2411,11 @@
         const diffStatusDisplay = document.getElementById('diffStatusDisplay');
         const difficultySelector = document.getElementById('difficultySelector');
 
-        const fruitReels = [
-            document.getElementById('fruitReel0'),
-            document.getElementById('fruitReel1'),
-            document.getElementById('fruitReel2'),
-        ];
+        const fruitGrid = document.getElementById('fruitGrid');
         const fruitBet = document.getElementById('fruitBet');
         const fruitSpin = document.getElementById('fruitSpin');
         const fruitResult = document.getElementById('fruitResult');
+        const fruitPaytable = document.getElementById('fruitPaytable');
 
         // ─────────────────────────────────────────────────────────────────
         //  HELPERS
@@ -2473,7 +2463,6 @@
         }
 
         function getAviatorCrashDistribution(difficulty) {
-            // Returns adjusted crash point generation
             const dist = {
                 easy: { low: 0.02, midLow: 0.08, mid: 0.25, midHigh: 0.55, high: 0.82, veryHigh: 0.96 },
                 medium: { low: 0.05, midLow: 0.15, mid: 0.35, midHigh: 0.60, high: 0.80, veryHigh: 0.94 },
@@ -2482,13 +2471,10 @@
             return dist[difficulty] || dist.medium;
         }
 
-        function getFruitMultiplier(difficulty) {
-            const map = {
-                easy: { apple: 6, orange: 5, grape: 4, watermelon: 3.5, strawberry: 2.5, peach: 2 },
-                medium: { apple: 5, orange: 4, grape: 3, watermelon: 2.5, strawberry: 2, peach: 1.5 },
-                hard: { apple: 4, orange: 3.2, grape: 2.4, watermelon: 2, strawberry: 1.6, peach: 1.2 },
-            };
-            return map[difficulty] || map.medium;
+        function getFruitLineMultiplier(difficulty) {
+            // per winning line (row, col, diag)
+            const map = { easy: 3.0, medium: 2.0, hard: 1.2 };
+            return map[difficulty] || 2.0;
         }
 
         // ─────────────────────────────────────────────────────────────────
@@ -2510,24 +2496,22 @@
             // Update game behaviors
             updateKenoUI();
             applyHotColdToGrid();
-            // Update aviator crash distribution for future games
             aviatorGameInstances.forEach(g => { g.crashDist = getAviatorCrashDistribution(gameDifficulty); });
-            // Update dice display
+            // Dice multiplier display (optional)
             const dm = getDiceMultiplier(gameDifficulty);
             document.querySelector('.dice-options').dataset.payout = dm;
-            // Update fruit paytable display
+            // Update fruit paytable
             updateFruitPaytable();
         }
 
         function updateFruitPaytable() {
-            const m = getFruitMultiplier(gameDifficulty);
-            const paytable = document.querySelector('.fruit-paytable');
-            if (!paytable) return;
+            const mult = getFruitLineMultiplier(gameDifficulty);
             const emojis = ['🍎', '🍊', '🍇', '🍉', '🍓', '🍑'];
-            const keys = ['apple', 'orange', 'grape', 'watermelon', 'strawberry', 'peach'];
-            paytable.innerHTML = keys.map((k, i) =>
-                `<span><span class="emoji">${emojis[i]}${emojis[i]}${emojis[i]}</span> <span class="mult">${m[k]}×</span></span>`
-            ).join('');
+            // Show that any matching line gives the base multiplier
+            fruitPaytable.innerHTML = `
+                <span>🎯 Any 4‑in‑a‑line <span class="mult">${mult}×</span></span>
+                <span>🌟 Multi‑line bonus: +${Math.round(mult*0.5)}× per extra line</span>
+            `;
         }
 
         // ─────────────────────────────────────────────────────────────────
@@ -2770,22 +2754,18 @@
                 txModalError.textContent = 'Insufficient balance';
                 return;
             }
-
-            // Validate account
             if (txMethod === 'cbe') {
                 if (!/^\d{13}$/.test(account)) {
                     txModalError.textContent = 'CBE account must be exactly 13 digits';
                     return;
                 }
-            } else { // telebirr
+            } else {
                 if (!/^\d{9}$/.test(account)) {
                     txModalError.textContent = 'Telebirr phone must be exactly 9 digits';
                     return;
                 }
             }
-
             const fullAccount = txMethod === 'telebirr' ? '+251' + account : account;
-
             try {
                 if (txType === 'deposit') {
                     await API.addTransaction({
@@ -3621,7 +3601,6 @@
                     this.profit = 0;
                     this.betPlaced = true;
 
-                    // Use difficulty-based crash distribution
                     const d = this.crashDist;
                     const r = Math.random();
                     let crash = 1.0;
@@ -3864,23 +3843,66 @@
         }
 
         // ─────────────────────────────────────────────────────────────────
-        //  FRUIT GAME
+        //  FRUIT GAME (4x4)
         // ─────────────────────────────────────────────────────────────────
 
         const FRUIT_EMOJIS = ['🍎', '🍊', '🍇', '🍉', '🍓', '🍑'];
-        const FRUIT_KEYS = ['apple', 'orange', 'grape', 'watermelon', 'strawberry', 'peach'];
 
         function initFruit() {
-            fruitSpin.onclick = fruitSpinHandler;
-            fruitBet.onchange = function() { fruitState.bet = parseFloat(this.value) || 5; };
-            fruitBet.value = fruitState.bet;
-            updateFruitPaytable();
-            // Set initial random fruits
-            for (let i = 0; i < 3; i++) {
-                fruitReels[i].textContent = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
+            // Build grid
+            fruitGrid.innerHTML = '';
+            fruitCells = [];
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'fruit-cell';
+                cell.dataset.index = i;
+                cell.textContent = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
+                fruitGrid.appendChild(cell);
+                fruitCells.push(cell);
             }
             fruitResult.textContent = 'Press SPIN to play';
             fruitResult.className = 'fruit-result';
+            fruitBet.value = fruitState.bet || 5;
+            fruitSpin.onclick = fruitSpinHandler;
+            fruitBet.onchange = function() { fruitState.bet = parseFloat(this.value) || 5; };
+            updateFruitPaytable();
+        }
+
+        function getFruitLineMultiplier(diff) {
+            const map = { easy: 3.0, medium: 2.0, hard: 1.2 };
+            return map[diff] || 2.0;
+        }
+
+        function checkFruitWins(grid) {
+            // grid is array of 16 emojis (row-major)
+            // Check rows (4), columns (4), diagonals (2)
+            const lines = [];
+            // rows
+            for (let r = 0; r < 4; r++) {
+                const row = [];
+                for (let c = 0; c < 4; c++) row.push(grid[r * 4 + c]);
+                lines.push(row);
+            }
+            // columns
+            for (let c = 0; c < 4; c++) {
+                const col = [];
+                for (let r = 0; r < 4; r++) col.push(grid[r * 4 + c]);
+                lines.push(col);
+            }
+            // diagonals
+            const diag1 = [grid[0], grid[5], grid[10], grid[15]];
+            const diag2 = [grid[3], grid[6], grid[9], grid[12]];
+            lines.push(diag1, diag2);
+
+            // Check each line for all same emoji
+            const winningLines = [];
+            lines.forEach((line, idx) => {
+                const first = line[0];
+                if (line.every(emoji => emoji === first)) {
+                    winningLines.push({ line, idx });
+                }
+            });
+            return winningLines;
         }
 
         async function fruitSpinHandler() {
@@ -3902,49 +3924,77 @@
                 sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateBalanceUI();
 
-                // Animate spinning
-                for (let spin = 0; spin < 10; spin++) {
-                    for (let i = 0; i < 3; i++) {
-                        fruitReels[i].textContent = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
+                // Animate: rapid random changes
+                for (let spin = 0; spin < 12; spin++) {
+                    for (let i = 0; i < 16; i++) {
+                        fruitCells[i].textContent = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
+                        fruitCells[i].classList.toggle('spinning', spin % 2 === 0);
                     }
-                    await new Promise(r => setTimeout(r, 80 + spin * 15));
+                    await new Promise(r => setTimeout(r, 80 + spin * 10));
                 }
 
-                // Final result
-                const results = [];
-                for (let i = 0; i < 3; i++) {
-                    results.push(FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)]);
-                    fruitReels[i].textContent = results[i];
+                // Final result: generate random grid
+                const grid = [];
+                for (let i = 0; i < 16; i++) {
+                    const emoji = FRUIT_EMOJIS[Math.floor(Math.random() * FRUIT_EMOJIS.length)];
+                    grid.push(emoji);
+                    fruitCells[i].textContent = emoji;
+                    fruitCells[i].classList.remove('spinning', 'winner');
                 }
 
-                // Check win
-                const allSame = results[0] === results[1] && results[1] === results[2];
-                const fruitIdx = FRUIT_EMOJIS.indexOf(results[0]);
-                const multipliers = getFruitMultiplier(gameDifficulty);
-                const mult = allSame ? multipliers[FRUIT_KEYS[fruitIdx]] || 0 : 0;
-                const winAmount = round2(bet * mult);
+                // Check wins
+                const winningLines = checkFruitWins(grid);
+                const baseMult = getFruitLineMultiplier(gameDifficulty);
+                let totalWin = 0;
+                let winMessage = '';
 
-                if (winAmount > 0) {
+                if (winningLines.length > 0) {
+                    // Highlight winning cells
+                    const winningIndices = new Set();
+                    winningLines.forEach(({ line, idx }) => {
+                        // Find indices of this line in grid
+                        let indices = [];
+                        if (idx < 4) { // row
+                            for (let c = 0; c < 4; c++) indices.push(idx * 4 + c);
+                        } else if (idx < 8) { // col
+                            const col = idx - 4;
+                            for (let r = 0; r < 4; r++) indices.push(r * 4 + col);
+                        } else if (idx === 8) { // diag1
+                            indices = [0, 5, 10, 15];
+                        } else { // diag2
+                            indices = [3, 6, 9, 12];
+                        }
+                        indices.forEach(i => {
+                            winningIndices.add(i);
+                            fruitCells[i].classList.add('winner');
+                        });
+                    });
+
+                    const lineCount = winningLines.length;
+                    // Payout: baseMult per line, plus bonus for multiple lines
+                    let multiplier = baseMult * lineCount;
+                    if (lineCount > 1) multiplier += 0.5 * baseMult; // extra bonus
+                    totalWin = round2(bet * multiplier);
+                    winMessage = `🎉 ${winningLines.length} winning line${winningLines.length>1?'s':''}! ${format(totalWin)} ETB (${multiplier.toFixed(1)}×)`;
+                    fruitResult.className = 'fruit-result win';
+                    showToast(`🍎 Fruit win: ${format(totalWin)} ETB!`, 'success');
+
+                    // Credit win
                     const user = await API.getUser(currentUser.username);
                     if (user) {
-                        const newBal = round2(user.balance + winAmount);
+                        const newBal = round2(user.balance + totalWin);
                         await API.updateUser(currentUser.username, { balance: newBal });
                         currentUser.balance = newBal;
                         sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                         updateBalanceUI();
                     }
-                    fruitResult.textContent = `🎉 ${results.join(' ')} — Won ${format(winAmount)} ETB! (${mult}×)`;
-                    fruitResult.className = 'fruit-result win';
-                    showToast(`🍎 Fruit win: ${format(winAmount)} ETB`, 'success');
-                    fruitReels.forEach(el => el.classList.add('winner'));
-                    setTimeout(() => fruitReels.forEach(el => el.classList.remove('winner')), 1500);
                 } else {
-                    fruitResult.textContent = `😔 ${results.join(' ')} — No match. Try again!`;
+                    winMessage = `😔 No match. Try again!`;
                     fruitResult.className = 'fruit-result lose';
                     showToast(`🍎 No match — lost ${format(bet)} ETB`, 'error');
                 }
 
-                // Update paytable to reflect difficulty
+                fruitResult.textContent = winMessage;
                 updateFruitPaytable();
 
             } catch (e) {
@@ -4138,7 +4188,6 @@
                     initDice();
                     initFruit();
                 }
-                // Set default difficulty
                 setDifficulty('medium');
             } else {
                 showToast('Server offline – please start the backend', 'error', 5000);
