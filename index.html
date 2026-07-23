@@ -1,10 +1,10 @@
-```html
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>🎮 PlayToWin – Game Platform</title>
+    <title>🎮 PlayToWin – Working Games</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         * {
@@ -222,81 +222,6 @@
             transform: scale(1.05);
         }
 
-        /* Admin Panel */
-        .admin-panel {
-            background: linear-gradient(135deg, #fff5f5, #fff0f5);
-            border-radius: 16px;
-            padding: 12px 16px;
-            border: 2px solid rgba(255, 107, 107, 0.2);
-            margin-bottom: 16px;
-            display: none;
-        }
-
-        .admin-panel.show {
-            display: block;
-        }
-
-        .admin-panel .admin-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #d63031;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .admin-controls {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .admin-controls button {
-            padding: 6px 14px;
-            border: 2px solid rgba(108, 92, 231, 0.2);
-            border-radius: 20px;
-            background: #fff;
-            font-weight: 600;
-            font-size: 11px;
-            cursor: pointer;
-            transition: 0.3s;
-            color: #1a1a2e;
-        }
-
-        .admin-controls button.active {
-            background: #6c5ce7;
-            color: #fff;
-            border-color: #6c5ce7;
-        }
-
-        .admin-controls button:hover {
-            transform: scale(1.05);
-        }
-
-        .grid-controls {
-            display: flex;
-            gap: 8px;
-            margin-left: auto;
-        }
-
-        .grid-controls button {
-            padding: 4px 12px;
-            border: 2px solid rgba(108, 92, 231, 0.2);
-            border-radius: 20px;
-            background: #fff;
-            font-weight: 600;
-            font-size: 11px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .grid-controls button.active {
-            background: #6c5ce7;
-            color: #fff;
-            border-color: #6c5ce7;
-        }
-
         /* Section Header */
         .section-header {
             display: flex;
@@ -318,25 +243,11 @@
             font-size: 16px;
         }
 
-        /* Game Grids */
-        .game-grid-4 {
+        /* Game Grid */
+        .game-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
-        }
-
-        .game-grid-5 {
-            display: none;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-        }
-
-        .game-grid-5.show {
-            display: grid;
-        }
-
-        .game-grid-4.hide {
-            display: none;
         }
 
         .game-card {
@@ -355,8 +266,12 @@
         }
 
         .game-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-4px) scale(1.02);
             box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .game-card:active {
+            transform: scale(0.95);
         }
 
         .game-card .icon {
@@ -366,7 +281,7 @@
         }
 
         .game-card:hover .icon {
-            transform: scale(1.15);
+            transform: scale(1.15) rotate(-5deg);
         }
 
         .game-card .name {
@@ -430,10 +345,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(4px);
         }
 
         .modal-overlay.show {
@@ -446,19 +362,33 @@
             padding: 24px;
             max-width: 400px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
             animation: modalIn 0.3s ease;
+            position: relative;
         }
 
         @keyframes modalIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from { transform: scale(0.9) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .modal .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 24px;
+            cursor: pointer;
+            color: rgba(26, 26, 46, 0.3);
+            background: none;
+            border: none;
+            padding: 0;
+            width: auto;
         }
 
         .modal h2 {
             font-size: 22px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             color: #1a1a2e;
         }
 
@@ -501,20 +431,12 @@
             background: linear-gradient(135deg, #00b894, #00cec9);
         }
 
-        .modal button:hover {
-            transform: scale(1.02);
+        .modal .btn-gold {
+            background: linear-gradient(135deg, #f39c12, #fdcb6e);
         }
 
-        .modal .close-btn {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            font-size: 24px;
-            cursor: pointer;
-            color: rgba(26, 26, 46, 0.3);
-            background: none;
-            width: auto;
-            padding: 0;
+        .modal button:hover {
+            transform: scale(1.02);
         }
 
         .modal .modal-close {
@@ -533,6 +455,177 @@
 
         .modal .toggle-link:hover {
             text-decoration: underline;
+        }
+
+        /* Game Result Modal */
+        .game-result {
+            text-align: center;
+        }
+
+        .game-result .result-emoji {
+            font-size: 64px;
+            margin: 10px 0;
+            animation: resultBounce 0.6s ease;
+        }
+
+        @keyframes resultBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .game-result .result-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+
+        .game-result .result-sub {
+            font-size: 14px;
+            color: rgba(26, 26, 46, 0.6);
+            margin-bottom: 16px;
+        }
+
+        .game-result .result-amount {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 12px 0;
+        }
+
+        .game-result .result-amount.win {
+            color: #00b894;
+        }
+
+        .game-result .result-amount.lose {
+            color: #ff6b6b;
+        }
+
+        /* Aviator Animation */
+        .aviator-game {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .aviator-game .plane {
+            font-size: 60px;
+            animation: flyUp 3s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes flyUp {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-40px) rotate(-5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        .aviator-game .multiplier {
+            font-size: 48px;
+            font-weight: 800;
+            color: #6c5ce7;
+            margin: 10px 0;
+        }
+
+        .aviator-game .bet-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 16px 0;
+        }
+
+        .aviator-game .bet-controls button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .aviator-game .bet-controls .cashout {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: #fff;
+        }
+
+        .aviator-game .bet-controls .cashout:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Keno Board */
+        .keno-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+            margin: 16px 0;
+        }
+
+        .keno-board .keno-cell {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            border: 2px solid rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #fff;
+        }
+
+        .keno-board .keno-cell.selected {
+            background: #6c5ce7;
+            color: #fff;
+            border-color: #6c5ce7;
+        }
+
+        .keno-board .keno-cell.hit {
+            background: #00b894;
+            color: #fff;
+            border-color: #00b894;
+        }
+
+        .keno-board .keno-cell.miss {
+            background: #ff6b6b;
+            color: #fff;
+            border-color: #ff6b6b;
+        }
+
+        /* Slot Machine */
+        .slot-machine {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .slot-reels {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 16px 0;
+        }
+
+        .slot-reel {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            border: 3px solid rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        .slot-reel.spinning {
+            animation: spinReel 0.3s ease-in-out infinite;
+        }
+
+        @keyframes spinReel {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Bottom Nav */
@@ -598,17 +691,37 @@
             font-weight: 700;
         }
 
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 2000;
+            display: none;
+            max-width: 90%;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
         /* Responsive */
         @media (max-width: 420px) {
             .app { padding: 10px 10px 80px; }
-            .game-grid-4 { gap: 8px; }
-            .game-grid-5 { gap: 6px; }
+            .game-grid { gap: 8px; }
             .game-card { padding: 12px 4px 10px; }
             .game-card .icon { font-size: 26px; }
             .game-card .name { font-size: 8px; }
             .page-title { font-size: 24px; }
             .balance-display .amount { font-size: 18px; }
             .modal { padding: 18px; }
+            .slot-reel { width: 55px; height: 55px; font-size: 28px; }
+            .keno-board { gap: 4px; }
+            .keno-board .keno-cell { font-size: 11px; }
         }
 
         ::-webkit-scrollbar { width: 4px; }
@@ -624,7 +737,7 @@
 
         <!-- Top Bar -->
         <div class="top-bar">
-            <span class="time" id="currentTime">8:21</span>
+            <span class="time" id="currentTime">08:45 PM</span>
             <div class="icons">
                 <i class="fas fa-wifi"></i>
                 <i class="fas fa-signal"></i>
@@ -639,8 +752,8 @@
                 Play<span>ToWin</span>
             </div>
             <div class="header-actions">
-                <span class="badge" id="onlineBadge" onclick="showToast('🔥 12 players online')">🔥 12</span>
-                <div class="avatar" id="avatarBtn" onclick="toggleModal('profileModal')">A</div>
+                <span class="badge" onclick="showToast('🔥 12 players online')">🔥 12</span>
+                <div class="avatar" onclick="toggleModal('profileModal')">A</div>
             </div>
         </div>
 
@@ -652,25 +765,11 @@
         <div class="balance-display">
             <div>
                 <div class="label">💰 Balance</div>
-                <div class="amount"><i class="fas fa-coins"></i> <span id="balanceAmount">0.00</span> ETB</div>
+                <div class="amount"><i class="fas fa-coins"></i> <span id="balanceAmount">25.55</span> ETB</div>
             </div>
             <div class="balance-actions">
                 <button class="deposit" onclick="toggleModal('depositModal')">Deposit</button>
                 <button class="withdraw" onclick="toggleModal('withdrawModal')">Withdraw</button>
-            </div>
-        </div>
-
-        <!-- Admin Panel -->
-        <div class="admin-panel" id="adminPanel">
-            <div class="admin-title"><i class="fas fa-crown"></i> Admin Controls</div>
-            <div class="admin-controls">
-                <button class="active" onclick="setDifficulty('easy', this)">😊 Easy</button>
-                <button onclick="setDifficulty('medium', this)">🤔 Medium</button>
-                <button onclick="setDifficulty('hard', this)">😈 Hard</button>
-                <div class="grid-controls">
-                    <button class="active" onclick="switchGrid(4, this)">4×4</button>
-                    <button onclick="switchGrid(5, this)">5×5</button>
-                </div>
             </div>
         </div>
 
@@ -680,122 +779,47 @@
             <span style="font-size:12px; color:rgba(26,26,46,0.4);">Tap to play</span>
         </div>
 
-        <!-- Grid 4x4 -->
-        <div class="game-grid-4" id="grid4">
-            <!-- Fast Keno -->
-            <div class="game-card purple" onclick="playGame('Fast Keno')">
-                <span class="badge">🔥</span>
+        <div class="game-grid">
+            <div class="game-card purple" onclick="playGame('keno')">
+                <span class="badge">🎯</span>
                 <i class="fas fa-dice icon"></i>
                 <span class="name">Fast Keno</span>
             </div>
-            <!-- Aviator -->
-            <div class="game-card cyan" onclick="playGame('Aviator')">
+            <div class="game-card cyan" onclick="playGame('aviator')">
                 <span class="badge">✈️</span>
                 <i class="fas fa-plane icon"></i>
                 <span class="name">Aviator</span>
             </div>
-            <!-- Fruits -->
-            <div class="game-card gold" onclick="playGame('Fruits')">
-                <span class="badge">🍎</span>
-                <i class="fas fa-apple-alt icon"></i>
-                <span class="name">Fruits</span>
-            </div>
-            <!-- Lucky Dice -->
-            <div class="game-card red" onclick="playGame('Lucky Dice')">
-                <i class="fas fa-dice-d6 icon"></i>
-                <span class="name">Lucky Dice</span>
-            </div>
-            <!-- Chess -->
-            <div class="game-card green" onclick="playGame('Chess')">
-                <i class="fas fa-chess-queen icon"></i>
-                <span class="name">Chess</span>
-            </div>
-            <!-- Speed -->
-            <div class="game-card pink" onclick="playGame('Speed Run')">
-                <i class="fas fa-bolt icon"></i>
-                <span class="name">Speed Run</span>
-            </div>
-            <!-- Puzzle -->
-            <div class="game-card blue" onclick="playGame('Puzzle')">
-                <i class="fas fa-brain icon"></i>
-                <span class="name">Puzzle</span>
-            </div>
-            <!-- Goal -->
-            <div class="game-card orange" onclick="playGame('Goal Keeper')">
-                <i class="fas fa-futbol icon"></i>
-                <span class="name">Goal Keeper</span>
-            </div>
-            <!-- Ghost -->
-            <div class="game-card indigo" onclick="playGame('Ghost Hunt')">
-                <span class="badge">NEW</span>
-                <i class="fas fa-ghost icon"></i>
-                <span class="name">Ghost Hunt</span>
-            </div>
-            <!-- Slot -->
-            <div class="game-card purple" onclick="playGame('Slot Machine')">
+            <div class="game-card gold" onclick="playGame('slots')">
+                <span class="badge">🎰</span>
                 <i class="fas fa-slot-machine icon"></i>
-                <span class="name">Slot</span>
+                <span class="name">Slots</span>
             </div>
-            <!-- Blackjack -->
-            <div class="game-card red" onclick="playGame('Blackjack')">
+            <div class="game-card red" onclick="playGame('blackjack')">
                 <i class="fas fa-club icon"></i>
                 <span class="name">Blackjack</span>
             </div>
-            <!-- Roulette -->
-            <div class="game-card gold" onclick="playGame('Roulette')">
+            <div class="game-card green" onclick="playGame('roulette')">
                 <i class="fas fa-circle icon"></i>
                 <span class="name">Roulette</span>
             </div>
-            <!-- Poker -->
-            <div class="game-card green" onclick="playGame('Poker')">
+            <div class="game-card pink" onclick="playGame('poker')">
                 <i class="fas fa-spade icon"></i>
                 <span class="name">Poker</span>
             </div>
-            <!-- Bingo -->
-            <div class="game-card pink" onclick="playGame('Bingo')">
+            <div class="game-card blue" onclick="playGame('bingo')">
                 <i class="fas fa-bingo-card icon"></i>
                 <span class="name">Bingo</span>
             </div>
-            <!-- Crash -->
-            <div class="game-card orange" onclick="playGame('Crash')">
+            <div class="game-card orange" onclick="playGame('crash')">
                 <i class="fas fa-chart-line icon"></i>
                 <span class="name">Crash</span>
             </div>
-            <!-- Mines -->
-            <div class="game-card blue" onclick="playGame('Mines')">
+            <div class="game-card indigo" onclick="playGame('mines')">
+                <span class="badge">💣</span>
                 <i class="fas fa-bomb icon"></i>
                 <span class="name">Mines</span>
             </div>
-        </div>
-
-        <!-- Grid 5x5 -->
-        <div class="game-grid-5" id="grid5">
-            <!-- All games with fruit emojis -->
-            <div class="game-card purple" onclick="playGame('🍎 Apple')"><i class="fas fa-apple-alt icon" style="color:#ff6b6b;"></i><span class="name">Apple</span></div>
-            <div class="game-card red" onclick="playGame('🍊 Orange')"><i class="fas fa-circle icon" style="color:#ff9f43;"></i><span class="name">Orange</span></div>
-            <div class="game-card gold" onclick="playGame('🍋 Lemon')"><i class="fas fa-circle icon" style="color:#fdcb6e;"></i><span class="name">Lemon</span></div>
-            <div class="game-card green" onclick="playGame('🍉 Watermelon')"><i class="fas fa-circle icon" style="color:#00b894;"></i><span class="name">Watermelon</span></div>
-            <div class="game-card pink" onclick="playGame('🍓 Strawberry')"><i class="fas fa-heart icon" style="color:#e84393;"></i><span class="name">Strawberry</span></div>
-            <div class="game-card blue" onclick="playGame('🫐 Blueberry')"><i class="fas fa-circle icon" style="color:#0984e3;"></i><span class="name">Blueberry</span></div>
-            <div class="game-card orange" onclick="playGame('🍑 Peach')"><i class="fas fa-circle icon" style="color:#e17055;"></i><span class="name">Peach</span></div>
-            <div class="game-card indigo" onclick="playGame('🍇 Grape')"><i class="fas fa-circle icon" style="color:#6c5ce7;"></i><span class="name">Grape</span></div>
-            <div class="game-card cyan" onclick="playGame('🍒 Cherry')"><i class="fas fa-circle icon" style="color:#d63031;"></i><span class="name">Cherry</span></div>
-            <div class="game-card purple" onclick="playGame('🥝 Kiwi')"><i class="fas fa-circle icon" style="color:#00b894;"></i><span class="name">Kiwi</span></div>
-            <div class="game-card gold" onclick="playGame('🍍 Pineapple')"><i class="fas fa-star icon" style="color:#f39c12;"></i><span class="name">Pineapple</span></div>
-            <div class="game-card red" onclick="playGame('🥭 Mango')"><i class="fas fa-circle icon" style="color:#ff9f43;"></i><span class="name">Mango</span></div>
-            <div class="game-card green" onclick="playGame('🍐 Pear')"><i class="fas fa-circle icon" style="color:#00b894;"></i><span class="name">Pear</span></div>
-            <div class="game-card pink" onclick="playGame('🍌 Banana')"><i class="fas fa-circle icon" style="color:#fdcb6e;"></i><span class="name">Banana</span></div>
-            <div class="game-card blue" onclick="playGame('🍈 Melon')"><i class="fas fa-circle icon" style="color:#55efc4;"></i><span class="name">Melon</span></div>
-            <div class="game-card orange" onclick="playGame('🍊 Tangerine')"><i class="fas fa-circle icon" style="color:#ff8a65;"></i><span class="name">Tangerine</span></div>
-            <div class="game-card indigo" onclick="playGame('🍋 Lime')"><i class="fas fa-circle icon" style="color:#55efc4;"></i><span class="name">Lime</span></div>
-            <div class="game-card cyan" onclick="playGame('🫒 Olive')"><i class="fas fa-circle icon" style="color:#00b894;"></i><span class="name">Olive</span></div>
-            <div class="game-card purple" onclick="playGame('🍎 Red Apple')"><i class="fas fa-apple-alt icon" style="color:#d63031;"></i><span class="name">Red Apple</span></div>
-            <div class="game-card gold" onclick="playGame('🍎 Green Apple')"><i class="fas fa-apple-alt icon" style="color:#00b894;"></i><span class="name">Green Apple</span></div>
-            <div class="game-card red" onclick="playGame('🍉 Melon')"><i class="fas fa-circle icon" style="color:#ff6b6b;"></i><span class="name">Melon</span></div>
-            <div class="game-card pink" onclick="playGame('🍓 Berry')"><i class="fas fa-circle icon" style="color:#fd79a8;"></i><span class="name">Berry</span></div>
-            <div class="game-card blue" onclick="playGame('🍑 Apricot')"><i class="fas fa-circle icon" style="color:#fdcb6e;"></i><span class="name">Apricot</span></div>
-            <div class="game-card orange" onclick="playGame('🍊 Citrus')"><i class="fas fa-circle icon" style="color:#ff9f43;"></i><span class="name">Citrus</span></div>
-            <div class="game-card green" onclick="playGame('🥑 Avocado')"><i class="fas fa-circle icon" style="color:#00b894;"></i><span class="name">Avocado</span></div>
         </div>
 
         <!-- Bottom Nav -->
@@ -823,6 +847,65 @@
 
     <!-- ===== MODALS ===== -->
 
+    <!-- Game Modal -->
+    <div class="modal-overlay" id="gameModal">
+        <div class="modal">
+            <button class="close-btn" onclick="closeGame()">✕</button>
+            <div id="gameContent"></div>
+        </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div class="modal-overlay" id="depositModal">
+        <div class="modal">
+            <h2>💰 Deposit</h2>
+            <select id="depositMethod">
+                <option value="telebirr">📱 TeleBirr</option>
+                <option value="cbe">🏦 CBE</option>
+            </select>
+            <input type="text" id="depositPhone" placeholder="Phone (+251911121212)" />
+            <input type="number" id="depositAmount" placeholder="Amount (ETB)" />
+            <button class="btn-success" onclick="deposit()">Deposit</button>
+            <button class="modal-close" onclick="toggleModal('depositModal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal-overlay" id="withdrawModal">
+        <div class="modal">
+            <h2>🏦 Withdraw</h2>
+            <select id="withdrawMethod">
+                <option value="telebirr">📱 TeleBirr</option>
+                <option value="cbe">🏦 CBE</option>
+            </select>
+            <input type="text" id="withdrawPhone" placeholder="Phone (+251911121212)" />
+            <input type="number" id="withdrawAmount" placeholder="Amount (ETB)" />
+            <button class="btn-secondary" onclick="withdraw()">Withdraw</button>
+            <button class="modal-close" onclick="toggleModal('withdrawModal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <h2>👤 Profile</h2>
+            <div id="profileContent">
+                <p style="margin:8px 0;"><strong>Username:</strong> <span id="profileUsername">Guest</span></p>
+                <p style="margin:8px 0;"><strong>Balance:</strong> <span id="profileBalance">0.00</span> ETB</p>
+                <p style="margin:8px 0;"><strong>Games Played:</strong> <span id="profileGames">0</span></p>
+                <p style="margin:8px 0;"><strong>Wins:</strong> <span id="profileWins">0</span></p>
+                <hr style="margin:12px 0; border-color:rgba(0,0,0,0.05);" />
+                <button class="btn-secondary" onclick="logout()" style="width:auto; padding:8px 24px;">Logout</button>
+            </div>
+            <div id="guestProfileContent">
+                <p style="margin:12px 0; color:rgba(26,26,46,0.5);">Please login to view your profile</p>
+                <button class="btn-primary" onclick="toggleModal('profileModal'); toggleModal('loginModal')">Login</button>
+                <button class="btn-success" onclick="toggleModal('profileModal'); toggleModal('registerModal')" style="margin-top:8px;">Register</button>
+            </div>
+            <button class="modal-close" onclick="toggleModal('profileModal')">Close</button>
+        </div>
+    </div>
+
     <!-- Login Modal -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal">
@@ -848,89 +931,25 @@
         </div>
     </div>
 
-    <!-- Deposit Modal -->
-    <div class="modal-overlay" id="depositModal">
-        <div class="modal">
-            <h2>💰 Deposit</h2>
-            <p style="color:rgba(26,26,46,0.6); font-size:14px; margin-bottom:12px;">Select payment method</p>
-            <select id="depositMethod" onchange="toggleDepositFields()">
-                <option value="telebirr">📱 TeleBirr</option>
-                <option value="cbe">🏦 CBE</option>
-            </select>
-            <input type="text" id="depositPhone" placeholder="Phone Number (+251911121212)" />
-            <input type="text" id="depositAmount" placeholder="Amount (ETB)" />
-            <button class="btn-success" onclick="deposit()">Deposit</button>
-            <button class="modal-close" onclick="toggleModal('depositModal')">Close</button>
-        </div>
-    </div>
-
-    <!-- Withdraw Modal -->
-    <div class="modal-overlay" id="withdrawModal">
-        <div class="modal">
-            <h2>🏦 Withdraw</h2>
-            <p style="color:rgba(26,26,46,0.6); font-size:14px; margin-bottom:12px;">Select withdrawal method</p>
-            <select id="withdrawMethod" onchange="toggleWithdrawFields()">
-                <option value="telebirr">📱 TeleBirr</option>
-                <option value="cbe">🏦 CBE</option>
-            </select>
-            <input type="text" id="withdrawPhone" placeholder="Phone Number (+251911121212)" />
-            <input type="text" id="withdrawAmount" placeholder="Amount (ETB)" />
-            <button class="btn-secondary" onclick="withdraw()">Withdraw</button>
-            <button class="modal-close" onclick="toggleModal('withdrawModal')">Close</button>
-        </div>
-    </div>
-
-    <!-- Profile Modal -->
-    <div class="modal-overlay" id="profileModal">
-        <div class="modal">
-            <h2>👤 Profile</h2>
-            <div id="profileContent">
-                <p style="margin:8px 0;"><strong>Username:</strong> <span id="profileUsername">Guest</span></p>
-                <p style="margin:8px 0;"><strong>Balance:</strong> <span id="profileBalance">0.00</span> ETB</p>
-                <p style="margin:8px 0;"><strong>Games Played:</strong> 0</p>
-                <p style="margin:8px 0;"><strong>Wins:</strong> 0</p>
-                <hr style="margin:12px 0; border-color:rgba(0,0,0,0.05);" />
-                <button class="btn-secondary" onclick="logout()" style="width:auto; padding:8px 24px;">Logout</button>
-            </div>
-            <div id="guestProfileContent">
-                <p style="margin:12px 0; color:rgba(26,26,46,0.5);">Please login to view your profile</p>
-                <button class="btn-primary" onclick="toggleModal('profileModal'); toggleModal('loginModal')">Login</button>
-                <button class="btn-success" onclick="toggleModal('profileModal'); toggleModal('registerModal')" style="margin-top:8px;">Register</button>
-            </div>
-            <button class="modal-close" onclick="toggleModal('profileModal')">Close</button>
-        </div>
-    </div>
-
-    <!-- Game Result Modal -->
-    <div class="modal-overlay" id="gameResultModal">
-        <div class="modal" style="text-align:center;">
-            <h2 id="gameResultTitle">🎮 Game</h2>
-            <div id="gameResultContent" style="margin:16px 0;">
-                <p style="font-size:48px;" id="gameResultEmoji">🎲</p>
-                <p style="font-size:18px; font-weight:700;" id="gameResultName">Game Name</p>
-                <p style="color:rgba(26,26,46,0.5);" id="gameResultDesc">Playing...</p>
-            </div>
-            <button class="btn-primary" onclick="toggleModal('gameResultModal')">Close</button>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" style="position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:#fff; padding:10px 24px; border-radius:12px; font-size:14px; z-index:2000; display:none; max-width:90%; text-align:center; backdrop-filter:blur(10px);">
-    </div>
+    <!-- Toast -->
+    <div id="toast"></div>
 
     <script>
         // ========== DATA ==========
         let currentUser = null;
-        let balance = 0;
-        let currentGrid = 4;
-        let difficulty = 'easy';
+        let balance = 25.55;
+        let gamesPlayed = 0;
+        let wins = 0;
+        let gameRunning = false;
+        let gameInterval = null;
 
         // ========== TIME ==========
         function updateTime() {
             const now = new Date();
             document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', { 
                 hour: '2-digit', 
-                minute: '2-digit' 
+                minute: '2-digit',
+                hour12: true
             });
         }
         setInterval(updateTime, 10000);
@@ -948,11 +967,14 @@
             const toast = document.getElementById('toast');
             toast.textContent = msg;
             toast.style.display = 'block';
+            toast.style.animation = 'none';
+            toast.offsetHeight;
+            toast.style.animation = 'modalIn 0.3s ease';
             clearTimeout(toast._timer);
             toast._timer = setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
-        // ========== REGISTRATION ==========
+        // ========== AUTHENTICATION ==========
         function register() {
             const username = document.getElementById('regUsername').value.trim();
             const password = document.getElementById('regPassword').value.trim();
@@ -963,7 +985,6 @@
                 return;
             }
 
-            // Validate phone format +251911121212
             if (!/^\+251\d{9}$/.test(phone)) {
                 showToast('❌ Phone must be +251 followed by 9 digits');
                 return;
@@ -974,22 +995,14 @@
                 showToast('❌ Username already exists');
                 return;
             }
-            if (users.find(u => u.phone === phone)) {
-                showToast('❌ Phone number already registered');
-                return;
-            }
 
             users.push({ username, password, phone, balance: 0, games: 0, wins: 0 });
             localStorage.setItem('users', JSON.stringify(users));
             showToast('✅ Registration successful! Please login.');
             toggleModal('registerModal');
             toggleModal('loginModal');
-            document.getElementById('regUsername').value = '';
-            document.getElementById('regPassword').value = '';
-            document.getElementById('regPhone').value = '';
         }
 
-        // ========== LOGIN ==========
         function login() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
@@ -1009,43 +1022,53 @@
 
             currentUser = user;
             balance = user.balance || 0;
+            gamesPlayed = user.games || 0;
+            wins = user.wins || 0;
             updateBalance();
             showToast(`✅ Welcome ${username}!`);
             toggleModal('loginModal');
-            document.getElementById('loginUsername').value = '';
-            document.getElementById('loginPassword').value = '';
             updateProfile();
-            checkAdmin();
+            document.querySelector('.avatar').textContent = username.charAt(0).toUpperCase();
         }
 
-        // ========== LOGOUT ==========
         function logout() {
+            if (currentUser) {
+                saveUserData();
+            }
             currentUser = null;
             balance = 0;
+            gamesPlayed = 0;
+            wins = 0;
             updateBalance();
             showToast('👋 Logged out');
             toggleModal('profileModal');
             updateProfile();
-            document.getElementById('adminPanel').classList.remove('show');
+            document.querySelector('.avatar').textContent = '?';
         }
 
-        // ========== UPDATE BALANCE ==========
-        function updateBalance() {
-            document.getElementById('balanceAmount').textContent = balance.toFixed(2);
-            document.getElementById('profileBalance').textContent = balance.toFixed(2);
-            // Update in localStorage
+        function saveUserData() {
             if (currentUser) {
                 const users = JSON.parse(localStorage.getItem('users') || '[]');
                 const idx = users.findIndex(u => u.username === currentUser.username);
                 if (idx >= 0) {
                     users[idx].balance = balance;
+                    users[idx].games = gamesPlayed;
+                    users[idx].wins = wins;
                     localStorage.setItem('users', JSON.stringify(users));
-                    currentUser.balance = balance;
                 }
             }
         }
 
-        // ========== UPDATE PROFILE ==========
+        // ========== BALANCE ==========
+        function updateBalance() {
+            document.getElementById('balanceAmount').textContent = balance.toFixed(2);
+            document.getElementById('profileBalance').textContent = balance.toFixed(2);
+            if (currentUser) {
+                currentUser.balance = balance;
+                saveUserData();
+            }
+        }
+
         function updateProfile() {
             const guest = document.getElementById('guestProfileContent');
             const logged = document.getElementById('profileContent');
@@ -1054,25 +1077,15 @@
                 logged.style.display = 'block';
                 document.getElementById('profileUsername').textContent = currentUser.username;
                 document.getElementById('profileBalance').textContent = balance.toFixed(2);
-                document.querySelector('.avatar').textContent = currentUser.username.charAt(0).toUpperCase();
+                document.getElementById('profileGames').textContent = gamesPlayed;
+                document.getElementById('profileWins').textContent = wins;
             } else {
                 guest.style.display = 'block';
                 logged.style.display = 'none';
-                document.querySelector('.avatar').textContent = '?';
             }
         }
 
-        // ========== CHECK ADMIN ==========
-        function checkAdmin() {
-            if (currentUser && currentUser.username === 'admin') {
-                document.getElementById('adminPanel').classList.add('show');
-                showToast('👑 Admin panel activated');
-            } else {
-                document.getElementById('adminPanel').classList.remove('show');
-            }
-        }
-
-        // ========== DEPOSIT ==========
+        // ========== DEPOSIT & WITHDRAW ==========
         function deposit() {
             const method = document.getElementById('depositMethod').value;
             const phone = document.getElementById('depositPhone').value.trim();
@@ -1085,25 +1098,24 @@
 
             if (method === 'telebirr') {
                 if (!/^\+251\d{9}$/.test(phone)) {
-                    showToast('❌ TeleBirr number must be +251 followed by 9 digits');
+                    showToast('❌ TeleBirr: +251 followed by 9 digits');
                     return;
                 }
             } else {
                 if (!/^\d{13}$/.test(phone.replace(/\D/g, ''))) {
-                    showToast('❌ CBE account must be 13 digits');
+                    showToast('❌ CBE: 13 digits required');
                     return;
                 }
             }
 
             balance += amount;
             updateBalance();
-            showToast(`✅ Deposited ${amount.toFixed(2)} ETB via ${method === 'telebirr' ? 'TeleBirr' : 'CBE'}`);
+            showToast(`✅ Deposited ${amount.toFixed(2)} ETB`);
+            toggleModal('depositModal');
             document.getElementById('depositPhone').value = '';
             document.getElementById('depositAmount').value = '';
-            toggleModal('depositModal');
         }
 
-        // ========== WITHDRAW ==========
         function withdraw() {
             const method = document.getElementById('withdrawMethod').value;
             const phone = document.getElementById('withdrawPhone').value.trim();
@@ -1121,148 +1133,373 @@
 
             if (method === 'telebirr') {
                 if (!/^\+251\d{9}$/.test(phone)) {
-                    showToast('❌ TeleBirr number must be +251 followed by 9 digits');
+                    showToast('❌ TeleBirr: +251 followed by 9 digits');
                     return;
                 }
             } else {
                 if (!/^\d{13}$/.test(phone.replace(/\D/g, ''))) {
-                    showToast('❌ CBE account must be 13 digits');
+                    showToast('❌ CBE: 13 digits required');
                     return;
                 }
             }
 
             balance -= amount;
             updateBalance();
-            showToast(`✅ Withdrew ${amount.toFixed(2)} ETB via ${method === 'telebirr' ? 'TeleBirr' : 'CBE'}`);
+            showToast(`✅ Withdrew ${amount.toFixed(2)} ETB`);
+            toggleModal('withdrawModal');
             document.getElementById('withdrawPhone').value = '';
             document.getElementById('withdrawAmount').value = '';
-            toggleModal('withdrawModal');
         }
 
-        // ========== DEPOSIT/WITHDRAW FIELD TOGGLE ==========
-        function toggleDepositFields() {
-            const method = document.getElementById('depositMethod').value;
-            const phoneField = document.getElementById('depositPhone');
-            phoneField.placeholder = method === 'telebirr' ? 'Phone (+251911121212)' : 'CBE Account (13 digits)';
-        }
+        // ========== GAME ENGINE ==========
 
-        function toggleWithdrawFields() {
-            const method = document.getElementById('withdrawMethod').value;
-            const phoneField = document.getElementById('withdrawPhone');
-            phoneField.placeholder = method === 'telebirr' ? 'Phone (+251911121212)' : 'CBE Account (13 digits)';
-        }
-
-        // ========== PLAY GAME ==========
-        function playGame(gameName) {
+        function playGame(gameType) {
             if (!currentUser) {
                 showToast('🔐 Please login first!');
                 toggleModal('loginModal');
                 return;
             }
 
-            const emojis = {
-                'Fast Keno': '🎲',
-                'Aviator': '✈️',
-                'Fruits': '🍎',
-                'Lucky Dice': '🎯',
-                'Chess': '♟️',
-                'Speed Run': '⚡',
-                'Puzzle': '🧩',
-                'Goal Keeper': '⚽',
-                'Ghost Hunt': '👻',
-                'Slot Machine': '🎰',
-                'Blackjack': '🃏',
-                'Roulette': '🎡',
-                'Poker': '♠️',
-                'Bingo': '🎱',
-                'Crash': '📈',
-                'Mines': '💣'
+            if (balance < 1) {
+                showToast('❌ Insufficient balance! Please deposit.');
+                return;
+            }
+
+            const games = {
+                keno: { name: 'Fast Keno', emoji: '🎯', icon: 'fa-dice' },
+                aviator: { name: 'Aviator', emoji: '✈️', icon: 'fa-plane' },
+                slots: { name: 'Slots', emoji: '🎰', icon: 'fa-slot-machine' },
+                blackjack: { name: 'Blackjack', emoji: '🃏', icon: 'fa-club' },
+                roulette: { name: 'Roulette', emoji: '🎡', icon: 'fa-circle' },
+                poker: { name: 'Poker', emoji: '♠️', icon: 'fa-spade' },
+                bingo: { name: 'Bingo', emoji: '🎱', icon: 'fa-bingo-card' },
+                crash: { name: 'Crash', emoji: '📈', icon: 'fa-chart-line' },
+                mines: { name: 'Mines', emoji: '💣', icon: 'fa-bomb' }
             };
 
-            const fruitEmojis = ['🍎', '🍊', '🍋', '🍉', '🍓', '🫐', '🍑', '🍇', '🍒', '🥝', '🍍', '🥭', '🍐', '🍌', '🍈'];
+            const game = games[gameType];
+            if (!game) return;
 
-            // Check if it's a fruit game
-            let emoji = emojis[gameName] || '🎮';
-            if (gameName.includes('🍎') || gameName.includes('🍊') || gameName.includes('🍋')) {
-                emoji = gameName.split(' ')[0] || '🍎';
-                gameName = gameName.replace(/[🍎🍊🍋🍉🍓🫐🍑🍇🍒🥝🍍🥭🍐🍌🍈]/g, '').trim() || 'Fruit';
+            const content = document.getElementById('gameContent');
+            toggleModal('gameModal');
+
+            switch(gameType) {
+                case 'keno':
+                    renderKeno(content);
+                    break;
+                case 'aviator':
+                    renderAviator(content);
+                    break;
+                case 'slots':
+                    renderSlots(content);
+                    break;
+                default:
+                    renderSimpleGame(content, game);
+                    break;
+            }
+        }
+
+        // ========== KENO GAME ==========
+        function renderKeno(content) {
+            const bet = Math.min(1, balance);
+            content.innerHTML = `
+                <div class="game-result">
+                    <div class="result-emoji">🎯</div>
+                    <div class="result-title">Fast Keno</div>
+                    <div class="result-sub">Pick 5 numbers (1-40) | Bet: ${bet.toFixed(2)} ETB</div>
+                    <div class="keno-board" id="kenoBoard"></div>
+                    <button class="btn-primary" onclick="playKeno()">Play Keno</button>
+                    <button class="modal-close" onclick="closeGame()" style="margin-top:8px;">Close</button>
+                </div>
+            `;
+
+            const board = document.getElementById('kenoBoard');
+            board.innerHTML = '';
+            for (let i = 1; i <= 40; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'keno-cell';
+                cell.textContent = i;
+                cell.dataset.num = i;
+                cell.onclick = () => {
+                    cell.classList.toggle('selected');
+                };
+                board.appendChild(cell);
             }
 
-            // Random result for demo
-            const result = Math.random() > 0.5 ? 'win' : 'lose';
-            const winAmount = result === 'win' ? (Math.random() * 10 + 1).toFixed(2) : '0.00';
+            window.kenoBet = bet;
+        }
 
-            document.getElementById('gameResultEmoji').textContent = emoji;
-            document.getElementById('gameResultName').textContent = gameName;
-            document.getElementById('gameResultDesc').textContent = result === 'win' ? 
-                `🎉 You won ${winAmount} ETB!` : 
-                '😅 Better luck next time!';
+        function playKeno() {
+            const selected = document.querySelectorAll('.keno-cell.selected');
+            if (selected.length !== 5) {
+                showToast('❌ Select exactly 5 numbers');
+                return;
+            }
 
-            if (result === 'win') {
-                balance += parseFloat(winAmount);
+            const picks = Array.from(selected).map(c => parseInt(c.dataset.num));
+            const hits = [];
+            const drawn = [];
+
+            for (let i = 0; i < 5; i++) {
+                let num;
+                do {
+                    num = Math.floor(Math.random() * 40) + 1;
+                } while (drawn.includes(num));
+                drawn.push(num);
+                if (picks.includes(num)) hits.push(num);
+            }
+
+            // Highlight results
+            document.querySelectorAll('.keno-cell').forEach(cell => {
+                const num = parseInt(cell.dataset.num);
+                if (drawn.includes(num)) {
+                    if (hits.includes(num)) {
+                        cell.className = 'keno-cell hit';
+                    } else {
+                        cell.className = 'keno-cell miss';
+                    }
+                }
+            });
+
+            const hitCount = hits.length;
+            const winMultiplier = [0, 0, 0, 2, 5, 20][hitCount] || 0;
+            const winAmount = winMultiplier * window.kenoBet;
+
+            gamesPlayed++;
+            if (winAmount > 0) {
+                wins++;
+                balance += winAmount;
                 updateBalance();
-            }
-
-            toggleModal('gameResultModal');
-        }
-
-        // ========== ADMIN: DIFFICULTY ==========
-        function setDifficulty(level, btn) {
-            difficulty = level;
-            document.querySelectorAll('.admin-controls button:not(.grid-controls button)').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            showToast(`⚙️ Difficulty set to ${level.toUpperCase()}`);
-        }
-
-        // ========== ADMIN: SWITCH GRID ==========
-        function switchGrid(size, btn) {
-            currentGrid = size;
-            document.querySelectorAll('.grid-controls button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const grid4 = document.getElementById('grid4');
-            const grid5 = document.getElementById('grid5');
-
-            if (size === 4) {
-                grid4.classList.remove('hide');
-                grid5.classList.remove('show');
+                showToast(`🎉 You hit ${hitCount} numbers! Won ${winAmount.toFixed(2)} ETB!`);
             } else {
-                grid4.classList.add('hide');
-                grid5.classList.add('show');
+                balance -= window.kenoBet;
+                updateBalance();
+                showToast(`😅 Hit ${hitCount} numbers. Better luck next time!`);
             }
-            showToast(`📐 Switched to ${size}×${size} grid`);
+
+            document.querySelector('.btn-primary').disabled = true;
+            setTimeout(() => {
+                closeGame();
+            }, 3000);
+        }
+
+        // ========== AVIATOR GAME ==========
+        let aviatorRunning = false;
+
+        function renderAviator(content) {
+            const bet = Math.min(1, balance);
+            content.innerHTML = `
+                <div class="game-result aviator-game">
+                    <div class="result-emoji">✈️</div>
+                    <div class="result-title">Aviator</div>
+                    <div class="result-sub">Bet: ${bet.toFixed(2)} ETB</div>
+                    <div class="plane">✈️</div>
+                    <div class="multiplier" id="aviatorMultiplier">1.00x</div>
+                    <div class="bet-controls">
+                        <button class="cashout" id="cashoutBtn" onclick="cashoutAviator()" disabled>Cash Out</button>
+                        <button class="btn-success" id="flyBtn" onclick="flyAviator()">🚀 Fly</button>
+                    </div>
+                    <button class="modal-close" onclick="closeGame()" style="margin-top:8px;">Close</button>
+                </div>
+            `;
+
+            window.aviatorBet = bet;
+            window.aviatorMultiplier = 1.00;
+            window.aviatorCrashed = false;
+            aviatorRunning = false;
+            document.getElementById('cashoutBtn').disabled = true;
+        }
+
+        function flyAviator() {
+            if (aviatorRunning) return;
+            if (balance < window.aviatorBet) {
+                showToast('❌ Insufficient balance');
+                return;
+            }
+
+            aviatorRunning = true;
+            window.aviatorMultiplier = 1.00;
+            window.aviatorCrashed = false;
+            document.getElementById('flyBtn').disabled = true;
+            document.getElementById('cashoutBtn').disabled = false;
+
+            balance -= window.aviatorBet;
+            updateBalance();
+
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(() => {
+                window.aviatorMultiplier += 0.01 + Math.random() * 0.05;
+                document.getElementById('aviatorMultiplier').textContent = window.aviatorMultiplier.toFixed(2) + 'x';
+
+                // Random crash
+                if (Math.random() < 0.015 && window.aviatorMultiplier > 1.5) {
+                    crashAviator();
+                }
+                if (window.aviatorMultiplier > 10) {
+                    crashAviator();
+                }
+            }, 100);
+        }
+
+        function cashoutAviator() {
+            if (!aviatorRunning || window.aviatorCrashed) return;
+            const winAmount = window.aviatorBet * window.aviatorMultiplier;
+            balance += winAmount;
+            wins++;
+            gamesPlayed++;
+            updateBalance();
+            showToast(`🎉 Cashed out at ${window.aviatorMultiplier.toFixed(2)}x! Won ${winAmount.toFixed(2)} ETB!`);
+            endAviator();
+        }
+
+        function crashAviator() {
+            if (window.aviatorCrashed) return;
+            window.aviatorCrashed = true;
+            gamesPlayed++;
+            showToast(`💥 Crashed at ${window.aviatorMultiplier.toFixed(2)}x! Lost bet.`);
+            endAviator();
+        }
+
+        function endAviator() {
+            aviatorRunning = false;
+            if (gameInterval) clearInterval(gameInterval);
+            document.getElementById('flyBtn').disabled = false;
+            document.getElementById('cashoutBtn').disabled = true;
+            saveUserData();
+        }
+
+        // ========== SLOTS GAME ==========
+        function renderSlots(content) {
+            const symbols = ['🍒', '🍋', '🍊', '🍇', '💎', '⭐', '🎰', '7️⃣'];
+            const bet = Math.min(1, balance);
+
+            content.innerHTML = `
+                <div class="game-result slot-machine">
+                    <div class="result-emoji">🎰</div>
+                    <div class="result-title">Slots</div>
+                    <div class="result-sub">Bet: ${bet.toFixed(2)} ETB</div>
+                    <div class="slot-reels">
+                        <div class="slot-reel" id="reel1">${symbols[0]}</div>
+                        <div class="slot-reel" id="reel2">${symbols[1]}</div>
+                        <div class="slot-reel" id="reel3">${symbols[2]}</div>
+                    </div>
+                    <button class="btn-gold" onclick="spinSlots()">🎰 Spin</button>
+                    <button class="modal-close" onclick="closeGame()" style="margin-top:8px;">Close</button>
+                </div>
+            `;
+
+            window.slotBet = bet;
+            window.slotSymbols = symbols;
+        }
+
+        function spinSlots() {
+            if (balance < window.slotBet) {
+                showToast('❌ Insufficient balance');
+                return;
+            }
+
+            balance -= window.slotBet;
+            updateBalance();
+
+            const reels = ['reel1', 'reel2', 'reel3'];
+            const results = [];
+
+            reels.forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.add('spinning');
+            });
+
+            setTimeout(() => {
+                reels.forEach(id => {
+                    const el = document.getElementById(id);
+                    const symbol = window.slotSymbols[Math.floor(Math.random() * window.slotSymbols.length)];
+                    el.textContent = symbol;
+                    el.classList.remove('spinning');
+                    results.push(symbol);
+                });
+
+                gamesPlayed++;
+                const win = results[0] === results[1] && results[1] === results[2];
+                if (win) {
+                    wins++;
+                    const winAmount = window.slotBet * 5;
+                    balance += winAmount;
+                    updateBalance();
+                    showToast(`🎉 Jackpot! Won ${winAmount.toFixed(2)} ETB!`);
+                } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[2]) {
+                    const winAmount = window.slotBet * 1.5;
+                    balance += winAmount;
+                    updateBalance();
+                    showToast(`🎉 Match! Won ${winAmount.toFixed(2)} ETB!`);
+                } else {
+                    showToast('😅 No match. Try again!');
+                }
+                saveUserData();
+            }, 1000);
+        }
+
+        // ========== SIMPLE GAMES (Blackjack, Roulette, etc.) ==========
+        function renderSimpleGame(content, game) {
+            const bet = Math.min(0.5, balance);
+            const outcomes = ['Win 🎉', 'Lose 😅', 'Lose 😅', 'Lose 😅', 'Win 🎉'];
+            const result = outcomes[Math.floor(Math.random() * outcomes.length)];
+            const isWin = result.includes('Win');
+            const winAmount = isWin ? bet * 2 : 0;
+
+            content.innerHTML = `
+                <div class="game-result">
+                    <div class="result-emoji">${game.emoji}</div>
+                    <div class="result-title">${game.name}</div>
+                    <div class="result-sub">Bet: ${bet.toFixed(2)} ETB</div>
+                    <div style="font-size:48px; margin:12px 0;">${isWin ? '🎉' : '😅'}</div>
+                    <div class="result-amount ${isWin ? 'win' : 'lose'}">
+                        ${isWin ? `+${winAmount.toFixed(2)} ETB` : `-${bet.toFixed(2)} ETB`}
+                    </div>
+                    <button class="btn-primary" onclick="playAgain('${game.name.toLowerCase().replace(' ', '')}')">Play Again</button>
+                    <button class="modal-close" onclick="closeGame()" style="margin-top:8px;">Close</button>
+                </div>
+            `;
+
+            gamesPlayed++;
+            if (isWin) {
+                wins++;
+                balance += winAmount;
+            } else {
+                balance -= bet;
+            }
+            updateBalance();
+            saveUserData();
+        }
+
+        function playAgain(gameType) {
+            closeGame();
+            setTimeout(() => playGame(gameType), 300);
+        }
+
+        function closeGame() {
+            if (gameInterval) clearInterval(gameInterval);
+            aviatorRunning = false;
+            toggleModal('gameModal');
         }
 
         // ========== NAVIGATION ==========
         function navigateTo(page, el) {
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             el.classList.add('active');
-
-            const pages = {
-                'home': '🏠 Home page',
-                'games': '🎮 Games page',
-                'ranking': '🏆 Ranking page',
-                'profile': '👤 Profile page'
-            };
-            showToast(pages[page] || '📱 Navigating...');
+            showToast(`📱 ${page.charAt(0).toUpperCase() + page.slice(1)} page`);
         }
 
         // ========== INITIALIZATION ==========
-        updateProfile();
-        updateBalance();
-        checkAdmin();
-
-        // Check for admin user
+        // Create default users
         const users = JSON.parse(localStorage.getItem('users') || '[]');
-        if (!users.find(u => u.username === 'admin')) {
-            users.push({ username: 'admin', password: 'admin123', phone: '+251911000000', balance: 1000, games: 0, wins: 0 });
+        if (!users.find(u => u.username === 'demo')) {
+            users.push({ username: 'demo', password: 'demo123', phone: '+251911121212', balance: 100, games: 0, wins: 0 });
             localStorage.setItem('users', JSON.stringify(users));
         }
 
-        console.log('🎮 PlayToWin loaded!');
-        console.log('👑 Admin: admin / admin123');
-        console.log('📱 Phone format: +251911121212');
-        console.log('🏦 CBE format: 13 digits');
+        updateProfile();
+        updateBalance();
+        showToast('🎮 Welcome to PlayToWin!');
 
         // Close modals on overlay click
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -1270,11 +1507,16 @@
                 if (e.target === this) {
                     this.classList.remove('show');
                     document.body.style.overflow = '';
+                    if (gameInterval) clearInterval(gameInterval);
                 }
             });
         });
-    </script>
 
+        console.log('🎮 PlayToWin – All games work!');
+        console.log('👤 Demo: demo / demo123');
+        console.log('📱 Phone format: +251911121212');
+        console.log('🏦 CBE format: 13 digits');
+    </script>
 </body>
 </html>
 ```
