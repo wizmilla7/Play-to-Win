@@ -3,128 +3,542 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>🎮 GameHub – Multi‑Game Platform</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>🎮 PlayToWin – Colorful Game Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* ── RESET & BASE ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+            background: #f8f0ff;
+            color: #1a1a2e;
+        }
+
+        /* ── COLORFUL BACKGROUND ── */
+        .bg-wrap {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(108, 92, 231, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(78, 205, 196, 0.05) 0%, transparent 60%),
+                radial-gradient(circle at 80% 20%, rgba(255, 159, 67, 0.06) 0%, transparent 40%);
+            animation: bgShift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgShift {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1.05) rotate(2deg); }
+        }
+
+        /* ── APP CONTAINER ── */
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 16px 16px 90px;
+            min-height: 100vh;
+        }
+
+        /* ── TOP BAR (Telegram Style) ── */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0 16px;
+            border-bottom: 2px solid rgba(108, 92, 231, 0.08);
+        }
+
+        .top-bar .time {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .top-bar .icons {
+            display: flex;
+            gap: 14px;
+            color: rgba(26, 26, 46, 0.5);
+            font-size: 15px;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0 10px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+
+        .logo i {
+            font-size: 26px;
+            background: linear-gradient(135deg, #ff6b6b, #ff9f43, #fdcb6e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .header-actions .badge {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .header-actions .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.25);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .header-actions .avatar:hover {
+            transform: scale(1.08) rotate(-5deg);
+        }
+
+        /* ── PLAYTOWIN TITLE ── */
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 16px 0 4px;
+            background: linear-gradient(135deg, #ff6b6b, #ff9f43, #fdcb6e, #6c5ce7);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .page-sub {
+            color: rgba(26, 26, 46, 0.5);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 22px 0 12px;
+        }
+
+        .section-header h2 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-header h2 i {
+            font-size: 16px;
+        }
+
+        .section-header .link {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c5ce7;
+            text-decoration: none;
+            padding: 4px 14px;
+            background: rgba(108, 92, 231, 0.08);
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        .section-header .link:hover {
+            background: rgba(108, 92, 231, 0.15);
+            transform: scale(1.05);
+        }
+
+        /* ── GAME GRID ── */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .game-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px 8px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+
+        .game-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .game-card .icon {
+            font-size: 30px;
+            margin-bottom: 6px;
+            transition: 0.3s;
+        }
+
+        .game-card:hover .icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .game-card .name {
+            font-size: 10px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .game-card .badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        /* ── CARD COLORS ── */
+        .game-card.purple { border-color: #a29bfe; background: linear-gradient(135deg, #fff, #f8f7ff); }
+        .game-card.purple .icon { color: #6c5ce7; }
+        .game-card.purple .badge { background: #6c5ce7; color: #fff; }
+
+        .game-card.cyan { border-color: #81ecec; background: linear-gradient(135deg, #fff, #f0fffe); }
+        .game-card.cyan .icon { color: #00cec9; }
+        .game-card.cyan .badge { background: #00cec9; color: #fff; }
+
+        .game-card.gold { border-color: #fdcb6e; background: linear-gradient(135deg, #fff, #fffbf0); }
+        .game-card.gold .icon { color: #f39c12; }
+        .game-card.gold .badge { background: #f39c12; color: #fff; }
+
+        .game-card.red { border-color: #ff7675; background: linear-gradient(135deg, #fff, #fff5f5); }
+        .game-card.red .icon { color: #d63031; }
+        .game-card.red .badge { background: #d63031; color: #fff; }
+
+        .game-card.green { border-color: #55efc4; background: linear-gradient(135deg, #fff, #f0fff5); }
+        .game-card.green .icon { color: #00b894; }
+        .game-card.green .badge { background: #00b894; color: #fff; }
+
+        .game-card.pink { border-color: #fd79a8; background: linear-gradient(135deg, #fff, #fff0f5); }
+        .game-card.pink .icon { color: #e84393; }
+        .game-card.pink .badge { background: #e84393; color: #fff; }
+
+        .game-card.blue { border-color: #74b9ff; background: linear-gradient(135deg, #fff, #f0f8ff); }
+        .game-card.blue .icon { color: #0984e3; }
+        .game-card.blue .badge { background: #0984e3; color: #fff; }
+
+        .game-card.orange { border-color: #fdcb6e; background: linear-gradient(135deg, #fff, #fff5e6); }
+        .game-card.orange .icon { color: #e17055; }
+        .game-card.orange .badge { background: #e17055; color: #fff; }
+
+        .game-card.indigo { border-color: #a29bfe; background: linear-gradient(135deg, #fff, #f5f0ff); }
+        .game-card.indigo .icon { color: #6c5ce7; }
+        .game-card.indigo .badge { background: #6c5ce7; color: #fff; }
+
+        /* ── LIVE CARDS ── */
+        .live-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .live-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 14px;
+            border: 2px solid #ff7675;
+            transition: 0.3s;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+
+        .live-card::after {
+            content: '● LIVE';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 8px;
+            font-weight: 700;
+            color: #d63031;
+            background: #ffeaa7;
+            padding: 2px 10px;
+            border-radius: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .live-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(255, 118, 117, 0.15);
+        }
+
+        .live-card .icon {
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .live-card .name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .live-card .players {
+            font-size: 10px;
+            color: rgba(26, 26, 46, 0.5);
+            font-weight: 500;
+        }
+
+        /* ── BOTTOM NAV ── */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-top: 2px solid rgba(0, 0, 0, 0.04);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 14px;
+            z-index: 100;
+            max-width: 420px;
+            margin: 0 auto;
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: rgba(26, 26, 46, 0.3);
+            font-size: 9px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            padding: 4px 16px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            transition: 0.3s;
+        }
+
+        .nav-item.active {
+            color: #6c5ce7;
+        }
+
+        .nav-item.active i {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.3));
+        }
+
+        .nav-item:hover {
+            color: #6c5ce7;
+        }
+
+        .nav-item .nav-badge {
+            position: absolute;
+            top: -4px;
+            right: 4px;
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 8px;
+            padding: 1px 7px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 420px) {
+            .app { padding: 12px 12px 80px; }
+            .game-grid { gap: 10px; }
+            .game-card { padding: 14px 6px 12px; }
+            .game-card .icon { font-size: 26px; }
+            .game-card .name { font-size: 9px; }
+            .page-title { font-size: 24px; }
+            .live-grid { gap: 10px; }
+            .live-card { padding: 12px; }
+            .logo { font-size: 20px; }
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #f0f0f0; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #ff6b6b, #6c5ce7); border-radius: 10px; }
+    </style>
 </head>
 <body>
 
-    <!-- ── BACKGROUND SHAPES ── -->
-    <div class="bg-pattern"></div>
-    <div class="shape shape-1"></div>
-    <div class="shape shape-2"></div>
-    <div class="shape shape-3"></div>
-    <div class="shape shape-4"></div>
-    <div class="shape shape-5"></div>
-    <div class="shape shape-6"></div>
+    <!-- Background -->
+    <div class="bg-wrap"></div>
 
-    <!-- ── MAIN APP ── -->
-    <div class="app-container">
+    <!-- Main App -->
+    <div class="app">
+
+        <!-- Top Bar (Telegram Style) -->
+        <div class="top-bar">
+            <span class="time">8:21</span>
+            <div class="icons">
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-battery-three-quarters"></i>
+            </div>
+        </div>
 
         <!-- Header -->
-        <header class="header">
+        <div class="header">
             <div class="logo">
                 <i class="fas fa-gamepad"></i>
-                Game<span>Hub</span>
+                Play<span>ToWin</span>
             </div>
-            <div class="header-right">
-                <div class="coin-display">
-                    <i class="fas fa-coins"></i>
-                    2,450
-                </div>
-                <div class="user-avatar">A</div>
+            <div class="header-actions">
+                <span class="badge">🔥 12</span>
+                <div class="avatar">A</div>
             </div>
-        </header>
+        </div>
 
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="hero-title">🎮 Ready to <span class="highlight">Play</span>?</div>
-            <div class="hero-sub">Challenge friends, earn rewards, level up!</div>
-            <div class="hero-stats">
-                <div class="stat">
-                    <span class="num">12</span>
-                    <span class="label">Games</span>
-                </div>
-                <div class="stat">
-                    <span class="num">84</span>
-                    <span class="label">Players Online</span>
-                </div>
-                <div class="stat">
-                    <span class="num">🏆</span>
-                    <span class="label">Leaderboard</span>
-                </div>
-            </div>
-        </section>
+        <!-- Page Title -->
+        <div class="page-title">PlayToWin</div>
+        <div class="page-sub">🎮 Challenge friends & earn rewards!</div>
 
-        <!-- Game Grid -->
-        <div class="section-title">
-            <h2><i class="fas fa-rocket" style="color: #6c5ce7;"></i> Popular Games</h2>
-            <a href="#" class="see-all">See All →</a>
+        <!-- Popular Games -->
+        <div class="section-header">
+            <h2><i class="fas fa-rocket" style="color: #6c5ce7;"></i> Popular</h2>
+            <a href="#" class="link">See All →</a>
         </div>
 
         <div class="game-grid">
             <div class="game-card purple">
-                <span class="game-badge">🔥</span>
+                <span class="badge">🔥</span>
                 <i class="fas fa-chess-queen icon"></i>
-                <span class="game-name">Chess Master</span>
+                <span class="name">Chess</span>
             </div>
             <div class="game-card cyan">
                 <i class="fas fa-dice icon"></i>
-                <span class="game-name">Lucky Dice</span>
+                <span class="name">Lucky Dice</span>
             </div>
             <div class="game-card gold">
-                <span class="game-badge">⭐</span>
+                <span class="badge">⭐</span>
                 <i class="fas fa-crown icon"></i>
-                <span class="game-name">Royal Rumble</span>
+                <span class="name">Royal</span>
             </div>
             <div class="game-card red">
                 <i class="fas fa-bolt icon"></i>
-                <span class="game-name">Speed Run</span>
+                <span class="name">Speed</span>
             </div>
             <div class="game-card green">
-                <span class="game-badge">🎯</span>
+                <span class="badge">🎯</span>
                 <i class="fas fa-crosshairs icon"></i>
-                <span class="game-name">Aim Lab</span>
+                <span class="name">Aim Lab</span>
             </div>
             <div class="game-card pink">
                 <i class="fas fa-heart icon"></i>
-                <span class="game-name">Love Quest</span>
+                <span class="name">Love</span>
             </div>
             <div class="game-card blue">
                 <i class="fas fa-brain icon"></i>
-                <span class="game-name">Mind Puzzle</span>
+                <span class="name">Puzzle</span>
             </div>
             <div class="game-card orange">
                 <i class="fas fa-futbol icon"></i>
-                <span class="game-name">Goal Keeper</span>
+                <span class="name">Goal</span>
             </div>
             <div class="game-card indigo">
-                <span class="game-badge">NEW</span>
+                <span class="badge">NEW</span>
                 <i class="fas fa-ghost icon"></i>
-                <span class="game-name">Ghost Hunt</span>
+                <span class="name">Ghost</span>
             </div>
         </div>
 
         <!-- Live Games -->
-        <div class="section-title">
+        <div class="section-header">
             <h2><i class="fas fa-bolt" style="color: #ff6b6b;"></i> Live Now</h2>
-            <a href="#" class="see-all">View All →</a>
+            <a href="#" class="link">View All →</a>
         </div>
 
         <div class="live-grid">
             <div class="live-card">
-                <div class="live-icon">⚔️</div>
-                <div class="live-name">Arena Battle</div>
-                <div class="live-players">👤 342 players</div>
+                <div class="icon">⚔️</div>
+                <div class="name">Arena</div>
+                <div class="players">👤 342</div>
             </div>
             <div class="live-card">
-                <div class="live-icon">🏎️</div>
-                <div class="live-name">Turbo Drive</div>
-                <div class="live-players">👤 128 players</div>
+                <div class="icon">🏎️</div>
+                <div class="name">Turbo</div>
+                <div class="players">👤 128</div>
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
+        <!-- Bottom Nav -->
         <nav class="bottom-nav">
             <a href="#" class="nav-item active">
                 <i class="fas fa-home"></i>
@@ -147,26 +561,25 @@
 
     </div>
 
-    <!-- ── GAME CLICK HANDLERS ── -->
+    <!-- ── INTERACTIVE SCRIPT ── -->
     <script>
-        // Add click functionality to all game cards
+        // Game card clicks
         document.querySelectorAll('.game-card').forEach(card => {
             card.addEventListener('click', function() {
-                const gameName = this.querySelector('.game-name').textContent;
-                alert(`🎮 Launching ${gameName}...`);
-                // Add your actual game launch logic here
+                const name = this.querySelector('.name').textContent;
+                alert(`🎮 Launching ${name}...`);
             });
         });
 
-        // Add click functionality to live cards
+        // Live card clicks
         document.querySelectorAll('.live-card').forEach(card => {
             card.addEventListener('click', function() {
-                const gameName = this.querySelector('.live-name').textContent;
-                alert(`⚡ Joining ${gameName} (Live)...`);
+                const name = this.querySelector('.name').textContent;
+                alert(`⚡ Joining ${name} (Live)...`);
             });
         });
 
-        // Nav item switching
+        // Nav switching
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -176,9 +589,16 @@
         });
 
         // Avatar click
-        document.querySelector('.user-avatar').addEventListener('click', function() {
-            alert('👤 Profile: Alex\n🎮 Games Played: 47\n🏆 Wins: 23');
+        document.querySelector('.avatar').addEventListener('click', function() {
+            alert('👤 Profile\n🎮 Games: 47\n🏆 Wins: 23');
         });
+
+        // Badge click
+        document.querySelector('.badge').addEventListener('click', function() {
+            alert('🔥 12 players online now!');
+        });
+
+        console.log('🎮 PlayToWin – Colorful Game Hub Loaded!');
     </script>
 
 </body>
