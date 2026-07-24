@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Exam · Home & Certification</title>
+    <title>Exam · Balance & Fee System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -34,7 +34,46 @@
         }
         .hidden { display: none !important; }
 
-        /* HOME PAGE */
+        /* Balance Display */
+        .balance-bar {
+            background: #0d1520;
+            border-radius: 16px;
+            padding: 10px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #1f2836;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .balance-bar .bal-label {
+            color: #8899b5;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .balance-bar .bal-amount {
+            font-size: 22px;
+            font-weight: 800;
+            color: #f5b342;
+        }
+        .balance-bar .bal-amount i {
+            margin-right: 6px;
+            color: #2ecc71;
+        }
+        .balance-bar .bal-fee {
+            font-size: 12px;
+            color: #8899b5;
+            background: #1f2836;
+            padding: 2px 12px;
+            border-radius: 40px;
+        }
+        .balance-bar .bal-fee span {
+            color: #f5b342;
+            font-weight: 700;
+        }
+
+        /* Home Page */
         .home-page {
             padding: 20px 10px 30px;
             text-align: center;
@@ -117,6 +156,12 @@
             transform: translateY(4px);
             box-shadow: 0 2px 0 #b87d2a;
         }
+        .home-page .btn-start:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #b87d2a;
+            cursor: not-allowed;
+        }
         .home-page .footer-text {
             margin-top: 20px;
             font-size: 12px;
@@ -187,7 +232,7 @@
         }
         .auth-screen .msg.success { color: #2ecc71; }
 
-        /* Payment section */
+        /* Payment / Deposit section */
         .payment-section {
             background: #0d1520;
             border-radius: 20px;
@@ -282,7 +327,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             padding-bottom: 8px;
             border-bottom: 1px solid #1f2836;
         }
@@ -322,6 +367,7 @@
         .btn-primary:active { transform: scale(0.95); }
         .btn-danger { background: #c0392b; border: none; padding: 5px 14px; border-radius: 40px; font-weight: 700; color: #fff; cursor: pointer; font-size: 12px; }
         .btn-danger:active { transform: scale(0.95); }
+        .btn-success { background: #2ecc71; border: none; padding: 5px 14px; border-radius: 40px; font-weight: 700; color: #0b0e14; cursor: pointer; font-size: 12px; }
 
         /* progress */
         .progress-bar { width: 100%; height: 4px; background: #1f2836; border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
@@ -633,6 +679,13 @@
         </div>
     </div>
 
+    <!-- Balance Bar -->
+    <div id="balanceBar" class="balance-bar no-print">
+        <span class="bal-label"><i class="fas fa-wallet"></i> Balance</span>
+        <span class="bal-amount" id="balanceDisplay"><i class="fas fa-coins"></i> 0.00 ETB</span>
+        <span class="bal-fee">Fee: <span>100 ETB</span></span>
+    </div>
+
     <!-- HOME PAGE -->
     <div id="homePage" class="home-page">
         <div class="logo"><i class="fas fa-graduation-cap"></i></div>
@@ -653,7 +706,7 @@
             </div>
             <div class="feature-card">
                 <i class="fas fa-credit-card"></i>
-                <span>Pay &amp; Access</span>
+                <span>100 ETB Fee</span>
             </div>
             <div class="feature-card">
                 <i class="fas fa-download"></i>
@@ -684,10 +737,10 @@
         </div>
     </div>
 
-    <!-- PAYMENT SECTION -->
+    <!-- PAYMENT / DEPOSIT SECTION -->
     <div id="paymentSection" class="payment-section hidden">
-        <h3><i class="fas fa-credit-card"></i> Payment Required</h3>
-        <p style="color:#8899b5;margin-bottom:8px;font-size:13px;">Select payment method and enter your details.</p>
+        <h3><i class="fas fa-plus-circle"></i> Deposit to Your Balance</h3>
+        <p style="color:#8899b5;margin-bottom:8px;font-size:13px;">Add funds to your account. Exam fee is 100 ETB.</p>
         <div class="pay-option">
             <input type="radio" name="paymentMethod" value="telebirr" id="payTelebirr" checked>
             <label for="payTelebirr"><i class="fas fa-mobile-alt" style="color:#f5b342;"></i> Telebirr</label>
@@ -699,10 +752,10 @@
             <span class="badge">13 digits</span>
         </div>
         <input type="text" id="paymentNumber" placeholder="Enter phone or account number" value="+251912121212">
-        <input type="number" id="paymentAmount" placeholder="Amount (ETB)" value="50" min="10">
+        <input type="number" id="paymentAmount" placeholder="Amount to Deposit (ETB)" value="100" min="10">
         <div class="msg" id="paymentMsg"></div>
-        <button class="btn-primary" id="payBtn"><i class="fas fa-check-circle"></i> Pay & Request Approval</button>
-        <div style="margin-top:6px;font-size:11px;color:#6a7a92;text-align:center;">Admin will review before exam access</div>
+        <button class="btn-primary" id="payBtn"><i class="fas fa-check-circle"></i> Deposit & Request Approval</button>
+        <div style="margin-top:6px;font-size:11px;color:#6a7a92;text-align:center;">Admin will approve your deposit before you can take the exam</div>
     </div>
 
     <!-- progress -->
@@ -792,8 +845,9 @@
                 <option value="">User</option>
             </select>
             <select id="adminActionSelect">
-                <option value="approve">✅ Approve</option>
+                <option value="approve">✅ Approve Deposit</option>
                 <option value="reset">🔑 Reset PW</option>
+                <option value="addfunds">💰 Add Funds</option>
             </select>
             <button id="adminActionBtn" class="approve"><i class="fas fa-check"></i></button>
             <button id="adminResultsBtn"><i class="fas fa-chart-line"></i></button>
@@ -894,8 +948,12 @@
         ];
 
         // ---- STATE ----
+        const EXAM_FEE = 100;
         let currentUser = null;
-        let users = JSON.parse(localStorage.getItem('examUsers')) || { 'admin': { password: 'admin123', role: 'admin', paid: true, approved: true } };
+        let users = JSON.parse(localStorage.getItem('examUsers')) || { 
+            'admin': { password: 'admin123', role: 'admin', balance: 9999, paid: true, approved: true },
+            'demo': { password: 'demo123', role: 'user', balance: 0, paid: false, approved: false }
+        };
         let paymentRequests = JSON.parse(localStorage.getItem('examPayments')) || {};
         let results = JSON.parse(localStorage.getItem('examResults')) || {};
 
@@ -907,6 +965,7 @@
         let examCompleted = false;
         let isExamActive = false;
         let lastResult = null;
+        let examPaid = false; // track if current exam fee has been paid
 
         // DOM refs
         const homePage = document.getElementById('homePage');
@@ -928,6 +987,8 @@
         const paymentAmount = document.getElementById('paymentAmount');
         const paymentMsg = document.getElementById('paymentMsg');
         const payBtn = document.getElementById('payBtn');
+
+        const balanceDisplay = document.getElementById('balanceDisplay');
 
         const qNumber = document.getElementById('qNumber');
         const qText = document.getElementById('qText');
@@ -993,6 +1054,31 @@
         function isPassed(score) { return score >= Math.ceil(totalQuestions * 0.5); }
         function getAnswered() { return userAnswers.filter(a => a !== null).length; }
 
+        function getUserBalance() {
+            if (!currentUser) return 0;
+            return users[currentUser.username]?.balance || 0;
+        }
+
+        function updateBalanceDisplay() {
+            const balance = getUserBalance();
+            balanceDisplay.innerHTML = `<i class="fas fa-coins"></i> ${balance.toFixed(2)} ETB`;
+        }
+
+        function canTakeExam() {
+            const balance = getUserBalance();
+            return balance >= EXAM_FEE;
+        }
+
+        function deductExamFee() {
+            if (!currentUser) return false;
+            const balance = getUserBalance();
+            if (balance < EXAM_FEE) return false;
+            users[currentUser.username].balance = balance - EXAM_FEE;
+            saveUsers();
+            updateBalanceDisplay();
+            return true;
+        }
+
         // ---- NAVIGATION ----
         function goHome() {
             homePage.classList.remove('hidden');
@@ -1026,17 +1112,30 @@
             totalQDisplay.textContent = totalQuestions;
             totalQBadge.textContent = totalQuestions;
             answeredCount.textContent = answered;
+            updateBalanceDisplay();
+            
             if (currentUser) {
                 greeting.textContent = `👋 ${currentUser.username}`;
                 roleBadge.textContent = currentUser.role.toUpperCase();
                 logoutBtn.classList.remove('hidden');
                 adminPanel.style.display = currentUser.role === 'admin' ? 'flex' : 'none';
                 if (currentUser.role === 'admin') updateAdminSelect();
+                
+                // Update start button status
+                if (canTakeExam()) {
+                    startExamBtn.disabled = false;
+                    startExamBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Start Exam';
+                } else {
+                    startExamBtn.disabled = true;
+                    startExamBtn.innerHTML = '<i class="fas fa-lock"></i> Insufficient Balance (Need 100 ETB)';
+                }
             } else {
                 greeting.textContent = '👋 Guest';
                 roleBadge.textContent = 'USER';
                 logoutBtn.classList.add('hidden');
                 adminPanel.style.display = 'none';
+                startExamBtn.disabled = false;
+                startExamBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Start Exam';
             }
             renderNavGrid();
         }
@@ -1047,7 +1146,7 @@
                 if (username !== 'admin') {
                     const opt = document.createElement('option');
                     opt.value = username;
-                    opt.textContent = `${username} ${data.paid && data.approved ? '✅' : '⏳'}`;
+                    opt.textContent = `${username} (${data.balance || 0} ETB) ${data.paid && data.approved ? '✅' : '⏳'}`;
                     adminUserSelect.appendChild(opt);
                 }
             }
@@ -1084,7 +1183,7 @@
             if (isLoginMode) {
                 const user = users[username];
                 if (user && user.password === password) {
-                    currentUser = { username, role: user.role, paid: user.paid || false, approved: user.approved || false };
+                    currentUser = { username, role: user.role, balance: user.balance || 0, paid: user.paid || false, approved: user.approved || false };
                     authMsg.textContent = '✅ Login successful!';
                     authMsg.className = 'msg success';
                     setTimeout(() => {
@@ -1107,7 +1206,7 @@
                     authMsg.className = 'msg';
                     return;
                 }
-                users[username] = { password, role: 'user', paid: false, approved: false };
+                users[username] = { password, role: 'user', balance: 0, paid: false, approved: false };
                 saveUsers();
                 authMsg.textContent = '✅ Account created! Please login.';
                 authMsg.className = 'msg success';
@@ -1118,7 +1217,10 @@
         function checkExamAccess() {
             if (!currentUser) return;
             const userData = users[currentUser.username];
-            if (userData.paid && userData.approved) {
+            
+            // Check if user has enough balance
+            if (userData.balance >= EXAM_FEE && userData.approved) {
+                // User has sufficient balance and is approved
                 paymentSection.classList.add('hidden');
                 progressBar.classList.remove('hidden');
                 document.getElementById('questionSelector').classList.remove('hidden');
@@ -1126,9 +1228,11 @@
                 examArea.classList.remove('hidden');
                 resultCard.classList.add('hidden');
                 isExamActive = true;
+                examPaid = false; // reset exam payment flag
                 applyQuestionCount();
                 updateUI();
-            } else {
+            } else if (userData.approved && userData.balance < EXAM_FEE) {
+                // Approved but insufficient balance - show deposit option
                 paymentSection.classList.remove('hidden');
                 progressBar.classList.add('hidden');
                 document.getElementById('questionSelector').classList.add('hidden');
@@ -1136,26 +1240,42 @@
                 examArea.classList.add('hidden');
                 resultCard.classList.add('hidden');
                 isExamActive = false;
-                if (userData.paid && !userData.approved) {
-                    paymentMsg.textContent = '⏳ Payment submitted. Awaiting admin approval.';
+                paymentMsg.textContent = `⚠️ Your balance (${userData.balance} ETB) is insufficient. Minimum 100 ETB required.`;
+                paymentMsg.className = 'msg error';
+            } else if (!userData.approved) {
+                // Not approved - show deposit request
+                paymentSection.classList.remove('hidden');
+                progressBar.classList.add('hidden');
+                document.getElementById('questionSelector').classList.add('hidden');
+                document.getElementById('qNavGrid').classList.add('hidden');
+                examArea.classList.add('hidden');
+                resultCard.classList.add('hidden');
+                isExamActive = false;
+                if (userData.paid) {
+                    paymentMsg.textContent = '⏳ Deposit submitted. Awaiting admin approval.';
                     paymentMsg.className = 'msg';
                 } else {
-                    paymentMsg.textContent = '💳 Complete payment to access exam.';
+                    paymentMsg.textContent = '💳 Please make a deposit to start your exam. Minimum 100 ETB.';
                     paymentMsg.className = 'msg';
                 }
             }
             updateUI();
         }
 
-        // ---- PAYMENT ----
+        // ---- PAYMENT / DEPOSIT ----
         function handlePayment() {
             if (!currentUser) return;
             const method = document.querySelector('input[name="paymentMethod"]:checked');
             const number = paymentNumber.value.trim();
-            const amount = parseInt(paymentAmount.value) || 50;
+            const amount = parseInt(paymentAmount.value) || 100;
             if (!number || number.length < 5) {
                 paymentMsg.textContent = '❌ Please enter valid payment number';
-                paymentMsg.className = 'msg';
+                paymentMsg.className = 'msg error';
+                return;
+            }
+            if (amount < EXAM_FEE) {
+                paymentMsg.textContent = `❌ Minimum deposit is ${EXAM_FEE} ETB`;
+                paymentMsg.className = 'msg error';
                 return;
             }
             const methodName = method ? method.value : 'telebirr';
@@ -1169,8 +1289,9 @@
             savePayments();
             users[currentUser.username].paid = true;
             users[currentUser.username].approved = false;
+            // Don't add balance yet - admin approves
             saveUsers();
-            paymentMsg.textContent = '✅ Payment submitted! Admin will approve.';
+            paymentMsg.textContent = `✅ Deposit of ${amount} ETB submitted! Admin will approve.`;
             paymentMsg.className = 'msg success';
             setTimeout(() => { checkExamAccess(); }, 1200);
         }
@@ -1184,13 +1305,19 @@
             if (!users[username]) { alert('User not found'); return; }
 
             if (action === 'approve') {
-                users[username].approved = true;
-                if (paymentRequests[username]) {
-                    paymentRequests[username].approved = true;
+                // Approve deposit - add balance
+                const user = users[username];
+                const req = paymentRequests[username];
+                if (req && !req.approved) {
+                    const amount = req.amount || EXAM_FEE;
+                    user.balance = (user.balance || 0) + amount;
+                    req.approved = true;
                     savePayments();
                 }
+                user.approved = true;
+                user.paid = true;
                 saveUsers();
-                alert(`✅ Payment for ${username} approved.`);
+                alert(`✅ Deposit for ${username} approved. Balance updated.`);
                 updateAdminSelect();
                 if (currentUser.username === username) checkExamAccess();
             } else if (action === 'reset') {
@@ -1201,6 +1328,21 @@
                     alert(`✅ Password for ${username} reset.`);
                 } else {
                     alert('❌ Invalid password (min 4 chars)');
+                }
+            } else if (action === 'addfunds') {
+                const amount = prompt(`Enter amount to add to ${username}'s balance:`);
+                const numAmount = parseFloat(amount);
+                if (isNaN(numAmount) || numAmount <= 0) {
+                    alert('❌ Invalid amount');
+                    return;
+                }
+                users[username].balance = (users[username].balance || 0) + numAmount;
+                saveUsers();
+                alert(`✅ Added ${numAmount} ETB to ${username}'s balance. New balance: ${users[username].balance} ETB`);
+                updateAdminSelect();
+                if (currentUser.username === username) {
+                    updateBalanceDisplay();
+                    checkExamAccess();
                 }
             }
             updateUI();
@@ -1217,7 +1359,13 @@
             }
             msg += '\n📋 PAYMENT REQUESTS:\n';
             for (const [user, req] of Object.entries(paymentRequests)) {
-                msg += `${user}: ${req.method} ${req.number} - ${req.approved ? '✅' : '⏳'}\n`;
+                msg += `${user}: ${req.method} ${req.amount} ETB - ${req.approved ? '✅ Approved' : '⏳ Pending'}\n`;
+            }
+            msg += '\n💰 USER BALANCES:\n';
+            for (const [user, data] of Object.entries(users)) {
+                if (user !== 'admin') {
+                    msg += `${user}: ${data.balance || 0} ETB ${data.approved ? '✅' : '⏳'}\n`;
+                }
             }
             alert(msg || 'No data.');
         }
@@ -1313,6 +1461,16 @@
 
         function submitExam() {
             if (!isExamActive) return;
+            
+            // Check if exam fee has been paid for this attempt
+            if (!examPaid) {
+                if (!deductExamFee()) {
+                    resultMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f5b342;"></i> Insufficient balance. Need ${EXAM_FEE} ETB to take exam.`;
+                    return;
+                }
+                examPaid = true;
+            }
+            
             const unanswered = userAnswers.filter(a => a === null).length;
             if (unanswered > 0) {
                 resultMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f5b342;"></i> ${unanswered} unanswered.`;
@@ -1347,12 +1505,14 @@
 
         function retakeExam() {
             if (!isExamActive) return;
+            // Reset exam state but keep balance (already paid)
             userAnswers = new Array(totalQuestions).fill(null);
             submitted = new Array(totalQuestions).fill(false);
             examCompleted = false;
             currentIndex = 0;
             examArea.classList.remove('hidden');
             resultCard.classList.add('hidden');
+            examPaid = false; // Reset so fee is deducted again on next attempt
             renderQuestion();
             updateUI();
         }
@@ -1428,6 +1588,7 @@
         // ---- LOGOUT ----
         function logout() {
             currentUser = null;
+            examPaid = false;
             goHome();
             authScreen.classList.remove('hidden');
             homePage.classList.remove('hidden');
@@ -1492,11 +1653,11 @@
 
         // ---- INIT ----
         if (!users['admin']) {
-            users['admin'] = { password: 'admin123', role: 'admin', paid: true, approved: true };
+            users['admin'] = { password: 'admin123', role: 'admin', balance: 9999, paid: true, approved: true };
             saveUsers();
         }
         if (!users['demo']) {
-            users['demo'] = { password: 'demo123', role: 'user', paid: false, approved: false };
+            users['demo'] = { password: 'demo123', role: 'user', balance: 0, paid: false, approved: false };
             saveUsers();
         }
         authUsername.value = 'demo';
@@ -1504,6 +1665,7 @@
         updateUI();
         console.log('👑 Admin: admin / admin123');
         console.log('👤 Demo: demo / demo123');
+        console.log('💰 Exam Fee: 100 ETB');
     })();
 </script>
 </body>
