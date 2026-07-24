@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>🎲 PRO GAMING · Keno & More</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Exam · Pay & Certify</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -13,324 +13,47 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         body {
-            background: radial-gradient(circle at 20% 30%, #0b0f16, #030507);
+            background: #0b0f16;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: #e8edf5;
         }
-        .platform {
-            max-width: 1100px;
+        .app-wrapper {
+            max-width: 1000px;
             width: 100%;
-            background: rgba(14, 20, 30, 0.92);
-            backdrop-filter: blur(6px);
-            border-radius: 48px;
-            padding: 24px 28px 32px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.9), 0 0 0 1px rgba(255, 215, 0, 0.12);
-            border: 1px solid rgba(255, 215, 0, 0.06);
+            background: #141d2a;
+            border-radius: 40px;
+            padding: 28px 30px 34px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.85);
+            border: 1px solid #26303f;
         }
-        /* top bar */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 14px;
+        .hidden { display: none !important; }
+        /* Auth screens */
+        .auth-screen {
+            max-width: 480px;
+            margin: 20px auto;
+            padding: 30px;
+            background: #101820;
+            border-radius: 32px;
+            border: 1px solid #26303f;
+        }
+        .auth-screen h2 {
+            font-size: 28px;
             margin-bottom: 8px;
-        }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .brand h1 {
-            font-size: 32px;
-            font-weight: 800;
             background: linear-gradient(135deg, #f9e07f, #f5b342);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -0.3px;
         }
-        .brand i {
-            font-size: 34px;
-            color: #f5b342;
-            filter: drop-shadow(0 0 10px #f5b34255);
-        }
-        .game-tabs {
-            display: flex;
-            gap: 6px;
-            background: #101820;
-            padding: 6px;
-            border-radius: 60px;
-            border: 1px solid #26303f;
-        }
-        .game-tab {
-            padding: 10px 22px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 15px;
+        .auth-screen .sub {
             color: #8899b5;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-        .game-tab.active {
-            background: #f5b342;
-            color: #0b0e14;
-            box-shadow: 0 4px 12px #f5b34266;
-        }
-        .game-tab:hover:not(.active) { background: #1f2a38; color: #e8edf5; }
-        .bet-module {
-            background: #101820;
-            padding: 8px 18px 8px 20px;
-            border-radius: 60px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid #26303f;
-        }
-        .bet-module span { color: #a0b3cc; font-weight: 600; font-size: 14px; }
-        .bet-module input {
-            background: transparent;
-            border: none;
-            width: 70px;
-            font-size: 20px;
-            font-weight: 700;
-            color: #f0f4fa;
-            outline: none;
-            text-align: right;
-        }
-        .bet-module .cur { color: #f5c542; }
-        /* game container */
-        .game-container {
-            margin-top: 18px;
-            min-height: 420px;
-        }
-        /* KENO GRID */
-        .num-grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 8px;
-            margin: 12px 0 18px;
-        }
-        .num-btn {
-            background: #141d2a;
-            border: 1px solid #26303f;
-            border-radius: 16px;
-            padding: 12px 0;
-            font-size: 20px;
-            font-weight: 700;
-            color: #c9d5e6;
-            box-shadow: 0 4px 0 #0a1018;
-            transition: all 0.08s ease;
-            cursor: pointer;
-            text-align: center;
-            aspect-ratio: 1/1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .num-btn:hover { background: #1f2a38; color: #fff; transform: scale(1.02); }
-        .num-btn.selected { background: #f5b342; border-color: #f5b342; color: #0b0e14; box-shadow: 0 0 20px #f5b342aa, 0 4px 0 #b87d2a; }
-        .num-btn.winning { background: #2ecc71; border-color: #2ecc71; color: #0b0e14; box-shadow: 0 0 24px #2ecc71bb, 0 4px 0 #1e8b4b; }
-        .num-btn.losing { background: #2f3a48; border-color: #26303f; color: #7a88a0; box-shadow: 0 4px 0 #1a222e; opacity: 0.7; }
-        .num-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-        /* other games */
-        .game-card {
-            background: #101820;
-            border-radius: 32px;
-            padding: 24px 28px;
-            border: 1px solid #26303f;
-            text-align: center;
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-        }
-        .game-card i { font-size: 64px; color: #f5b342; opacity: 0.7; }
-        .game-card h3 { color: #e8edf5; font-size: 28px; }
-        .game-card p { color: #8899b5; max-width: 360px; }
-        .game-card .btn-play {
-            background: #f5b342;
-            border: none;
-            padding: 14px 48px;
-            border-radius: 60px;
-            font-weight: 800;
-            font-size: 18px;
-            color: #0b0e14;
-            box-shadow: 0 6px 0 #b87d2a;
-            cursor: pointer;
-            transition: 0.08s;
-        }
-        .game-card .btn-play:active { transform: translateY(4px); box-shadow: 0 2px 0 #b87d2a; }
-        .action-row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 12px;
-            margin: 6px 0 10px;
-        }
-        .multiplier-badge {
-            background: #101820;
-            padding: 8px 24px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 17px;
-            color: #f5e7c8;
-            border: 1px solid #f5b34255;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-primary {
-            background: #f5b342;
-            border: none;
-            padding: 14px 40px;
-            border-radius: 60px;
-            font-weight: 800;
-            font-size: 20px;
-            color: #0b0e14;
-            box-shadow: 0 8px 0 #b87d2a;
-            transition: 0.08s;
-            cursor: pointer;
-            flex: 1 1 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .btn-primary:active { transform: translateY(4px); box-shadow: 0 4px 0 #b87d2a; }
-        .btn-primary:disabled { opacity: 0.5; transform: translateY(4px); box-shadow: 0 4px 0 #b87d2a; pointer-events: none; }
-        .btn-secondary {
-            background: #1e2632;
-            border: 1px solid #2f3a48;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-weight: 600;
-            color: #bcc9de;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .btn-secondary:hover { background: #2a3442; color: #fff; }
-        .result-box {
-            font-size: 18px;
-            font-weight: 600;
-            padding: 10px 0 4px;
-            min-height: 48px;
-            color: #e8edf5;
-            border-top: 1px solid #1f2836;
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .result-box i { color: #f5b342; }
-        .bottom-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            padding-top: 14px;
-            border-top: 1px solid #1a232f;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .bottom-nav a {
-            color: #8899b5;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 40px;
+            margin-bottom: 20px;
             font-size: 14px;
-            transition: 0.1s;
         }
-        .bottom-nav a i { margin-right: 8px; }
-        .bottom-nav a:hover { background: #1a232f; color: #f0f4fa; }
-        .admin-panel {
-            background: #0d1520;
-            border-radius: 28px;
-            padding: 14px 22px;
-            margin-top: 20px;
-            border: 1px solid #1f2836;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .user-badge i { font-size: 26px; color: #f5b342; }
-        .user-badge .name { font-weight: 700; color: #e8edf5; }
-        .user-badge .role { background: #1f6feb; padding: 2px 14px; border-radius: 40px; font-size: 12px; font-weight: 700; color: white; }
-        .admin-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .admin-actions button {
-            background: #1a232f;
-            border: 1px solid #2a3442;
-            color: #c9d5e6;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: 0.1s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .admin-actions button:hover { background: #26303f; color: #fff; }
-        .admin-actions .approve { background: #1e8b4b; border-color: #2ecc71; color: #fff; }
-        .admin-actions .approve:hover { background: #2ecc71; }
-        .admin-actions .reject { background: #a13131; border-color: #e74c3c; color: #fff; }
-        .admin-actions .reject:hover { background: #e74c3c; }
-        .login-btn {
-            background: transparent;
-            border: 1px solid #2a3442;
-            padding: 6px 18px;
-            border-radius: 40px;
-            color: #bcc9de;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .login-btn:hover { background: #1a232f; color: #fff; }
-        .hidden { display: none; }
-        /* modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(6px);
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: #141d2a;
-            max-width: 420px;
-            width: 92%;
-            padding: 28px 26px;
-            border-radius: 32px;
-            border: 1px solid #2f3a48;
-            box-shadow: 0 30px 60px #000000cc;
-        }
-        .modal-box h3 { color: #f0f4fa; margin-bottom: 16px; }
-        .modal-box input {
+        .auth-screen input, .auth-screen select {
             width: 100%;
             padding: 14px 18px;
             margin: 8px 0;
@@ -339,123 +62,442 @@
             border-radius: 60px;
             color: #f0f4fa;
             font-size: 15px;
+            outline: none;
         }
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-            justify-content: flex-end;
-        }
-        .modal-actions button {
-            padding: 10px 24px;
+        .auth-screen input:focus, .auth-screen select:focus { border-color: #f5b342; }
+        .auth-screen .btn-primary {
+            width: 100%;
+            padding: 14px;
             border-radius: 60px;
             font-weight: 700;
-            border: none;
+            font-size: 18px;
+            margin-top: 12px;
+        }
+        .auth-screen .toggle-link {
+            color: #f5b342;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .auth-screen .toggle-link:hover { text-decoration: underline; }
+        .auth-screen .msg {
+            color: #e74c3c;
+            font-size: 14px;
+            min-height: 24px;
+            margin: 6px 0;
+        }
+        .auth-screen .msg.success { color: #2ecc71; }
+        /* Payment section */
+        .payment-section {
+            background: #0d1520;
+            border-radius: 24px;
+            padding: 20px;
+            margin: 16px 0;
+            border: 1px solid #1f2836;
+        }
+        .payment-section h3 {
+            color: #f0f4fa;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+        .payment-section .pay-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #101820;
+            border-radius: 16px;
+            border: 1px solid #26303f;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .payment-section .pay-option:hover { background: #1a232f; }
+        .payment-section .pay-option input[type="radio"] {
+            appearance: none;
+            width: 18px; height: 18px;
+            border: 2px solid #4a5a70;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
             cursor: pointer;
         }
+        .payment-section .pay-option input[type="radio"]:checked {
+            border-color: #f5b342;
+            background: #f5b342;
+        }
+        .payment-section .pay-option input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 8px; height: 8px;
+            background: #0b0f16;
+            border-radius: 50%;
+        }
+        .payment-section .pay-option label {
+            color: #d3def0;
+            cursor: pointer;
+            flex: 1;
+        }
+        .payment-section .pay-option .badge {
+            background: #1f6feb;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+        /* header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #1f2836;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f9e07f, #f5b342);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header h1 i { -webkit-text-fill-color: #f5b342; }
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .user-area .greeting { font-weight: 600; color: #c9d5e6; }
+        .user-area .badge { background: #1f6feb; padding: 4px 14px; border-radius: 40px; font-size: 12px; font-weight: 700; color: #fff; }
+        .btn-outline {
+            background: transparent; border: 1px solid #2f3a48; padding: 6px 18px;
+            border-radius: 40px; color: #bcc9de; font-weight: 600; cursor: pointer;
+            transition: 0.1s; font-size: 14px;
+        }
+        .btn-outline:hover { background: #1e2632; color: #fff; }
+        .btn-primary {
+            background: #f5b342; border: none; padding: 8px 24px;
+            border-radius: 40px; font-weight: 700; color: #0b0e14;
+            cursor: pointer; transition: 0.1s; font-size: 14px;
+        }
+        .btn-primary:hover { background: #f0c45a; }
+        .btn-danger { background: #c0392b; border: none; padding: 8px 24px; border-radius: 40px; font-weight: 700; color: #fff; cursor: pointer; }
+        .btn-danger:hover { background: #e74c3c; }
+        .btn-success { background: #2ecc71; border: none; padding: 8px 24px; border-radius: 40px; font-weight: 700; color: #0b0e14; cursor: pointer; }
+        .btn-success:hover { background: #27ae60; }
+        /* progress */
+        .progress-bar { width: 100%; height: 6px; background: #1f2836; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #f5b342, #f9e07f); width: 0%; border-radius: 10px; transition: width 0.3s; }
+        /* question selector */
+        .question-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            padding: 10px 16px;
+            background: #101820;
+            border-radius: 20px;
+            border: 1px solid #1f2836;
+        }
+        .question-selector label { color: #8899b5; font-weight: 600; font-size: 14px; }
+        .question-selector input {
+            background: #0b1018; border: 1px solid #26303f; border-radius: 40px;
+            padding: 8px 16px; width: 80px; color: #f0f4fa; font-size: 15px;
+            text-align: center; outline: none;
+        }
+        .question-selector input:focus { border-color: #f5b342; }
+        .question-selector .q-count-badge {
+            background: #1f6feb; padding: 4px 16px; border-radius: 40px;
+            font-weight: 700; font-size: 14px; color: #fff;
+        }
+        /* q-nav */
+        .q-nav-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 18px;
+            padding: 10px 12px;
+            background: #0d1520;
+            border-radius: 20px;
+            border: 1px solid #1f2836;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .q-nav-btn {
+            width: 38px; height: 38px; border-radius: 50%;
+            border: 1px solid #2f3a48; background: #101820;
+            color: #8899b5; font-weight: 700; font-size: 13px;
+            cursor: pointer; transition: 0.1s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .q-nav-btn:hover { background: #1a232f; color: #fff; }
+        .q-nav-btn.active { background: #f5b342; color: #0b0e14; border-color: #f5b342; }
+        .q-nav-btn.answered { background: #2ecc71; color: #0b0e14; border-color: #2ecc71; }
+        .q-nav-btn.wrong { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+        .q-nav-btn.current { box-shadow: 0 0 16px #f5b34288; }
+        /* question */
+        .q-number { font-size: 14px; color: #8899b5; font-weight: 600; margin-bottom: 6px; }
+        .q-text { font-size: 20px; font-weight: 600; line-height: 1.5; margin-bottom: 18px; color: #f0f4fa; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option {
+            display: flex; align-items: flex-start; gap: 14px;
+            background: #101820; padding: 14px 18px; border-radius: 18px;
+            border: 1px solid #26303f; cursor: pointer; transition: 0.12s;
+        }
+        .option:hover:not(.disabled) { background: #1a232f; border-color: #3e4b5e; }
+        .option input[type="radio"] {
+            appearance: none; width: 20px; height: 20px;
+            border: 2px solid #4a5a70; border-radius: 50%;
+            margin-top: 2px; flex-shrink: 0; cursor: pointer;
+            transition: 0.08s; position: relative;
+        }
+        .option input[type="radio"]:checked {
+            border-color: #f5b342; background: #f5b342;
+            box-shadow: 0 0 12px #f5b34266;
+        }
+        .option input[type="radio"]:checked::after {
+            content: ''; position: absolute; top: 4px; left: 4px;
+            width: 8px; height: 8px; background: #0b0f16; border-radius: 50%;
+        }
+        .option label { font-size: 17px; line-height: 1.5; color: #d3def0; cursor: pointer; flex: 1; }
+        .option.correct { background: #1e4b2a; border-color: #2ecc71; }
+        .option.correct label { color: #b8f0c8; }
+        .option.wrong { background: #4b1e1e; border-color: #e74c3c; }
+        .option.wrong label { color: #f0b8b8; }
+        .option.disabled { opacity: 0.85; cursor: default; }
+        .option.disabled:hover { background: #101820; border-color: #26303f; }
+        .option.disabled.correct:hover { background: #1e4b2a; border-color: #2ecc71; }
+        .option.disabled.wrong:hover { background: #4b1e1e; border-color: #e74c3c; }
+        /* nav */
+        .nav-row {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 14px; margin-top: 18px; padding-top: 16px;
+            border-top: 1px solid #1f2836;
+        }
+        .nav-btn {
+            background: #1e2632; border: 1px solid #2f3a48; padding: 10px 28px;
+            border-radius: 60px; font-weight: 600; color: #c9d5e6;
+            cursor: pointer; transition: 0.1s; font-size: 15px;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .nav-btn:hover:not(:disabled) { background: #2a3442; color: #fff; }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .nav-btn.primary { background: #f5b342; border-color: #f5b342; color: #0b0e14; font-weight: 700; }
+        .nav-btn.primary:hover:not(:disabled) { background: #f0c45a; }
+        .score-area { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .score-badge {
+            background: #1f2836; padding: 8px 20px; border-radius: 60px;
+            font-weight: 700; color: #f0f4fa; font-size: 16px;
+        }
+        .score-badge i { color: #f5b342; margin-right: 8px; }
+        .result-msg { font-weight: 600; font-size: 17px; padding: 10px 0 4px; color: #f0f4fa; min-height: 40px; }
+        .result-msg i { margin-right: 10px; }
+        /* result card */
+        .result-card {
+            background: linear-gradient(145deg, #1a2330, #0d1520);
+            border-radius: 32px; padding: 34px 28px;
+            border: 2px solid #f5b342; text-align: center; margin: 12px 0;
+            box-shadow: 0 0 40px #f5b34222;
+        }
+        .result-card .big-score { font-size: 64px; font-weight: 800; color: #f5b342; }
+        .result-card .status { font-size: 32px; font-weight: 700; margin: 12px 0; }
+        .result-card .status.pass { color: #2ecc71; text-shadow: 0 0 30px #2ecc7155; }
+        .result-card .status.fail { color: #e74c3c; text-shadow: 0 0 30px #e74c3c55; }
+        .result-card .cert {
+            background: #1f2836; padding: 20px; border-radius: 24px; margin-top: 16px;
+            border: 2px solid #f5b34255;
+        }
+        .result-card .cert i { color: #f5b342; font-size: 40px; }
+        .result-card .cert .cert-text { font-size: 18px; color: #f0f4fa; margin-top: 8px; font-weight: 600; }
+        .result-card .cert .cert-sub { color: #8899b5; font-size: 14px; margin-top: 4px; }
+        .result-card .cert .cert-id { color: #f5b342; font-size: 13px; margin-top: 8px; font-family: monospace; }
+        .result-card .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+        /* admin panel */
+        .admin-panel {
+            background: #0d1520; border-radius: 24px; padding: 14px 22px;
+            margin-top: 18px; border: 1px solid #1f2836;
+            display: flex; flex-wrap: wrap; align-items: center;
+            justify-content: space-between; gap: 12px;
+        }
+        .admin-panel .admin-title { color: #8899b5; font-weight: 600; font-size: 14px; }
+        .admin-panel .admin-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        .admin-panel .admin-actions select, .admin-panel .admin-actions button {
+            background: #1a232f; border: 1px solid #2a3442; color: #c9d5e6;
+            padding: 6px 16px; border-radius: 40px; font-weight: 600; font-size: 13px;
+            cursor: pointer; transition: 0.1s; display: flex; align-items: center; gap: 6px;
+            outline: none;
+        }
+        .admin-panel .admin-actions select option { background: #141d2a; }
+        .admin-panel .admin-actions button:hover { background: #26303f; color: #fff; }
+        .admin-panel .admin-actions .approve { background: #1e8b4b; border-color: #2ecc71; color: #fff; }
+        .admin-panel .admin-actions .approve:hover { background: #2ecc71; }
+        .admin-panel .admin-actions .reject { background: #a13131; border-color: #e74c3c; color: #fff; }
+        .admin-panel .admin-actions .reject:hover { background: #e74c3c; }
+        /* modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(6px);
+            align-items: center; justify-content: center; z-index: 999;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #141d2a; max-width: 440px; width: 92%;
+            padding: 30px 28px; border-radius: 32px; border: 1px solid #2f3a48;
+            box-shadow: 0 30px 60px #000000cc;
+        }
+        .modal-box h3 { color: #f0f4fa; margin-bottom: 16px; font-size: 24px; }
+        .modal-box input, .modal-box select {
+            width: 100%; padding: 14px 18px; margin: 8px 0;
+            background: #0b1018; border: 1px solid #26303f; border-radius: 60px;
+            color: #f0f4fa; font-size: 15px; outline: none;
+        }
+        .modal-box input:focus, .modal-box select:focus { border-color: #f5b342; }
+        .modal-actions { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
+        .modal-actions button { padding: 10px 24px; border-radius: 60px; font-weight: 700; border: none; cursor: pointer; }
         .btn-cancel { background: #26303f; color: #bcc9de; }
         .btn-confirm { background: #f5b342; color: #0b0e14; }
-        @media (max-width: 680px) {
-            .num-grid { gap: 5px; }
-            .num-btn { font-size: 16px; padding: 8px 0; }
-            .brand h1 { font-size: 24px; }
-            .game-tab { padding: 6px 14px; font-size: 13px; }
+        .modal-msg { color: #e74c3c; font-size: 14px; margin-top: 6px; min-height: 24px; }
+        @media (max-width: 600px) {
+            .app-wrapper { padding: 16px 12px; }
+            .q-text { font-size: 18px; }
+            .option label { font-size: 15px; }
+            .nav-btn { padding: 8px 14px; font-size: 13px; }
+            .header h1 { font-size: 22px; }
+            .result-card .big-score { font-size: 44px; }
+            .q-nav-btn { width: 32px; height: 32px; font-size: 11px; }
+            .auth-screen { padding: 20px; }
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .app-wrapper { background: white !important; color: black !important; border: none !important; box-shadow: none !important; }
+            .result-card { border: 2px solid #f5b342 !important; }
+            .result-card .status.pass { color: #2ecc71 !important; }
+            .result-card .status.fail { color: #e74c3c !important; }
+            body { background: white !important; }
         }
     </style>
 </head>
 <body>
-<div class="platform" id="app">
-    <!-- top bar -->
-    <div class="top-bar">
-        <div class="brand">
-            <i class="fas fa-crown"></i>
-            <h1>PRO GAMING</h1>
-        </div>
-        <div class="game-tabs" id="gameTabs">
-            <button class="game-tab active" data-game="keno"><i class="fas fa-dice"></i> Keno</button>
-            <button class="game-tab" data-game="slots"><i class="fas fa-sliders-h"></i> Slots</button>
-            <button class="game-tab" data-game="roulette"><i class="fas fa-circle"></i> Roulette</button>
-            <button class="game-tab" data-game="blackjack"><i class="fas fa-club"></i> Blackjack</button>
-        </div>
-        <div class="bet-module">
-            <span><i class="fas fa-coins"></i> BET</span>
-            <input type="number" id="betAmount" value="1" min="1" step="1">
-            <span class="cur">ETB</span>
+<div class="app-wrapper" id="app">
+    <!-- header -->
+    <div class="header no-print">
+        <h1><i class="fas fa-graduation-cap"></i> ProExam</h1>
+        <div class="user-area" id="userArea">
+            <span class="greeting" id="greeting">👋 Guest</span>
+            <span class="badge" id="roleBadge">USER</span>
+            <button class="btn-outline hidden" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
     </div>
 
-    <!-- GAME CONTAINER -->
-    <div class="game-container" id="gameContainer">
-        <!-- KENO -->
-        <div id="kenoGame">
-            <div class="meta-row" style="display:flex;justify-content:space-between;color:#7d8ba5;font-size:14px;padding:6px 0 4px;border-bottom:1px solid #1f2836;margin-bottom:12px;">
-                <span><strong>ID:</strong> <span id="userIdDisplay">884650418</span></span>
-                <span><i class="far fa-clock"></i> 20/80 · <span id="drawCount">0</span></span>
+    <!-- AUTH SCREEN (shown first) -->
+    <div id="authScreen" class="auth-screen">
+        <h2 id="authTitle">Welcome to ProExam</h2>
+        <div class="sub" id="authSub">Login to continue or register for a new account</div>
+        <div id="authForm">
+            <input type="text" id="authUsername" placeholder="Username" value="demo">
+            <input type="password" id="authPassword" placeholder="Password" value="demo123">
+            <div class="msg" id="authMsg"></div>
+            <button class="btn-primary" id="authActionBtn">Login</button>
+            <div style="text-align:center;margin-top:14px;color:#8899b5;font-size:14px;">
+                <span id="authToggleText">Don't have an account?</span>
+                <span class="toggle-link" id="authToggleLink">Register</span>
             </div>
-            <div class="num-grid" id="numberGrid"></div>
-            <div class="action-row">
-                <div class="multiplier-badge"><i class="fas fa-bolt"></i> X2 MAX</div>
-                <button class="btn-primary" id="playBtn"><i class="fas fa-play"></i> PLAY</button>
-                <button class="btn-secondary" id="clearBtn"><i class="fas fa-undo-alt"></i> Clear</button>
-            </div>
-            <div class="result-box" id="resultMessage"><i class="fas fa-info-circle"></i> Pick 10 numbers & play</div>
-        </div>
-
-        <!-- SLOTS -->
-        <div id="slotsGame" class="hidden game-card">
-            <i class="fas fa-sliders-h"></i>
-            <h3>🎰 SLOTS</h3>
-            <p>Spin the reels and win big! Classic 3-reel action.</p>
-            <button class="btn-play" id="slotsSpinBtn"><i class="fas fa-sync-alt"></i> SPIN</button>
-            <div id="slotsResult" style="font-size:22px;font-weight:700;color:#f5b342;margin-top:8px;">🍒 🍋 🍒</div>
-        </div>
-
-        <!-- ROULETTE -->
-        <div id="rouletteGame" class="hidden game-card">
-            <i class="fas fa-circle"></i>
-            <h3>🎡 ROULETTE</h3>
-            <p>Bet on red, black, or your lucky number.</p>
-            <button class="btn-play" id="rouletteSpinBtn"><i class="fas fa-spinner"></i> SPIN</button>
-            <div id="rouletteResult" style="font-size:28px;font-weight:800;color:#f5b342;margin-top:8px;">🔴 0</div>
-        </div>
-
-        <!-- BLACKJACK -->
-        <div id="blackjackGame" class="hidden game-card">
-            <i class="fas fa-club"></i>
-            <h3>🃏 BLACKJACK</h3>
-            <p>Beat the dealer! Hit or stand.</p>
-            <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
-                <button class="btn-play" id="bjHitBtn" style="padding:10px 28px;font-size:16px;">HIT</button>
-                <button class="btn-play" id="bjStandBtn" style="padding:10px 28px;font-size:16px;">STAND</button>
-                <button class="btn-play" id="bjNewBtn" style="padding:10px 28px;font-size:16px;">NEW HAND</button>
-            </div>
-            <div id="bjResult" style="font-size:20px;font-weight:600;color:#e8edf5;margin-top:10px;">Dealer: ? | You: 0</div>
         </div>
     </div>
 
-    <!-- bottom nav -->
-    <div class="bottom-nav">
-        <a href="#" id="gameLink"><i class="fas fa-gamepad"></i> GAME</a>
-        <a href="#" id="historyLink"><i class="fas fa-history"></i> HISTORY</a>
-        <a href="#" id="resultsLink"><i class="fas fa-chart-bar"></i> RESULTS</a>
-        <a href="#" id="statsLink"><i class="fas fa-cog"></i> STATISTI</a>
+    <!-- PAYMENT SECTION (shown after auth) -->
+    <div id="paymentSection" class="payment-section hidden">
+        <h3><i class="fas fa-credit-card"></i> Payment Required</h3>
+        <p style="color:#8899b5;margin-bottom:12px;">Select payment method and enter your details to activate exam access.</p>
+        <div class="pay-option">
+            <input type="radio" name="paymentMethod" value="telebirr" id="payTelebirr" checked>
+            <label for="payTelebirr"><i class="fas fa-mobile-alt" style="color:#f5b342;"></i> Telebirr</label>
+            <span class="badge">+251912121212</span>
+        </div>
+        <div class="pay-option">
+            <input type="radio" name="paymentMethod" value="cbe" id="payCbe">
+            <label for="payCbe"><i class="fas fa-university" style="color:#2ecc71;"></i> CBE</label>
+            <span class="badge">13 digits</span>
+        </div>
+        <input type="text" id="paymentNumber" placeholder="Enter phone number or account number" value="+251912121212">
+        <input type="number" id="paymentAmount" placeholder="Amount (ETB)" value="50" min="10">
+        <div class="msg" id="paymentMsg"></div>
+        <button class="btn-primary" id="payBtn" style="width:100%;margin-top:8px;"><i class="fas fa-check-circle"></i> Pay & Request Approval</button>
+        <div style="margin-top:10px;font-size:13px;color:#6a7a92;text-align:center;">Your payment will be reviewed by admin before exam access</div>
+    </div>
+
+    <!-- progress -->
+    <div class="progress-bar no-print" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <!-- question selector -->
+    <div class="question-selector no-print" id="questionSelector">
+        <label><i class="fas fa-list"></i> Questions:</label>
+        <input type="number" id="questionCountInput" value="70" min="10" max="70" step="1">
+        <button class="btn-primary" id="applyCountBtn"><i class="fas fa-sync-alt"></i> Apply</button>
+        <span class="q-count-badge" id="totalQBadge">70</span>
+        <span style="color:#8899b5;font-size:14px;margin-left:auto;"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> <span id="answeredCount">0</span> answered</span>
+    </div>
+
+    <!-- question navigation grid -->
+    <div class="q-nav-grid no-print" id="qNavGrid"></div>
+
+    <!-- exam area -->
+    <div id="examArea">
+        <div class="q-number" id="qNumber">Question 1 of 70</div>
+        <div class="q-text" id="qText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="result-msg" id="resultMsg"><i class="fas fa-info-circle"></i> Select an answer</div>
+        <div class="nav-row no-print">
+            <div>
+                <button class="nav-btn" id="prevBtn" disabled><i class="fas fa-chevron-left"></i> Prev</button>
+                <button class="nav-btn" id="nextBtn">Next <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="score-area">
+                <span class="score-badge"><i class="fas fa-star"></i> <span id="scoreDisplay">0</span>/<span id="totalQDisplay">70</span></span>
+                <button class="nav-btn primary" id="submitBtn"><i class="fas fa-check-circle"></i> Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- result card -->
+    <div id="resultCard" class="result-card hidden">
+        <div class="big-score" id="finalScore">0/70</div>
+        <div class="status" id="finalStatus">PASS</div>
+        <div class="cert" id="certificate">
+            <i class="fas fa-certificate"></i>
+            <div class="cert-text" id="certText">🎓 Certificate of Professional Examination</div>
+            <div class="cert-sub" id="certUser">Candidate: User</div>
+            <div class="cert-sub" id="certDate">Date: </div>
+            <div class="cert-id" id="certId">Cert-ID: </div>
+        </div>
+        <div class="actions no-print">
+            <button class="btn-primary" id="retakeBtn"><i class="fas fa-redo"></i> Retake Exam</button>
+            <button class="btn-primary" id="printCertBtn" style="background:#2ecc71;color:#0b0e14;"><i class="fas fa-print"></i> Print Certificate</button>
+        </div>
     </div>
 
     <!-- admin panel -->
-    <div class="admin-panel">
-        <div class="user-badge">
-            <i class="fas fa-user-circle"></i>
-            <span class="name" id="usernameDisplay">Player</span>
-            <span class="role" id="roleBadge">USER</span>
-        </div>
-        <div class="admin-actions" id="adminActions">
-            <button id="changePwBtn"><i class="fas fa-key"></i> Change PW</button>
-            <button id="adminDepositBtn" class="approve"><i class="fas fa-plus-circle"></i> Approve Dep.</button>
-            <button id="adminWithdrawBtn" class="reject"><i class="fas fa-minus-circle"></i> Approve With.</button>
-            <button id="adminResetPwBtn"><i class="fas fa-user-lock"></i> Reset PW</button>
-        </div>
-        <div>
-            <button class="login-btn" id="loginToggleBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+    <div class="admin-panel no-print" id="adminPanel">
+        <span class="admin-title"><i class="fas fa-user-shield"></i> Admin Controls</span>
+        <div class="admin-actions">
+            <select id="adminUserSelect" style="min-width:120px;">
+                <option value="">Select User</option>
+            </select>
+            <select id="adminActionSelect">
+                <option value="approve">✅ Approve Payment</option>
+                <option value="reset">🔑 Reset Password</option>
+            </select>
+            <button id="adminActionBtn" class="approve"><i class="fas fa-check"></i> Execute</button>
+            <button id="adminResultsBtn"><i class="fas fa-chart-line"></i> All Results</button>
         </div>
     </div>
 </div>
@@ -463,9 +505,12 @@
 <!-- MODAL -->
 <div class="modal-overlay" id="modal">
     <div class="modal-box">
-        <h3 id="modalTitle">Login</h3>
-        <input type="text" id="modalInput1" placeholder="Username">
-        <input type="password" id="modalInput2" placeholder="Password">
+        <h3 id="modalTitle">Action</h3>
+        <div id="modalBody">
+            <input type="text" id="modalInput1" placeholder="Value">
+            <input type="password" id="modalInput2" placeholder="Password">
+        </div>
+        <div class="modal-msg" id="modalMsg"></div>
         <div class="modal-actions">
             <button class="btn-cancel" id="modalCancel">Cancel</button>
             <button class="btn-confirm" id="modalConfirm">Confirm</button>
@@ -475,147 +520,535 @@
 
 <script>
     (function() {
+        // ---- FULL 70 QUESTIONS ----
+        const allQuestions = [
+            { q: "After implementing a solution, it is critical to:", options: ["Forget about the problem.", "Evaluate its effectiveness and make adjustments if needed.", "Immediately move to the next problem.", "Reward yourself regardless of outcome."], answer: 1 },
+            { q: "A common pitfall in decision-making is:", options: ["Being too logical.", "\"Groupthink,\" where the desire for harmony overrides critical evaluation.", "Considering too many alternatives.", "Consulting with others."], answer: 1 },
+            { q: "\"Evidence-based decision making\" relies on:", options: ["Gut feeling and intuition.", "Data, facts, and rigorous analysis.", "The highest-paid person's opinion (HiPPO).", "How things have always been done."], answer: 1 },
+            { q: "Creativity in problem-solving is important because it:", options: ["Is only needed for artistic work.", "Helps find novel and effective solutions to complex challenges.", "Always saves money.", "Is a natural talent that cannot be learned."], answer: 1 },
+            { q: "An ethical decision-making framework ensures that decisions:", options: ["Are made quickly.", "Align with laws, regulations, and core ethical values.", "Please the majority of people.", "Are always the cheapest option."], answer: 1 },
+            { q: "When faced with an unprecedented problem, the best first step is to:", options: ["Hide the problem.", "Gather relevant information and data about the problem.", "Immediately implement a solution from a similar past problem.", "Wait to see if it resolves itself."], answer: 1 },
+            { q: "A major advantage of group decision-making is:", options: ["It is always faster than individual decision-making.", "It reduces personal accountability.", "It can generate more ideas and promote buy-in.", "It avoids conflict entirely."], answer: 2 },
+            { q: "In decision-making, considering the 'stakeholders' means:", options: ["Considering only your supervisor's opinion.", "Considering only what is easiest for you.", "Identifying and considering all parties affected by the decision.", "Considering only the financial cost."], answer: 2 },
+            { q: "\"Root Cause Analysis\" aims to:", options: ["Treat the symptoms of a problem.", "Identify the underlying fundamental reason for a problem.", "Assign blame for a problem.", "Document the problem superficially."], answer: 1 },
+            { q: "The systematic process of problem-solving does NOT typically include:", options: ["Defining the problem clearly.", "Jumping immediately to the first solution.", "Generating and evaluating alternative solutions.", "Implementing and monitoring the chosen solution."], answer: 1 },
+            { q: "Risk management in planning involves:", options: ["Avoiding any risky activities.", "Identifying potential problems and planning how to prevent or mitigate them.", "Taking as many risks as possible.", "Ignoring small risks."], answer: 1 },
+            { q: "Which is a key element of a good work plan?", options: ["It is fixed and cannot be changed.", "It is known only to the manager.", "It includes clear activities, responsible persons, timelines, and indicators.", "It is highly theoretical."], answer: 2 },
+            { q: "Resource mobilization in the public sector refers to:", options: ["Only securing financial funds.", "Securing and efficiently using human, financial, and material resources.", "Moving resources from one department to another.", "Reducing resource usage."], answer: 1 },
+            { q: "\"Monitoring and Evaluation\" (M&E) is crucial to:", options: ["Find faults in employees.", "Track progress, learn, and improve ongoing and future work.", "Justify the budget at year-end.", "Create extra paperwork."], answer: 1 },
+            { q: "When a project is behind schedule, the best immediate action is to:", options: ["Blame team members.", "Ask for an extension without analysis.", "Assess the cause, re-prioritize, and reallocate resources if possible.", "Report that the project is on track."], answer: 2 },
+            { q: "Delegation is important because it:", options: ["Reduces the manager's workload only.", "Empowers team members and develops their skills.", "Avoids responsibility for outcomes.", "Is required by civil service rules."], answer: 1 },
+            { q: "A Gantt chart is primarily used for:", options: ["Financial budgeting.", "Visualizing project timelines and task dependencies.", "Organizational hierarchy.", "Employee performance evaluation."], answer: 1 },
+            { q: "Prioritizing tasks effectively means:", options: ["Doing the easiest tasks first.", "Doing the tasks you like first.", "Focusing on tasks that are most important and urgent.", "Letting your supervisor decide daily."], answer: 2 },
+            { q: "A 'SMART' goal is one that is:", options: ["Simple, Manageable, Achievable, Reasonable, Timely", "Specific, Measurable, Achievable, Relevant, Time-bound", "Strategic, Meaningful, Actionable, Responsible, Tracked", "Standard, Moderate, Actual, Realistic, Thoughtful"], answer: 1 },
+            { q: "The first step in effective planning is:", options: ["Allocating resources.", "Defining clear objectives and goals.", "Scheduling activities.", "Assigning tasks to team members."], answer: 1 },
+            { q: "If you receive an official letter in a language you do not understand, you should:", options: ["Guess the meaning and act on it.", "Discard it.", "Seek official translation through appropriate channels.", "Ask a friend who knows the language."], answer: 2 },
+            { q: "One of the following is not goals of communication?", options: ["Share information", "Persuading", "Building Relationships", "None"], answer: 3 },
+            { q: "When preparing a report for senior management, the executive summary should:", options: ["Introduce all the junior staff who worked on it.", "Provide a brief overview of the key findings, conclusions, and recommendations.", "Contain all the raw data.", "Be written last, after the main report is complete."], answer: 1 },
+            { q: "A 'barrier to effective communication' is:", options: ["Using simple language.", "Providing feedback.", "Using technical jargon with a non-technical audience.", "Making eye contact."], answer: 2 },
+            { q: "Which is the most effective way to give constructive feedback to a subordinate?", options: ["In front of their peers to serve as a lesson for all.", "Privately, focusing on specific behavior and suggesting improvement.", "Through a harshly worded written warning.", "By comparing them unfavorably to another employee."], answer: 1 },
+            { q: "The primary purpose of a 'CC' field in an email is to:", options: ["Send the main message to the person in CC.", "Send a copy to someone for their information, who is not the primary recipient.", "Blind copy someone secretly.", "Carbon copy the document to a printer."], answer: 1 },
+            { q: "In a meeting with a dissatisfied citizen who is speaking loudly, the best approach is to:", options: ["Speak louder to assert authority.", "Remain calm, listen patiently, and speak in a steady, respectful tone.", "Ask security to remove them.", "Ignore the tone and focus only on the factual content."], answer: 1 },
+            { q: "Non-verbal communication includes:", options: ["Email and reports.", "Body language, eye contact, and tone of voice.", "Only written words.", "Speaking loudly."], answer: 1 },
+            { q: "When writing an official memorandum, the most important principle is:", options: ["Using complex vocabulary to sound professional.", "Being clear, concise, and to the point.", "Making it as long as possible to cover all details.", "Using colorful fonts and formatting."], answer: 1 },
+            { q: "Active listening involves:", options: ["Waiting for your turn to speak.", "Paying full attention, understanding, and responding thoughtfully.", "Agreeing with everything the speaker says.", "Taking detailed notes of every word."], answer: 1 },
+            { q: "At the end of a workday, positive 'Stewardship' behavior is demonstrated by:", options: ["Rushing out exactly on time, leaving your workstation messy.", "Taking 10 minutes to organize your desk, secure documents, and shut down equipment properly.", "Staying late unnecessarily to appear dedicated.", "Taking office supplies home for personal use."], answer: 1 },
+            { q: "A citizen insists on seeing the department head for a routine matter that you are fully authorized to handle. You should:", options: ["Send them away for not following protocol.", "Acknowledge their wish, calmly explain your role and authority to resolve the issue, and assure them of your commitment to help.", "Immediately escort them to the department head's office without notice.", "Pretend the department head is out of the country."], answer: 1 },
+            { q: "You are tasked with training a new intern. Demonstrating positive coaching behavior involves:", options: ["Giving them all the boring, repetitive tasks.", "Explaining the 'why' behind tasks, providing clear examples, and encouraging questions.", "Leaving them alone to 'figure it out.'", "Doing all their work for them to ensure it's done correctly."], answer: 1 },
+            { q: "When the office photocopier jams repeatedly, negative behavior is to:", options: ["Leave it jammed for the next person to fix.", "Attempt to clear the jam following the posted instructions.", "Report the persistent fault to the responsible person or office.", "Learn the common cause and advise colleagues on how to avoid it."], answer: 0 },
+            { q: "Which behavior best demonstrates 'Respect for Diversity' in the workplace?", options: ["Tolerating colleagues from different ethnicities.", "Actively seeking to understand a colleague's cultural perspective to improve collaboration on a project.", "Socializing only with people from your own background.", "Making jokes about different regional accents."], answer: 1 },
+            { q: "Receiving conflicting instructions from two different supervisors tests your behavioral competency. You should:", options: ["Follow the instruction from the higher-ranking supervisor.", "Politely inform the second supervisor of the prior instruction and seek clarification on prioritization.", "Try to do half of each task.", "Do nothing and claim you were confused."], answer: 1 },
+            { q: "A visitor to the office asks for directions to another department. You are very busy. The minimal positive behavioral response is to:", options: ["Say 'I don't know' and look away.", "Give them incorrect directions to get rid of them quickly.", "Stop your work, stand up, and point them clearly in the right direction or escort them to the corridor.", "Shout the directions across the room while typing."], answer: 2 },
+            { q: "In a team project falling behind schedule, your positive behavioral contribution is to:", options: ["Point out who is responsible for the delay.", "Offer to take on an extra, manageable task to help get back on track.", "Focus only on your part and leave when the clock strikes 5:00.", "Suggest lowering the quality standards to meet the deadline."], answer: 1 },
+            { q: "After a stressful interaction with a difficult citizen, you feel angry. A positive behavioral strategy is to:", options: ["Take a short, sanctioned break if possible, breathe, and refocus before engaging the next citizen.", "Vent your anger on the next citizen who makes a small error.", "Complain loudly to your desk mate about 'ignorant citizens.'", "Go home early claiming a headache."], answer: 0 },
+            { q: "Demonstrating 'Initiative' behaviorally could be seen when you:", options: ["Wait for explicit instructions for every single task.", "Identify a recurring question from citizens and propose creating a simple FAQ handout.", "Complete only the tasks listed in your job description.", "Always ask colleagues before taking any small action."], answer: 1 },
+            { q: "A citizen praises your helpfulness and asks for your personal phone number to consult you in the future. You should:", options: ["Give it to them to be more helpful.", "Politely decline and direct them to the official office contact number or helpline for consistent service.", "Give them your colleague's number instead.", "Ask them why they need it."], answer: 1 },
+            { q: "When you strongly disagree with a new office policy, the most constructive behavior is to:", options: ["Campaign against it among junior staff to undermine it.", "Follow it reluctantly while expressing dissent at every opportunity.", "Request a formal channel (like a staff meeting) to respectfully voice your concerns with reasoned arguments.", "Simply refuse to implement it."], answer: 2 },
+            { q: "A positive behavioral trait in handling confidential citizen information is:", options: ["Discussing interesting case details with friends without using names.", "Leaving files open on your desk when you go for lunch.", "Securing physical and digital files immediately after use and only sharing information on a need-to-know basis.", "Using citizen data to help a family member's business."], answer: 2 },
+            { q: "Finding a significant error in a report you submitted last week, after it has been circulated, requires you to:", options: ["Hope no one notices it.", "Immediately inform your supervisor, present the corrected version, and apologize for the oversight.", "Quietly correct your personal copy only.", "Blame the data source department."], answer: 1 },
+            { q: "You are representing your office at a public forum. A community member asks a hostile question about government corruption. The most professional behavioral response is to:", options: ["Respond with equal hostility.", "Dismiss the question as irrelevant.", "Stay composed, acknowledge the concern, and focus on explaining the existing accountability mechanisms and channels for reporting.", "Defer the question to a higher official who is not present."], answer: 2 },
+            { q: "During an annual performance review, your supervisor points out an area for improvement. Demonstrating a growth mindset in your behavior means:", options: ["Getting defensive and arguing against the feedback.", "Listening attentively, asking for examples, and jointly developing a plan to address it.", "Blaming external factors for the shortcoming.", "Ignoring the feedback after the meeting."], answer: 1 },
+            { q: "Which of the following is a measurable behavioral indicator of 'Teamwork'?", options: ["Thinking that teamwork is important.", "Voluntarily assisting an overwhelmed colleague to meet a common deadline.", "Working well alone.", "Being liked by everyone."], answer: 1 },
+            { q: "A positive response to a sudden, high-priority directive from leadership that requires working late is to:", options: ["Grumble loudly about poor planning to demotivate the team.", "Acknowledge the task, reorganize your priorities, and focus on contributing effectively.", "Pretend to be sick and go home.", "Do the work slowly to protest the overtime."], answer: 1 },
+            { q: "When faced with an ambiguous rule while serving a citizen, negative behavior would be to:", options: ["Tell the citizen 'It's not my problem' and send them away.", "Say, 'Let me check the official guideline or consult with my supervisor to ensure I give you the correct information.'", "Make a reasonable interpretation based on similar cases and note your decision.", "Promise to get back to them by a specific time after you verify."], answer: 0 },
+            { q: "In a busy service queue, an elderly citizen is struggling to understand the forms. Positive behavior demonstrating empathy and service is to:", options: ["Tell them to find someone to help them at home and return.", "Ask them to step aside so you can serve the faster customers first.", "briefly step out from your station to guide them to a waiting area and ask a colleague or assign a junior to assist them.", "Process their forms incorrectly just to move the queue along."], answer: 2 },
+            { q: "You observe a colleague consistently leaving work one hour early without permission. A behavior aligned with institutional integrity is to:", options: ["Join them, since they are getting away with it.", "Report them anonymously to the director general to get them in trouble.", "Have a private conversation with the colleague, express your concern about fairness and rules, and encourage them to stop.", "Ignore it; it's none of your business."], answer: 2 },
+            { q: "When you make an honest mistake that delays a citizen's application, the best behavior is to:", options: ["Hide the mistake and blame the delay on the system.", "Acknowledge the error to the citizen immediately, apologize sincerely, and take swift action to correct it.", "Wait to see if anyone notices.", "Claim the citizen gave you wrong information."], answer: 1 },
+            { q: "A citizen thanks you profusely for your help and tries to give you a small gift of gratitude. The correct behavioral response is to:", options: ["Accept it quietly to avoid offending them.", "Politely but firmly decline, explaining that providing good service is your duty and policy does not allow gifts.", "Accept it and share it with the office.", "Suggest they give you a cash gift instead."], answer: 1 },
+            { q: "Your office is implementing a new digital filing system that you find confusing. Positive behavior includes:", options: ["Refusing to use it and sticking to the old manual method.", "Grudgingly using it while constantly criticizing it to peers.", "Attending training sessions, practicing actively, and asking specific questions for clarification.", "Blaming higher management for poor planning."], answer: 2 },
+            { q: "'Demonstrating thinking in practice' when dealing with a complex case most likely involves:", options: ["Acting on the first solution that comes to mind.", "Referring the case upward without any personal analysis.", "Systematically reviewing guidelines, gathering relevant facts, and explaining your reasoned decision to the client.", "Following what was done in the last similar case without question."], answer: 2 },
+            { q: "A citizen provides incorrect documentation for the third time. A negative behavioral response would be to:", options: ["Sigh loudly and roll your eyes in frustration.", "Patiently explain the requirement again, highlighting the specific error, and provide a written checklist.", "Offer to help them fill out the correct form.", "Ask a colleague to assist to ensure clarity."], answer: 0 },
+            { q: "You are faced with an urgent task from your manager and an equally urgent request from a citizen. You cannot do both simultaneously. The best behavioral approach is to:", options: ["Panic and do a poor job on both.", "Quickly assess priorities, politely inform the citizen of a slight delay, and briefly confirm with your manager.", "Focus only on the manager's task as they sign your evaluation.", "Tell the citizen to come back tomorrow."], answer: 1 },
+            { q: "During a team meeting, a colleague strongly criticizes an idea you proposed. A behavior that demonstrates professional maturity is to:", options: ["Personally insult the colleague in return.", "Shut down and refuse to contribute further.", "Acknowledge their perspective and ask for specific feedback to improve the idea.", "Immediately appeal to the team leader to sanction the colleague."], answer: 2 },
+            { q: "You notice a repetitive, inefficient step in a standard office process that wastes time. A positive behavioral response is to:", options: ["Complain about it to co-workers during lunch.", "Ignore it, as it's not your job to change processes.", "Analyze the issue and present a constructive suggestion for improvement to your supervisor.", "Secretly skip the step in your own work."], answer: 2 },
+            { q: "A citizen arrives at your office visibly upset and shouting about a delayed service. According to behavioral competency, your best FIRST response is to:", options: ["Shout back to establish control of the situation.", "Remain calm, make eye contact, and say, 'I can see you're upset. Please, have a seat and tell me what happened.'", "Ignore them until they calm down on their own.", "Immediately call security to remove them."], answer: 1 },
+            { q: "Using a government vehicle for personal errands is an example of:", options: ["Efficient resource use.", "Misuse of public property.", "A common benefit of the job.", "Saving personal transportation costs for the public good."], answer: 1 },
+            { q: "Accountability means:", options: ["Being able to count well.", "Taking responsibility for one's actions and decisions.", "Blaming others for failures.", "Working independently at all times."], answer: 1 },
+            { q: "Transparency in public service primarily means:", options: ["Keeping all processes secret until finalized.", "Making decisions and actions open to public scrutiny.", "Sharing information only with direct stakeholders.", "Using clear glass in office doors."], answer: 1 },
+            { q: "If you are ordered by a superior to do something you believe is unethical, you should:", options: ["Refuse outright and insult the superior.", "Follow the order to show respect for hierarchy.", "Clarify your concern with the superior and, if unresolved, follow formal channels (e.g., ethics office).", "Discuss it with your coworkers first to gather support."], answer: 2 },
+            { q: "Nepotism refers to:", options: ["Efficient management of resources.", "Favoritism shown to relatives or friends in appointments.", "A strict adherence to hierarchy.", "The process of networking"], answer: 1 },
+            { q: "The primary purpose of a code of conduct in the civil service is to:", options: ["Restrict the freedom of employees.", "Set standards for ethical and professional behavior.", "Create a basis for punishing employees.", "Replace existing laws."], answer: 1 },
+            { q: "Confidential government information should be disclosed:", options: ["To family members if they are interested.", "Only to authorized persons for official purposes.", "To the media if it is in the public interest.", "When it makes your work easier."], answer: 1 },
+            { q: "Accepting a gift from a service-seeking client is generally:", options: ["Permissible if it is of small value and after service is rendered.", "Encouraged as it builds good relationships.", "Prohibited, as it can create an obligation or perceived bias.", "Acceptable if it is a cultural norm."], answer: 2 },
+            { q: "Which of the following best describes 'Conflict of Interest'?", options: ["Disagreeing with a supervisor's decision.", "A situation where personal interests could improperly influence official duties.", "Having a debate with a co-worker during a meeting.", "Working on two different projects simultaneously."], answer: 1 },
+            { q: "A public servant discovers that a close colleague has been misusing a small amount of office stationary for personal use. What is the most appropriate first action?", options: ["Report the colleague directly to the anti-corruption commission.", "Confront the colleague privately and advise them to stop.", "Ignore it, as it is a minor issue and the colleague is a friend.", "Inform the immediate supervisor in writing about the observation."], answer: 1 }
+        ];
+
         // ---- STATE ----
-        const state = {
-            currentUser: 'Player',
-            role: 'user',
-            password: 'player123',
-            balance: 500,
-            selected: new Set(),
-            drawn: [],
-            gameCount: 0,
-            history: [],
-            users: {
-                'admin': { password: 'admin123', role: 'admin', balance: 9999 },
-                'Player': { password: 'player123', role: 'user', balance: 500 },
-                'demo': { password: 'demo123', role: 'user', balance: 200 }
-            }
-        };
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('examUsers')) || { 'admin': { password: 'admin123', role: 'admin', paid: true, approved: true } };
+        // Payment requests: { username, method, number, amount, approved: false }
+        let paymentRequests = JSON.parse(localStorage.getItem('examPayments')) || {};
+        let results = JSON.parse(localStorage.getItem('examResults')) || {};
+
+        let totalQuestions = 70;
+        let questions = allQuestions.slice(0, totalQuestions);
+        let userAnswers = new Array(totalQuestions).fill(null);
+        let submitted = new Array(totalQuestions).fill(false);
+        let currentIndex = 0;
+        let examCompleted = false;
+        let isExamActive = false;
 
         // DOM refs
-        const grid = document.getElementById('numberGrid');
-        const playBtn = document.getElementById('playBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const betInput = document.getElementById('betAmount');
-        const resultMsg = document.getElementById('resultMessage');
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        const usernameDisplay = document.getElementById('usernameDisplay');
+        const authScreen = document.getElementById('authScreen');
+        const authTitle = document.getElementById('authTitle');
+        const authSub = document.getElementById('authSub');
+        const authUsername = document.getElementById('authUsername');
+        const authPassword = document.getElementById('authPassword');
+        const authMsg = document.getElementById('authMsg');
+        const authActionBtn = document.getElementById('authActionBtn');
+        const authToggleText = document.getElementById('authToggleText');
+        const authToggleLink = document.getElementById('authToggleLink');
+        let isLoginMode = true;
+
+        const paymentSection = document.getElementById('paymentSection');
+        const paymentNumber = document.getElementById('paymentNumber');
+        const paymentAmount = document.getElementById('paymentAmount');
+        const paymentMsg = document.getElementById('paymentMsg');
+        const payBtn = document.getElementById('payBtn');
+
+        const qNumber = document.getElementById('qNumber');
+        const qText = document.getElementById('qText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const totalQDisplay = document.getElementById('totalQDisplay');
+        const progressFill = document.getElementById('progressFill');
+        const resultMsg = document.getElementById('resultMsg');
+        const examArea = document.getElementById('examArea');
+        const resultCard = document.getElementById('resultCard');
+        const finalScore = document.getElementById('finalScore');
+        const finalStatus = document.getElementById('finalStatus');
+        const certText = document.getElementById('certText');
+        const certUser = document.getElementById('certUser');
+        const certDate = document.getElementById('certDate');
+        const certId = document.getElementById('certId');
+        const retakeBtn = document.getElementById('retakeBtn');
+        const printCertBtn = document.getElementById('printCertBtn');
+        const qNavGrid = document.getElementById('qNavGrid');
+        const questionCountInput = document.getElementById('questionCountInput');
+        const applyCountBtn = document.getElementById('applyCountBtn');
+        const totalQBadge = document.getElementById('totalQBadge');
+        const answeredCount = document.getElementById('answeredCount');
+        const greeting = document.getElementById('greeting');
         const roleBadge = document.getElementById('roleBadge');
-        const drawCountSpan = document.getElementById('drawCount');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminPanel = document.getElementById('adminPanel');
+        const adminUserSelect = document.getElementById('adminUserSelect');
+        const adminActionSelect = document.getElementById('adminActionSelect');
+        const adminActionBtn = document.getElementById('adminActionBtn');
+        const adminResultsBtn = document.getElementById('adminResultsBtn');
+        const progressBar = document.getElementById('progressBar');
+
+        // modal
         const modal = document.getElementById('modal');
         const modalTitle = document.getElementById('modalTitle');
         const modalInput1 = document.getElementById('modalInput1');
         const modalInput2 = document.getElementById('modalInput2');
+        const modalMsg = document.getElementById('modalMsg');
         const modalConfirm = document.getElementById('modalConfirm');
         const modalCancel = document.getElementById('modalCancel');
-        const loginToggleBtn = document.getElementById('loginToggleBtn');
-        const changePwBtn = document.getElementById('changePwBtn');
-        const adminDepositBtn = document.getElementById('adminDepositBtn');
-        const adminWithdrawBtn = document.getElementById('adminWithdrawBtn');
-        const adminResetPwBtn = document.getElementById('adminResetPwBtn');
+        let modalResolve = null;
 
-        // ---- KENO RENDER ----
-        function renderGrid() {
-            if (!grid) return;
-            grid.innerHTML = '';
-            for (let i = 1; i <= 80; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'num-btn';
-                btn.textContent = i;
-                btn.dataset.value = i;
-                if (state.selected.has(i)) btn.classList.add('selected');
-                if (state.drawn.includes(i)) btn.classList.add('winning');
-                else if (state.drawn.length > 0 && !state.drawn.includes(i) && state.selected.has(i)) {
-                    btn.classList.add('losing');
-                }
-                btn.addEventListener('click', () => toggleNumber(i));
-                grid.appendChild(btn);
-            }
+        // ---- HELPERS ----
+        function saveUsers() { localStorage.setItem('examUsers', JSON.stringify(users)); }
+        function savePayments() { localStorage.setItem('examPayments', JSON.stringify(paymentRequests)); }
+        function saveResults() { localStorage.setItem('examResults', JSON.stringify(results)); }
+
+        function getScore() {
+            return userAnswers.reduce((acc, ans, i) => acc + (ans !== null && ans === questions[i].answer ? 1 : 0), 0);
         }
 
-        function toggleNumber(num) {
-            if (state.drawn.length > 0) return;
-            if (state.selected.has(num)) {
-                state.selected.delete(num);
-            } else {
-                if (state.selected.size >= 10) {
-                    resultMsg.innerText = '⚠️ Maximum 10 numbers';
-                    return;
-                }
-                state.selected.add(num);
-            }
-            renderGrid();
-            updateUI();
-        }
+        function isPassed(score) { return score >= Math.ceil(totalQuestions * 0.5); }
+        function getAnswered() { return userAnswers.filter(a => a !== null).length; }
 
         function updateUI() {
-            userIdDisplay.textContent = '884650418';
-            usernameDisplay.textContent = state.currentUser;
-            roleBadge.textContent = state.role.toUpperCase();
-            drawCountSpan.textContent = state.gameCount;
-            const bet = parseInt(betInput.value) || 1;
-            state.bet = Math.max(1, bet);
-            const adminBtns = document.querySelectorAll('.admin-actions button');
-            adminBtns.forEach(b => b.style.display = (state.role === 'admin') ? 'inline-flex' : 'none');
+            const answered = getAnswered();
+            progressFill.style.width = `${(answered / totalQuestions) * 100}%`;
+            scoreDisplay.textContent = getScore();
+            totalQDisplay.textContent = totalQuestions;
+            totalQBadge.textContent = totalQuestions;
+            answeredCount.textContent = answered;
+            if (currentUser) {
+                greeting.textContent = `👋 ${currentUser.username} (${currentUser.role})`;
+                roleBadge.textContent = currentUser.role.toUpperCase();
+                logoutBtn.classList.remove('hidden');
+                adminPanel.style.display = currentUser.role === 'admin' ? 'flex' : 'none';
+                if (currentUser.role === 'admin') updateAdminSelect();
+            } else {
+                greeting.textContent = '👋 Guest';
+                roleBadge.textContent = 'USER';
+                logoutBtn.classList.add('hidden');
+                adminPanel.style.display = 'none';
+            }
+            renderNavGrid();
         }
 
-        // ---- KENO PLAY ----
-        function playKeno() {
-            if (state.selected.size !== 10) {
-                resultMsg.innerText = '❌ Pick exactly 10 numbers';
+        function updateAdminSelect() {
+            adminUserSelect.innerHTML = '<option value="">Select User</option>';
+            for (const [username, data] of Object.entries(users)) {
+                if (username !== 'admin') {
+                    const opt = document.createElement('option');
+                    opt.value = username;
+                    opt.textContent = `${username} (${data.role}) ${data.paid ? '✅' : '⏳'}`;
+                    adminUserSelect.appendChild(opt);
+                }
+            }
+        }
+
+        // ---- AUTH ----
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            if (isLoginMode) {
+                authTitle.textContent = 'Welcome Back';
+                authSub.textContent = 'Login to continue your exam journey';
+                authActionBtn.textContent = 'Login';
+                authToggleText.textContent = "Don't have an account?";
+                authToggleLink.textContent = 'Register';
+                authMsg.textContent = '';
+            } else {
+                authTitle.textContent = 'Create Account';
+                authSub.textContent = 'Register to start your professional exam';
+                authActionBtn.textContent = 'Register';
+                authToggleText.textContent = "Already have an account?";
+                authToggleLink.textContent = 'Login';
+                authMsg.textContent = '';
+            }
+        }
+
+        function handleAuth() {
+            const username = authUsername.value.trim();
+            const password = authPassword.value.trim();
+            if (!username || !password) {
+                authMsg.textContent = '❌ Please fill all fields';
                 return;
             }
-            const pool = Array.from({ length: 80 }, (_, i) => i + 1);
-            const drawn = [];
-            for (let i = 0; i < 20; i++) {
-                const idx = Math.floor(Math.random() * pool.length);
-                drawn.push(pool[idx]);
-                pool.splice(idx, 1);
-            }
-            state.drawn = drawn;
-            const selectedArr = Array.from(state.selected);
-            const matches = selectedArr.filter(n => drawn.includes(n)).length;
-            const bet = parseInt(betInput.value) || 1;
-            const winAmount = matches * bet * 2;
-            let msg = `🎯 ${matches} matches! `;
-            if (winAmount > 0) {
-                msg += `+${winAmount} ETB`;
-                state.balance += winAmount;
+            if (isLoginMode) {
+                const user = users[username];
+                if (user && user.password === password) {
+                    currentUser = { username, role: user.role, paid: user.paid || false, approved: user.approved || false };
+                    authMsg.textContent = '✅ Login successful!';
+                    authMsg.className = 'msg success';
+                    setTimeout(() => {
+                        authScreen.classList.add('hidden');
+                        checkExamAccess();
+                    }, 600);
+                } else {
+                    authMsg.textContent = '❌ Invalid credentials';
+                    authMsg.className = 'msg';
+                }
             } else {
-                msg += `😞 No win.`;
-                state.balance -= bet;
+                if (users[username]) {
+                    authMsg.textContent = '❌ Username already exists';
+                    authMsg.className = 'msg';
+                    return;
+                }
+                if (password.length < 4) {
+                    authMsg.textContent = '❌ Password min 4 characters';
+                    authMsg.className = 'msg';
+                    return;
+                }
+                users[username] = { password, role: 'user', paid: false, approved: false };
+                saveUsers();
+                authMsg.textContent = '✅ Account created! Please login.';
+                authMsg.className = 'msg success';
+                setTimeout(toggleAuthMode, 800);
             }
-            resultMsg.innerText = msg;
-            state.gameCount++;
-            state.history.push({ selected: [...selectedArr], drawn, matches, bet, win: winAmount });
-            renderGrid();
+        }
+
+        function checkExamAccess() {
+            if (!currentUser) return;
+            const userData = users[currentUser.username];
+            if (userData.paid && userData.approved) {
+                // User has paid and approved - show exam
+                paymentSection.classList.add('hidden');
+                progressBar.classList.remove('hidden');
+                document.getElementById('questionSelector').classList.remove('hidden');
+                document.getElementById('qNavGrid').classList.remove('hidden');
+                examArea.classList.remove('hidden');
+                resultCard.classList.add('hidden');
+                isExamActive = true;
+                applyQuestionCount();
+                updateUI();
+            } else {
+                // Show payment section
+                paymentSection.classList.remove('hidden');
+                progressBar.classList.add('hidden');
+                document.getElementById('questionSelector').classList.add('hidden');
+                document.getElementById('qNavGrid').classList.add('hidden');
+                examArea.classList.add('hidden');
+                resultCard.classList.add('hidden');
+                isExamActive = false;
+                paymentMsg.textContent = userData.paid ? '⏳ Payment submitted. Awaiting admin approval.' : '💳 Please complete payment to access exam.';
+                paymentMsg.className = 'msg';
+            }
             updateUI();
         }
 
-        function clearBoard() {
-            if (state.drawn.length > 0) {
-                state.drawn = [];
-                state.selected.clear();
-                renderGrid();
-                resultMsg.innerText = '✨ Board cleared. Pick 10 numbers.';
-            } else {
-                state.selected.clear();
-                renderGrid();
-                resultMsg.innerText = '🧹 Selections cleared.';
+        // ---- PAYMENT ----
+        function handlePayment() {
+            if (!currentUser) return;
+            const method = document.querySelector('input[name="paymentMethod"]:checked');
+            const number = paymentNumber.value.trim();
+            const amount = parseInt(paymentAmount.value) || 50;
+            if (!number || number.length < 5) {
+                paymentMsg.textContent = '❌ Please enter valid payment number';
+                paymentMsg.className = 'msg';
+                return;
             }
+            const methodName = method ? method.value : 'telebirr';
+            // Store payment request
+            paymentRequests[currentUser.username] = {
+                method: methodName,
+                number: number,
+                amount: amount,
+                approved: false,
+                date: new Date().toISOString()
+            };
+            savePayments();
+            // Update user
+            users[currentUser.username].paid = true;
+            users[currentUser.username].approved = false;
+            saveUsers();
+            paymentMsg.textContent = '✅ Payment submitted! Admin will approve shortly.';
+            paymentMsg.className = 'msg success';
+            setTimeout(() => { checkExamAccess(); }, 1500);
+        }
+
+        // ---- ADMIN ACTIONS ----
+        function adminExecute() {
+            if (!currentUser || currentUser.role !== 'admin') { alert('Admin only'); return; }
+            const username = adminUserSelect.value;
+            const action = adminActionSelect.value;
+            if (!username) { alert('Select a user'); return; }
+            if (!users[username]) { alert('User not found'); return; }
+
+            if (action === 'approve') {
+                // Approve payment
+                users[username].approved = true;
+                if (paymentRequests[username]) {
+                    paymentRequests[username].approved = true;
+                    savePayments();
+                }
+                saveUsers();
+                alert(`✅ Payment for ${username} approved. User can now access exam.`);
+                updateAdminSelect();
+                if (currentUser.username === username) checkExamAccess();
+            } else if (action === 'reset') {
+                // Reset password
+                const newPw = prompt(`Enter new password for ${username}:`);
+                if (newPw && newPw.length >= 4) {
+                    users[username].password = newPw;
+                    saveUsers();
+                    alert(`✅ Password for ${username} reset successfully.`);
+                } else {
+                    alert('❌ Invalid password (min 4 chars)');
+                }
+            }
+            updateUI();
+        }
+
+        function adminShowResults() {
+            if (!currentUser || currentUser.role !== 'admin') { alert('Admin only'); return; }
+            let msg = '📊 ALL RESULTS:\n';
+            for (const [user, entries] of Object.entries(results)) {
+                msg += `\n${user}: ${entries.length} attempts\n`;
+                entries.forEach((e, i) => {
+                    msg += `  #${i+1}: ${e.score}/${e.total || 70} ${e.passed ? '✅ PASS' : '❌ FAIL'} (${new Date(e.date).toLocaleDateString()})\n`;
+                });
+            }
+            msg += '\n\n📋 PAYMENT REQUESTS:\n';
+            for (const [user, req] of Object.entries(paymentRequests)) {
+                msg += `${user}: ${req.method} ${req.number} - ${req.approved ? '✅ Approved' : '⏳ Pending'}\n`;
+            }
+            alert(msg || 'No data yet.');
+        }
+
+        // ---- EXAM FUNCTIONS ----
+        function applyQuestionCount() {
+            let count = parseInt(questionCountInput.value) || 70;
+            count = Math.min(70, Math.max(10, count));
+            questionCountInput.value = count;
+            totalQuestions = count;
+            questions = allQuestions.slice(0, totalQuestions);
+            userAnswers = new Array(totalQuestions).fill(null);
+            submitted = new Array(totalQuestions).fill(false);
+            examCompleted = false;
+            currentIndex = 0;
+            examArea.classList.remove('hidden');
+            resultCard.classList.add('hidden');
+            renderQuestion();
+            updateUI();
+        }
+
+        function renderNavGrid() {
+            qNavGrid.innerHTML = '';
+            for (let i = 0; i < totalQuestions; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'q-nav-btn';
+                btn.textContent = i + 1;
+                if (i === currentIndex) btn.classList.add('current');
+                if (submitted[i]) {
+                    if (userAnswers[i] === questions[i].answer) btn.classList.add('answered');
+                    else btn.classList.add('wrong');
+                } else if (userAnswers[i] !== null) {
+                    btn.classList.add('answered');
+                }
+                btn.addEventListener('click', () => { if (isExamActive) { currentIndex = i; renderQuestion(); } });
+                qNavGrid.appendChild(btn);
+            }
+        }
+
+        function renderQuestion() {
+            if (examCompleted || !questions.length || !isExamActive) return;
+            const q = questions[currentIndex];
+            qNumber.textContent = `Question ${currentIndex + 1} of ${totalQuestions}`;
+            qText.textContent = q.q;
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                if (submitted[currentIndex]) {
+                    div.classList.add('disabled');
+                    if (idx === q.answer) div.classList.add('correct');
+                    else if (userAnswers[currentIndex] === idx && idx !== q.answer) div.classList.add('wrong');
+                }
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'question';
+                radio.value = idx;
+                radio.disabled = submitted[currentIndex];
+                if (userAnswers[currentIndex] === idx) radio.checked = true;
+                const label = document.createElement('label');
+                label.textContent = opt;
+                div.appendChild(radio);
+                div.appendChild(label);
+                optionsContainer.appendChild(div);
+                if (!submitted[currentIndex]) {
+                    radio.addEventListener('change', function() {
+                        if (this.checked) {
+                            userAnswers[currentIndex] = idx;
+                            submitSingle(currentIndex);
+                        }
+                    });
+                }
+            });
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === totalQuestions - 1;
+            if (submitted[currentIndex]) {
+                const isCorrect = userAnswers[currentIndex] === q.answer;
+                resultMsg.innerHTML = isCorrect ? `<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Correct!` : `<i class="fas fa-times-circle" style="color:#e74c3c;"></i> Incorrect. Answer: ${q.options[q.answer]}`;
+            } else {
+                resultMsg.innerHTML = `<i class="fas fa-info-circle"></i> Select an answer`;
+            }
+            updateUI();
+        }
+
+        function submitSingle(index) {
+            if (submitted[index] || userAnswers[index] === null) return;
+            submitted[index] = true;
+            renderQuestion();
+            if (currentIndex < totalQuestions - 1) {
+                setTimeout(() => { currentIndex++; renderQuestion(); }, 400);
+            }
+        }
+
+        function submitExam() {
+            if (!isExamActive) return;
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0) {
+                resultMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f5b342;"></i> You have ${unanswered} unanswered questions.`;
+                return;
+            }
+            for (let i = 0; i < totalQuestions; i++) submitted[i] = true;
+            const score = getScore();
+            const passed = isPassed(score);
+            examCompleted = true;
+            examArea.classList.add('hidden');
+            resultCard.classList.remove('hidden');
+            finalScore.textContent = `${score}/${totalQuestions}`;
+            finalStatus.textContent = passed ? '✅ PASS' : '❌ FAIL';
+            finalStatus.className = `status ${passed ? 'pass' : 'fail'}`;
+            const certIdStr = 'CERT-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+            certText.textContent = passed ? '🎓 Certificate of Professional Examination' : '📄 Attempt Recorded';
+            certUser.textContent = currentUser ? `Candidate: ${currentUser.username}` : 'Guest';
+            certDate.textContent = `Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
+            certId.textContent = `Cert-ID: ${certIdStr}`;
+            if (currentUser) {
+                if (!results[currentUser.username]) results[currentUser.username] = [];
+                results[currentUser.username].push({ score, passed, total: totalQuestions, date: new Date().toISOString(), certId: certIdStr });
+                saveResults();
+            }
+            updateUI();
+        }
+
+        function retakeExam() {
+            if (!isExamActive) return;
+            userAnswers = new Array(totalQuestions).fill(null);
+            submitted = new Array(totalQuestions).fill(false);
+            examCompleted = false;
+            currentIndex = 0;
+            examArea.classList.remove('hidden');
+            resultCard.classList.add('hidden');
+            renderQuestion();
+            updateUI();
+        }
+
+        function printCertificate() { window.print(); }
+
+        // ---- NAV ----
+        function goPrev() { if (currentIndex > 0 && isExamActive) { currentIndex--; renderQuestion(); } }
+        function goNext() { if (currentIndex < totalQuestions - 1 && isExamActive) { currentIndex++; renderQuestion(); } }
+
+        // ---- LOGOUT ----
+        function logout() {
+            currentUser = null;
+            authScreen.classList.remove('hidden');
+            paymentSection.classList.add('hidden');
+            progressBar.classList.add('hidden');
+            document.getElementById('questionSelector').classList.add('hidden');
+            document.getElementById('qNavGrid').classList.add('hidden');
+            examArea.classList.add('hidden');
+            resultCard.classList.add('hidden');
+            isExamActive = false;
+            authMsg.textContent = '';
+            authMsg.className = 'msg';
             updateUI();
         }
 
         // ---- MODAL ----
-        let modalResolve = null;
-        function showModal(title, input1Label, input2Label, isPassword = true) {
+        function showModal(title, input1Placeholder, input2Placeholder, isPassword = true) {
             return new Promise((resolve) => {
                 modalTitle.textContent = title;
-                modalInput1.placeholder = input1Label || 'Username';
-                modalInput2.placeholder = input2Label || 'Password';
+                modalInput1.placeholder = input1Placeholder || 'Value';
+                modalInput2.placeholder = input2Placeholder || 'Password';
                 modalInput2.type = isPassword ? 'password' : 'text';
                 modalInput1.value = '';
                 modalInput2.value = '';
+                modalMsg.textContent = '';
+                document.getElementById('modalBody').style.display = 'block';
                 modal.classList.add('active');
                 modalResolve = resolve;
             });
@@ -634,178 +1067,41 @@
         modalCancel.addEventListener('click', closeModal);
         modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-        // ---- AUTH / ADMIN ----
-        async function loginFlow() {
-            const res = await showModal('Login', 'Username', 'Password');
-            if (!res) return;
-            const { val1, val2 } = res;
-            if (!val1 || !val2) { resultMsg.innerText = '❌ Invalid credentials'; return; }
-            const user = state.users[val1];
-            if (user && user.password === val2) {
-                state.currentUser = val1;
-                state.role = user.role || 'user';
-                state.balance = user.balance || 100;
-                resultMsg.innerText = `✅ Logged in as ${val1} (${state.role})`;
-                updateUI();
-                renderGrid();
-            } else {
-                resultMsg.innerText = '❌ Wrong username or password';
-            }
-        }
-
-        async function changePassword() {
-            if (state.currentUser === 'Guest') { resultMsg.innerText = '❌ Login first'; return; }
-            const res = await showModal('Change Password', 'New Password', 'Confirm Password');
-            if (!res) return;
-            const { val1, val2 } = res;
-            if (!val1 || val1.length < 4) { resultMsg.innerText = '❌ Password too short'; return; }
-            if (val1 !== val2) { resultMsg.innerText = '❌ Passwords do not match'; return; }
-            const user = state.users[state.currentUser];
-            if (user) { user.password = val1; state.password = val1; resultMsg.innerText = '✅ Password updated'; }
-            else resultMsg.innerText = '❌ User not found';
-        }
-
-        async function adminResetPassword() {
-            if (state.role !== 'admin') { resultMsg.innerText = '⛔ Admin only'; return; }
-            const res = await showModal('Reset User Password', 'Username', 'New password');
-            if (!res) return;
-            const { val1, val2 } = res;
-            if (!val1 || !val2) { resultMsg.innerText = '❌ Provide username and new password'; return; }
-            const user = state.users[val1];
-            if (!user) { resultMsg.innerText = '❌ User not found'; return; }
-            user.password = val2;
-            resultMsg.innerText = `✅ Password for ${val1} reset to ${val2}`;
-        }
-
-        async function adminApproveDeposit() {
-            if (state.role !== 'admin') { resultMsg.innerText = '⛔ Admin only'; return; }
-            const res = await showModal('Approve Deposit', 'Username', 'Amount (ETB)');
-            if (!res) return;
-            const { val1, val2 } = res;
-            const amount = parseInt(val2);
-            if (!val1 || isNaN(amount) || amount <= 0) { resultMsg.innerText = '❌ Invalid input'; return; }
-            const user = state.users[val1];
-            if (!user) { resultMsg.innerText = '❌ User not found'; return; }
-            user.balance = (user.balance || 0) + amount;
-            if (state.currentUser === val1) state.balance = user.balance;
-            resultMsg.innerText = `✅ Deposited ${amount} ETB to ${val1}`;
-            updateUI();
-        }
-
-        async function adminApproveWithdraw() {
-            if (state.role !== 'admin') { resultMsg.innerText = '⛔ Admin only'; return; }
-            const res = await showModal('Approve Withdrawal', 'Username', 'Amount (ETB)');
-            if (!res) return;
-            const { val1, val2 } = res;
-            const amount = parseInt(val2);
-            if (!val1 || isNaN(amount) || amount <= 0) { resultMsg.innerText = '❌ Invalid input'; return; }
-            const user = state.users[val1];
-            if (!user) { resultMsg.innerText = '❌ User not found'; return; }
-            if ((user.balance || 0) < amount) { resultMsg.innerText = '❌ Insufficient balance'; return; }
-            user.balance -= amount;
-            if (state.currentUser === val1) state.balance = user.balance;
-            resultMsg.innerText = `✅ Withdrew ${amount} ETB from ${val1}`;
-            updateUI();
-        }
-
-        // ---- OTHER GAMES ----
-        // Slots
-        document.getElementById('slotsSpinBtn')?.addEventListener('click', function() {
-            const slots = ['🍒','🍋','🍊','🍇','🔔','💎','7️⃣'];
-            const reels = [slots[Math.floor(Math.random()*slots.length)], slots[Math.floor(Math.random()*slots.length)], slots[Math.floor(Math.random()*slots.length)]];
-            document.getElementById('slotsResult').innerText = reels.join(' ');
-            if (reels[0] === reels[1] && reels[1] === reels[2]) {
-                document.getElementById('slotsResult').innerHTML = `🎉 JACKPOT! ${reels.join(' ')} 🎉`;
-            }
-        });
-
-        // Roulette
-        document.getElementById('rouletteSpinBtn')?.addEventListener('click', function() {
-            const num = Math.floor(Math.random() * 37);
-            const color = num === 0 ? '🟢' : (num % 2 === 0 ? '🔴' : '⚫');
-            document.getElementById('rouletteResult').innerHTML = `${color} ${num}`;
-        });
-
-        // Blackjack (simplified)
-        let bjDealer = [], bjPlayer = [];
-        function bjValue(hand) {
-            let sum = hand.reduce((a,c) => a + (c === 'A' ? 11 : (['J','Q','K'].includes(c) ? 10 : parseInt(c))), 0);
-            let aces = hand.filter(c => c === 'A').length;
-            while (sum > 21 && aces > 0) { sum -= 10; aces--; }
-            return sum;
-        }
-        function bjDeal() {
-            const deck = ['2','3','4','5','6','7','8','9','10','J','Q','K','A','2','3','4','5','6','7','8','9','10','J','Q','K','A','2','3','4','5','6','7','8','9','10','J','Q','K','A','2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-            const shuffle = () => deck.sort(() => Math.random() - 0.5);
-            shuffle();
-            bjPlayer = [deck.pop(), deck.pop()];
-            bjDealer = [deck.pop(), deck.pop()];
-            document.getElementById('bjResult').innerHTML = `Dealer: ${bjDealer[0]} ? | You: ${bjValue(bjPlayer)}`;
-        }
-        document.getElementById('bjNewBtn')?.addEventListener('click', bjDeal);
-        document.getElementById('bjHitBtn')?.addEventListener('click', function() {
-            if (bjValue(bjPlayer) >= 21) return;
-            const deck = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-            bjPlayer.push(deck[Math.floor(Math.random()*deck.length)]);
-            const val = bjValue(bjPlayer);
-            document.getElementById('bjResult').innerHTML = `Dealer: ${bjDealer[0]} ? | You: ${val}`;
-            if (val > 21) document.getElementById('bjResult').innerHTML = `💥 BUST! You: ${val}`;
-        });
-        document.getElementById('bjStandBtn')?.addEventListener('click', function() {
-            let dealerVal = bjValue(bjDealer);
-            while (dealerVal < 17) {
-                const deck = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-                bjDealer.push(deck[Math.floor(Math.random()*deck.length)]);
-                dealerVal = bjValue(bjDealer);
-            }
-            const playerVal = bjValue(bjPlayer);
-            let msg = `Dealer: ${dealerVal} | You: ${playerVal}`;
-            if (playerVal > 21) msg += ' 💥 You bust!';
-            else if (dealerVal > 21 || playerVal > dealerVal) msg += ' 🎉 You win!';
-            else if (playerVal === dealerVal) msg += ' 🤝 Push';
-            else msg += ' 😞 Dealer wins';
-            document.getElementById('bjResult').innerHTML = msg;
-        });
-        bjDeal();
-
-        // ---- TAB SWITCHING ----
-        const tabs = document.querySelectorAll('.game-tab');
-        const games = {
-            keno: document.getElementById('kenoGame'),
-            slots: document.getElementById('slotsGame'),
-            roulette: document.getElementById('rouletteGame'),
-            blackjack: document.getElementById('blackjackGame')
-        };
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                tabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                const game = this.dataset.game;
-                Object.keys(games).forEach(key => {
-                    games[key].classList.toggle('hidden', key !== game);
-                });
-                if (game === 'keno') renderGrid();
-            });
-        });
-
         // ---- EVENT BINDINGS ----
-        playBtn.addEventListener('click', playKeno);
-        clearBtn.addEventListener('click', clearBoard);
-        loginToggleBtn.addEventListener('click', loginFlow);
-        changePwBtn.addEventListener('click', changePassword);
-        adminResetPwBtn.addEventListener('click', adminResetPassword);
-        adminDepositBtn.addEventListener('click', adminApproveDeposit);
-        adminWithdrawBtn.addEventListener('click', adminApproveWithdraw);
+        authActionBtn.addEventListener('click', handleAuth);
+        authToggleLink.addEventListener('click', toggleAuthMode);
+        authUsername.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAuth(); });
+        authPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAuth(); });
 
-        document.getElementById('gameLink').addEventListener('click', (e) => { e.preventDefault(); resultMsg.innerText = '🎮 PRO GAMING · All games active'; });
-        document.getElementById('historyLink').addEventListener('click', (e) => { e.preventDefault(); resultMsg.innerText = `📜 HISTORY: ${state.history.length} games played`; });
-        document.getElementById('resultsLink').addEventListener('click', (e) => { e.preventDefault(); resultMsg.innerText = `📊 RESULTS: last draw ${state.drawn.length > 0 ? state.drawn.join(',') : '—'}`; });
-        document.getElementById('statsLink').addEventListener('click', (e) => { e.preventDefault(); resultMsg.innerText = `📈 STATS: balance ${state.balance} ETB · games ${state.gameCount}`; });
+        payBtn.addEventListener('click', handlePayment);
+
+        logoutBtn.addEventListener('click', logout);
+        prevBtn.addEventListener('click', goPrev);
+        nextBtn.addEventListener('click', goNext);
+        submitBtn.addEventListener('click', submitExam);
+        retakeBtn.addEventListener('click', retakeExam);
+        printCertBtn.addEventListener('click', printCertificate);
+        applyCountBtn.addEventListener('click', applyQuestionCount);
+        questionCountInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') applyQuestionCount(); });
+
+        adminActionBtn.addEventListener('click', adminExecute);
+        adminResultsBtn.addEventListener('click', adminShowResults);
 
         // ---- INIT ----
-        renderGrid();
+        if (!users['admin']) {
+            users['admin'] = { password: 'admin123', role: 'admin', paid: true, approved: true };
+            saveUsers();
+        }
+        // Pre-add demo user
+        if (!users['demo']) {
+            users['demo'] = { password: 'demo123', role: 'user', paid: false, approved: false };
+            saveUsers();
+        }
+        authUsername.value = 'demo';
+        authPassword.value = 'demo123';
         updateUI();
-        console.log('👑 Admin: admin / admin123  |  Player: Player / player123');
+        console.log('👑 Admin: admin / admin123');
+        console.log('👤 Demo: demo / demo123');
     })();
 </script>
 </body>
