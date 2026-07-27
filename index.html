@@ -2,1671 +2,1153 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Exam · Balance & Fee System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ሎጂስቲክስ ትራንስፖርት · አደጋ ስጋት ኮሚሽን</title>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         body {
-            background: #0b0f16;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 10px;
-            color: #e8edf5;
-        }
-        .app-wrapper {
-            max-width: 480px;
-            width: 100%;
-            background: #141d2a;
-            border-radius: 28px;
-            padding: 16px 14px 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.85);
-            border: 1px solid #26303f;
-            margin: 0 auto;
-        }
-        .hidden { display: none !important; }
-
-        /* Balance Display */
-        .balance-bar {
-            background: #0d1520;
-            border-radius: 16px;
-            padding: 10px 16px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #1f2836;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .balance-bar .bal-label {
-            color: #8899b5;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .balance-bar .bal-amount {
-            font-size: 22px;
-            font-weight: 800;
-            color: #f5b342;
-        }
-        .balance-bar .bal-amount i {
-            margin-right: 6px;
-            color: #2ecc71;
-        }
-        .balance-bar .bal-fee {
-            font-size: 12px;
-            color: #8899b5;
-            background: #1f2836;
-            padding: 2px 12px;
-            border-radius: 40px;
-        }
-        .balance-bar .bal-fee span {
-            color: #f5b342;
-            font-weight: 700;
-        }
-
-        /* Home Page */
-        .home-page {
-            padding: 20px 10px 30px;
-            text-align: center;
-        }
-        .home-page .logo {
-            font-size: 56px;
-            color: #f5b342;
-            margin-bottom: 10px;
-        }
-        .home-page h1 {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #f9e07f, #f5b342);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-        }
-        .home-page .moto {
-            font-size: 18px;
-            font-style: italic;
-            color: #c9d5e6;
-            border-top: 2px solid #f5b34255;
-            border-bottom: 2px solid #f5b34255;
-            padding: 16px 20px;
-            margin: 16px 0 20px;
-            line-height: 1.6;
-            letter-spacing: 0.5px;
-            background: #101820;
-            border-radius: 16px;
-        }
-        .home-page .moto i {
-            color: #f5b342;
-            margin: 0 6px;
-        }
-        .home-page .features {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 18px 0 22px;
-        }
-        .home-page .feature-card {
-            background: #101820;
-            padding: 14px 10px;
-            border-radius: 16px;
-            border: 1px solid #1f2836;
-            text-align: center;
-        }
-        .home-page .feature-card i {
-            font-size: 28px;
-            color: #f5b342;
-            margin-bottom: 4px;
-        }
-        .home-page .feature-card span {
-            font-size: 13px;
-            color: #c9d5e6;
-            display: block;
-            font-weight: 500;
-        }
-        .home-page .btn-start {
-            background: #f5b342;
-            border: none;
-            padding: 16px 48px;
-            border-radius: 60px;
-            font-weight: 800;
-            font-size: 22px;
-            color: #0b0e14;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #b87d2a;
-            transition: 0.08s;
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        .home-page .btn-start:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #b87d2a;
-        }
-        .home-page .btn-start:disabled {
-            opacity: 0.5;
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #b87d2a;
-            cursor: not-allowed;
-        }
-        .home-page .footer-text {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #6a7a92;
-        }
-        .home-page .footer-text i {
-            color: #f5b342;
-        }
-
-        /* Auth screens */
-        .auth-screen {
-            width: 100%;
-            padding: 24px 18px;
-            background: #101820;
-            border-radius: 24px;
-            border: 1px solid #26303f;
-            margin: 0 auto;
-        }
-        .auth-screen h2 {
-            font-size: 24px;
-            margin-bottom: 4px;
-            background: linear-gradient(135deg, #f9e07f, #f5b342);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .auth-screen .sub {
-            color: #8899b5;
-            margin-bottom: 14px;
-            font-size: 13px;
-        }
-        .auth-screen input {
-            width: 100%;
-            padding: 12px 16px;
-            margin: 6px 0;
-            background: #0b1018;
-            border: 1px solid #26303f;
-            border-radius: 40px;
-            color: #f0f4fa;
-            font-size: 15px;
-            outline: none;
-            -webkit-appearance: none;
-        }
-        .auth-screen input:focus { border-color: #f5b342; }
-        .auth-screen .btn-primary {
-            width: 100%;
+            background: #e6e9ef;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
             padding: 12px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 16px;
-            margin-top: 10px;
-            background: #f5b342;
-            border: none;
-            color: #0b0e14;
-            cursor: pointer;
         }
-        .auth-screen .btn-primary:active { transform: scale(0.97); }
-        .auth-screen .toggle-link {
-            color: #f5b342;
-            cursor: pointer;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .page {
+            background: white;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-radius: 6px;
+            padding: 12px 10px 18px;
+            margin-bottom: 20px;
+        }
+        /* Navigation */
+        .nav-bar {
+            background: #1e3a5f;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
             font-weight: 600;
-        }
-        .auth-screen .msg {
-            color: #e74c3c;
-            font-size: 13px;
-            min-height: 20px;
-            margin: 4px 0;
-        }
-        .auth-screen .msg.success { color: #2ecc71; }
-
-        /* Payment / Deposit section */
-        .payment-section {
-            background: #0d1520;
-            border-radius: 20px;
-            padding: 16px;
-            margin: 10px 0;
-            border: 1px solid #1f2836;
-        }
-        .payment-section h3 {
-            color: #f0f4fa;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-        .payment-section .pay-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            background: #101820;
-            border-radius: 14px;
-            border: 1px solid #26303f;
-            margin: 6px 0;
-            cursor: pointer;
-        }
-        .payment-section .pay-option input[type="radio"] {
-            appearance: none;
-            width: 16px; height: 16px;
-            border: 2px solid #4a5a70;
-            border-radius: 50%;
-            flex-shrink: 0;
-            position: relative;
-            cursor: pointer;
-        }
-        .payment-section .pay-option input[type="radio"]:checked {
-            border-color: #f5b342;
-            background: #f5b342;
-        }
-        .payment-section .pay-option input[type="radio"]:checked::after {
-            content: '';
-            position: absolute;
-            top: 3px; left: 3px;
-            width: 6px; height: 6px;
-            background: #0b0f16;
-            border-radius: 50%;
-        }
-        .payment-section .pay-option label {
-            color: #d3def0;
-            cursor: pointer;
-            flex: 1;
-            font-size: 14px;
-        }
-        .payment-section .pay-option .badge {
-            background: #1f6feb;
-            padding: 2px 10px;
-            border-radius: 40px;
-            font-size: 10px;
-            font-weight: 700;
-            color: #fff;
-        }
-        .payment-section input {
-            width: 100%;
-            padding: 12px 16px;
-            margin: 6px 0;
-            background: #0b1018;
-            border: 1px solid #26303f;
-            border-radius: 40px;
-            color: #f0f4fa;
-            font-size: 14px;
-            outline: none;
-        }
-        .payment-section input:focus { border-color: #f5b342; }
-        .payment-section .btn-primary {
-            width: 100%;
-            padding: 12px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 16px;
-            margin-top: 6px;
-            background: #f5b342;
-            border: none;
-            color: #0b0e14;
-            cursor: pointer;
-        }
-        .payment-section .btn-primary:active { transform: scale(0.97); }
-        .payment-section .msg { font-size: 13px; min-height: 20px; margin: 4px 0; }
-        .payment-section .msg.success { color: #2ecc71; }
-        .payment-section .msg.error { color: #e74c3c; }
-
-        /* header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #1f2836;
-        }
-        .header h1 {
-            font-size: 20px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #f9e07f, #f5b342);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-        .header h1 i { -webkit-text-fill-color: #f5b342; font-size: 18px; }
-        .header h1:hover { opacity: 0.8; }
-        .user-area {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .user-area .greeting { font-size: 12px; font-weight: 600; color: #c9d5e6; }
-        .user-area .badge { background: #1f6feb; padding: 2px 8px; border-radius: 40px; font-size: 9px; font-weight: 700; color: #fff; }
-        .btn-outline {
-            background: transparent; border: 1px solid #2f3a48; padding: 4px 12px;
-            border-radius: 40px; color: #bcc9de; font-weight: 600; cursor: pointer;
-            font-size: 11px;
-        }
-        .btn-outline:active { transform: scale(0.95); }
-        .btn-primary {
-            background: #f5b342; border: none; padding: 5px 14px;
-            border-radius: 40px; font-weight: 700; color: #0b0e14;
-            cursor: pointer; font-size: 12px;
-        }
-        .btn-primary:active { transform: scale(0.95); }
-        .btn-danger { background: #c0392b; border: none; padding: 5px 14px; border-radius: 40px; font-weight: 700; color: #fff; cursor: pointer; font-size: 12px; }
-        .btn-danger:active { transform: scale(0.95); }
-        .btn-success { background: #2ecc71; border: none; padding: 5px 14px; border-radius: 40px; font-weight: 700; color: #0b0e14; cursor: pointer; font-size: 12px; }
-
-        /* progress */
-        .progress-bar { width: 100%; height: 4px; background: #1f2836; border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #f5b342, #f9e07f); width: 0%; border-radius: 10px; transition: width 0.3s; }
-
-        /* question selector */
-        .question-selector {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 8px;
-            padding: 6px 10px;
-            background: #101820;
-            border-radius: 14px;
-            border: 1px solid #1f2836;
-        }
-        .question-selector label { color: #8899b5; font-weight: 600; font-size: 11px; }
-        .question-selector input {
-            background: #0b1018; border: 1px solid #26303f; border-radius: 40px;
-            padding: 4px 8px; width: 50px; color: #f0f4fa; font-size: 13px;
-            text-align: center; outline: none;
-        }
-        .question-selector input:focus { border-color: #f5b342; }
-        .question-selector .q-count-badge {
-            background: #1f6feb; padding: 2px 10px; border-radius: 40px;
-            font-weight: 700; font-size: 11px; color: #fff;
-        }
-        .question-selector .btn-primary { padding: 3px 10px; font-size: 11px; }
-
-        /* q-nav */
-        .q-nav-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-bottom: 10px;
-            padding: 6px 8px;
-            background: #0d1520;
-            border-radius: 14px;
-            border: 1px solid #1f2836;
-            max-height: 90px;
-            overflow-y: auto;
-        }
-        .q-nav-btn {
-            width: 28px; height: 28px; border-radius: 50%;
-            border: 1px solid #2f3a48; background: #101820;
-            color: #8899b5; font-weight: 700; font-size: 10px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-        .q-nav-btn:active { transform: scale(0.9); }
-        .q-nav-btn.active { background: #f5b342; color: #0b0e14; border-color: #f5b342; }
-        .q-nav-btn.answered { background: #2ecc71; color: #0b0e14; border-color: #2ecc71; }
-        .q-nav-btn.wrong { background: #e74c3c; color: #fff; border-color: #e74c3c; }
-        .q-nav-btn.current { box-shadow: 0 0 10px #f5b34288; }
-
-        /* question */
-        .q-number { font-size: 11px; color: #8899b5; font-weight: 600; margin-bottom: 3px; }
-        .q-text { font-size: 16px; font-weight: 600; line-height: 1.4; margin-bottom: 12px; color: #f0f4fa; }
-        .options { display: flex; flex-direction: column; gap: 6px; }
-        .option {
-            display: flex; align-items: flex-start; gap: 8px;
-            background: #101820; padding: 10px 12px; border-radius: 12px;
-            border: 1px solid #26303f; cursor: pointer;
-        }
-        .option:active { transform: scale(0.98); }
-        .option input[type="radio"] {
-            appearance: none; width: 16px; height: 16px;
-            border: 2px solid #4a5a70; border-radius: 50%;
-            margin-top: 1px; flex-shrink: 0; cursor: pointer;
-            position: relative;
-        }
-        .option input[type="radio"]:checked {
-            border-color: #f5b342;
-            background: #f5b342;
-        }
-        .option input[type="radio"]:checked::after {
-            content: ''; position: absolute; top: 3px; left: 3px;
-            width: 6px; height: 6px; background: #0b0f16; border-radius: 50%;
-        }
-        .option label { font-size: 14px; line-height: 1.3; color: #d3def0; cursor: pointer; flex: 1; }
-        .option.correct { background: #1e4b2a; border-color: #2ecc71; }
-        .option.correct label { color: #b8f0c8; }
-        .option.wrong { background: #4b1e1e; border-color: #e74c3c; }
-        .option.wrong label { color: #f0b8b8; }
-        .option.disabled { opacity: 0.8; cursor: default; }
-        .option.disabled:active { transform: none; }
-
-        /* nav */
-        .nav-row {
-            display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 8px; margin-top: 12px; padding-top: 10px;
-            border-top: 1px solid #1f2836;
-        }
-        .nav-btn {
-            background: #1e2632; border: 1px solid #2f3a48; padding: 6px 14px;
-            border-radius: 40px; font-weight: 600; color: #c9d5e6;
-            cursor: pointer; font-size: 12px;
-            display: inline-flex; align-items: center; gap: 4px;
-        }
-        .nav-btn:active { transform: scale(0.95); }
-        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .nav-btn.primary { background: #f5b342; border-color: #f5b342; color: #0b0e14; font-weight: 700; }
-        .score-area { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-        .score-badge {
-            background: #1f2836; padding: 4px 12px; border-radius: 40px;
-            font-weight: 700; color: #f0f4fa; font-size: 13px;
-        }
-        .score-badge i { color: #f5b342; margin-right: 4px; }
-        .result-msg { font-weight: 600; font-size: 14px; padding: 6px 0 2px; color: #f0f4fa; min-height: 28px; }
-        .result-msg i { margin-right: 6px; }
-
-        /* CERTIFICATE */
-        .certificate-wrapper {
-            background: #0d1520;
-            border-radius: 20px;
-            padding: 16px;
-            margin: 10px 0;
-            border: 1px solid #1f2836;
-        }
-        .certificate {
-            background: linear-gradient(145deg, #fbf7e9, #f5edd6);
-            border-radius: 16px;
-            padding: 24px 20px;
-            text-align: center;
-            border: 4px double #b8860b;
-            position: relative;
-            color: #1a1a2e;
-            max-width: 100%;
-        }
-        .certificate .seal {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            font-size: 36px;
-            color: #b8860b;
-            opacity: 0.3;
-        }
-        .certificate .cert-header {
-            font-size: 22px;
-            font-weight: 800;
-            color: #1a1a2e;
-            letter-spacing: 2px;
-            border-bottom: 2px solid #b8860b;
-            padding-bottom: 6px;
-            margin-bottom: 8px;
-        }
-        .certificate .cert-moto {
-            font-size: 13px;
-            font-style: italic;
-            color: #4a4a6a;
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
-        .certificate .cert-name {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin: 8px 0 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .certificate .cert-text {
-            font-size: 15px;
-            color: #2a2a4e;
-            line-height: 1.6;
-            margin: 6px 0;
-        }
-        .certificate .cert-score {
-            font-size: 20px;
-            font-weight: 700;
-            color: #b8860b;
-            margin: 6px 0;
-        }
-        .certificate .cert-details {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #4a4a6a;
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px dashed #b8860b;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-        .certificate .cert-signature {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid #b8860b;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .certificate .cert-signature .sig-block {
-            text-align: center;
-            font-size: 12px;
-            color: #4a4a6a;
-        }
-        .certificate .cert-signature .sig-line {
-            width: 120px;
-            height: 2px;
-            background: #1a1a2e;
-            margin: 4px auto;
-        }
-        .certificate .cert-signature .sig-name {
-            font-weight: 600;
-            font-size: 13px;
-            color: #1a1a2e;
-        }
-
-        /* result card */
-        .result-card {
-            background: linear-gradient(145deg, #1a2330, #0d1520);
-            border-radius: 24px; padding: 20px 16px;
-            border: 2px solid #f5b342; text-align: center; margin: 10px 0;
-            box-shadow: 0 0 30px #f5b34222;
-        }
-        .result-card .big-score { font-size: 44px; font-weight: 800; color: #f5b342; }
-        .result-card .status { font-size: 24px; font-weight: 700; margin: 6px 0; }
-        .result-card .status.pass { color: #2ecc71; text-shadow: 0 0 20px #2ecc7155; }
-        .result-card .status.fail { color: #e74c3c; text-shadow: 0 0 20px #e74c3c55; }
-        .result-card .actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
-        .result-card .actions .btn-primary { padding: 8px 16px; font-size: 13px; }
-        .download-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .download-actions .btn-primary {
             padding: 6px 14px;
-            font-size: 12px;
+            border-radius: 4px;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        .nav-bar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .nav-bar a.active {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .nav-bar .badge {
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 10px;
+            font-size: 0.75rem;
+            margin-left: 4px;
+        }
+        /* Form styles */
+        .commission-header {
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.3px;
+            color: #0b2b4a;
+            border-bottom: 2px solid #1e3a5f;
+            padding-bottom: 3px;
+            margin-bottom: 6px;
+        }
+        .sub-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            background: #f4f7fc;
+            padding: 4px 10px;
+            border-radius: 5px;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+            align-items: center;
+        }
+        .sub-header .left {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+        }
+        .field-label {
+            font-weight: 500;
+            color: #1e2f4e;
+            margin-right: 2px;
+        }
+        .input-field {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #5a6f8a;
+            font-size: 0.75rem;
+            padding: 0 2px;
+            width: 100px;
+            font-family: inherit;
+            min-width: 30px;
+        }
+        .input-field:focus {
+            outline: none;
+            border-bottom: 2px solid #1f4b7a;
+        }
+        .input-field.small {
+            width: 70px;
+        }
+        .input-field.med {
+            width: 90px;
+        }
+        .vehicle-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 14px;
+            background: #f3f7fe;
+            padding: 3px 10px;
+            border-radius: 5px;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+            align-items: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.6rem;
+            margin: 2px 0 4px;
+            table-layout: fixed;
+        }
+        th {
+            background: #1e3a5f;
+            color: white;
+            padding: 4px 1px;
+            text-align: center;
+            border: 1px solid #1e3a5f;
+            font-weight: 500;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.2;
+            font-size: 0.55rem;
+        }
+        td {
+            border: 1px solid #bac9db;
+            padding: 2px 1px;
+            text-align: center;
+            background: white;
+            word-break: break-word;
+        }
+        td input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-size: 0.6rem;
+            padding: 1px 0;
+            font-family: inherit;
+        }
+        td input:focus {
+            outline: 1px solid #1e3a5f;
+            background: #f2f7ff;
+            border-radius: 2px;
+        }
+        td input[readonly] {
+            background: #f4f7fc;
+            font-weight: 500;
+            color: #0a1e33;
+            cursor: default;
+        }
+        .total-row td {
+            background: #dce5f0;
+            font-weight: 600;
+            border-top: 2px solid #1e3a5f;
+        }
+        .signature-area {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #b7c7dd;
+            gap: 4px 8px;
+            font-size: 0.7rem;
+        }
+        .signature-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px 6px;
+            flex-wrap: wrap;
         }
-        .download-actions .btn-primary i { font-size: 14px; }
+        .signature-item .input-field {
+            width: 90px;
+        }
+        .btn-container {
+            text-align: right;
+            margin-top: 10px;
+            display: flex;
+            gap: 6px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        .btn {
+            background: #1e3a5f;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #14304d;
+            transform: scale(0.96);
+        }
+        .btn.green {
+            background: #2a6d4a;
+        }
+        .btn.green:hover {
+            background: #1e5538;
+        }
+        .btn.grey {
+            background: #5f738e;
+        }
+        .btn.grey:hover {
+            background: #4a5d77;
+        }
+        .btn.add-row-btn {
+            background: #1f6d8a;
+        }
+        .btn.add-row-btn:hover {
+            background: #15556e;
+        }
+        .btn.orange {
+            background: #d4772a;
+        }
+        .btn.orange:hover {
+            background: #b8641f;
+        }
 
-        /* admin panel */
-        .admin-panel {
-            background: #0d1520; border-radius: 16px; padding: 10px 12px;
-            margin-top: 10px; border: 1px solid #1f2836;
-            display: flex; flex-wrap: wrap; align-items: center;
-            justify-content: space-between; gap: 6px;
+        .col-id {
+            width: 4%;
         }
-        .admin-panel .admin-title { color: #8899b5; font-weight: 600; font-size: 11px; }
-        .admin-panel .admin-actions { display: flex; flex-wrap: wrap; gap: 4px; }
-        .admin-panel .admin-actions select {
-            background: #1a232f; border: 1px solid #2a3442; color: #c9d5e6;
-            padding: 3px 8px; border-radius: 40px; font-weight: 600; font-size: 11px;
-            cursor: pointer; outline: none; max-width: 90px;
+        .col-origin {
+            width: 8%;
         }
-        .admin-panel .admin-actions select option { background: #141d2a; }
-        .admin-panel .admin-actions button {
-            background: #1a232f; border: 1px solid #2a3442; color: #c9d5e6;
-            padding: 3px 10px; border-radius: 40px; font-weight: 600; font-size: 11px;
-            cursor: pointer; display: flex; align-items: center; gap: 3px;
+        .col-dest {
+            width: 8%;
         }
-        .admin-panel .admin-actions button:active { transform: scale(0.95); }
-        .admin-panel .admin-actions .approve { background: #1e8b4b; border-color: #2ecc71; color: #fff; }
-        .admin-panel .admin-actions .reject { background: #a13131; border-color: #e74c3c; color: #fff; }
+        .col-single-load {
+            width: 7%;
+        }
+        .col-double-load {
+            width: 7%;
+        }
+        .col-single-empty {
+            width: 7%;
+        }
+        .col-double-empty {
+            width: 7%;
+        }
+        .col-fuel-load {
+            width: 6%;
+        }
+        .col-fuel-empty {
+            width: 6%;
+        }
+        .col-price {
+            width: 6%;
+        }
+        .col-birr-load {
+            width: 6%;
+        }
+        .col-birr-empty {
+            width: 6%;
+        }
+        .col-total {
+            width: 7%;
+        }
+        .col-remark {
+            width: 7%;
+        }
 
-        /* modal */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
-            align-items: center; justify-content: center; z-index: 999;
-            padding: 20px;
+        /* All Data View */
+        .data-list {
+            margin-top: 12px;
         }
-        .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: #141d2a; max-width: 400px; width: 100%;
-            padding: 20px 18px; border-radius: 24px; border: 1px solid #2f3a48;
-            box-shadow: 0 20px 40px #000000cc;
+        .data-card {
+            background: #f8f9fc;
+            border: 1px solid #dce3ed;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .modal-box h3 { color: #f0f4fa; margin-bottom: 10px; font-size: 18px; }
-        .modal-box input {
-            width: 100%; padding: 10px 14px; margin: 4px 0;
-            background: #0b1018; border: 1px solid #26303f; border-radius: 40px;
-            color: #f0f4fa; font-size: 14px; outline: none;
+        .data-card .info {
+            font-size: 0.8rem;
         }
-        .modal-box input:focus { border-color: #f5b342; }
-        .modal-actions { display: flex; gap: 8px; margin-top: 14px; justify-content: flex-end; }
-        .modal-actions button { padding: 6px 16px; border-radius: 40px; font-weight: 700; border: none; cursor: pointer; font-size: 13px; }
-        .btn-cancel { background: #26303f; color: #bcc9de; }
-        .btn-confirm { background: #f5b342; color: #0b0e14; }
-        .modal-msg { color: #e74c3c; font-size: 13px; margin-top: 4px; min-height: 20px; }
+        .data-card .info strong {
+            color: #1e3a5f;
+        }
+        .data-card .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .data-card .actions .btn {
+            padding: 4px 12px;
+            font-size: 0.7rem;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6a7b94;
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
 
+        /* Print styles */
         @media print {
-            .no-print { display: none !important; }
-            .app-wrapper { background: white !important; color: black !important; border: none !important; box-shadow: none !important; padding: 10px; max-width: 100% !important; }
-            .certificate { border: 4px double #b8860b !important; }
-            body { background: white !important; padding: 0; }
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .page {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 6px 4px;
+                max-width: 100%;
+                margin: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .btn {
+                display: none !important;
+            }
+            .nav-bar {
+                display: none !important;
+            }
+            .page {
+                background: white;
+            }
+            table {
+                page-break-inside: avoid;
+            }
+            tr {
+                page-break-inside: avoid;
+            }
+            .total-row {
+                background: #f0f3f8 !important;
+            }
+            th,
+            td {
+                padding: 2px 1px !important;
+                font-size: 0.5rem !important;
+                line-height: 1.1;
+            }
+            th {
+                white-space: normal !important;
+                word-break: break-word;
+            }
+            .commission-header {
+                font-size: 1rem !important;
+            }
+            .sub-header {
+                padding: 2px 4px !important;
+                flex-wrap: wrap;
+            }
+            .field-label {
+                font-size: 0.55rem;
+            }
+            .input-field {
+                font-size: 0.55rem;
+                padding: 0 2px;
+                width: 60px;
+                border: none !important;
+                border-bottom: 1px solid #999 !important;
+                background: transparent !important;
+                color: #000 !important;
+                min-width: 30px;
+            }
+            .signature-item .input-field {
+                width: 70px;
+            }
+            .vehicle-bar {
+                gap: 2px 6px;
+                padding: 2px 4px;
+                font-size: 0.55rem;
+            }
+            .vehicle-bar .input-field {
+                width: 50px;
+            }
+            .input-field {
+                border: none !important;
+                border-bottom: 1px solid #aaa !important;
+                background: transparent !important;
+                color: #000 !important;
+                min-width: 30px;
+            }
+            .input-field::placeholder {
+                color: transparent !important;
+                opacity: 0 !important;
+            }
+            td input[readonly] {
+                background: transparent !important;
+                border-bottom: 1px solid #ccc !important;
+                color: #000 !important;
+            }
+            .data-card {
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .page {
+                padding: 6px;
+            }
+            .sub-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 3px;
+            }
+            .input-field {
+                width: 70px;
+            }
+            .signature-item .input-field {
+                width: 70px;
+            }
+            th {
+                font-size: 0.45rem;
+            }
+            td input {
+                font-size: 0.5rem;
+            }
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .data-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
 <body>
-<div class="app-wrapper" id="app">
-    <!-- header -->
-    <div class="header no-print">
-        <h1 id="homeBtn"><i class="fas fa-home"></i> Exam</h1>
-        <div class="user-area" id="userArea">
-            <span class="greeting" id="greeting">👋 Guest</span>
-            <span class="badge" id="roleBadge">USER</span>
-            <button class="btn-outline hidden" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    <div class="container" id="app">
+        <!-- Navigation -->
+        <div class="nav-bar no-print">
+            <a href="#" class="active" onclick="showForm()">📝 ቅጽ ሙላ</a>
+            <a href="#" onclick="showAllData()">📊 ሁሉም ውሂብ <span class="badge" id="dataCount">0</span></a>
+            <span style="flex:1"></span>
+            <a href="#" onclick="window.print()" style="background:rgba(255,255,255,0.15)">🖨️ ማተሚያ</a>
         </div>
-    </div>
 
-    <!-- Balance Bar -->
-    <div id="balanceBar" class="balance-bar no-print">
-        <span class="bal-label"><i class="fas fa-wallet"></i> Balance</span>
-        <span class="bal-amount" id="balanceDisplay"><i class="fas fa-coins"></i> 0.00 ETB</span>
-        <span class="bal-fee">Fee: <span>100 ETB</span></span>
-    </div>
+        <!-- Form Section -->
+        <div id="formSection" class="page">
+            <div class="commission-header">የአደጋ ስጋት አመራር ኮሚሽን</div>
+            <div style="font-weight: 600; font-size: 0.95rem; color: #0a2647; margin-bottom: 3px;">የሎጂስቲክስ ትራንስፖርት ኦፕሬሽን ስራ አስፈፃሚ</div>
 
-    <!-- HOME PAGE -->
-    <div id="homePage" class="home-page">
-        <div class="logo"><i class="fas fa-graduation-cap"></i></div>
-        <h1>Professional Exam</h1>
-        <div class="moto">
-            <i class="fas fa-quote-left"></i>
-            "Observed that knowledge is a permanent, personal treasure"
-            <i class="fas fa-quote-right"></i>
-        </div>
-        <div class="features">
-            <div class="feature-card">
-                <i class="fas fa-file-alt"></i>
-                <span>70 Questions</span>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-certificate"></i>
-                <span>Get Certified</span>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-credit-card"></i>
-                <span>100 ETB Fee</span>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-download"></i>
-                <span>Download Certificate</span>
-            </div>
-        </div>
-        <button class="btn-start" id="startExamBtn">
-            <i class="fas fa-arrow-right"></i> Start Exam
-        </button>
-        <div class="footer-text">
-            <i class="fas fa-lock"></i> Secure · Professional · Certified
-        </div>
-    </div>
-
-    <!-- AUTH SCREEN -->
-    <div id="authScreen" class="auth-screen hidden">
-        <h2 id="authTitle">Welcome Back</h2>
-        <div class="sub" id="authSub">Login to continue your exam journey</div>
-        <div id="authForm">
-            <input type="text" id="authUsername" placeholder="Username" value="demo">
-            <input type="password" id="authPassword" placeholder="Password" value="demo123">
-            <div class="msg" id="authMsg"></div>
-            <button class="btn-primary" id="authActionBtn">Login</button>
-            <div style="text-align:center;margin-top:10px;color:#8899b5;font-size:13px;">
-                <span id="authToggleText">Don't have an account?</span>
-                <span class="toggle-link" id="authToggleLink">Register</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- PAYMENT / DEPOSIT SECTION -->
-    <div id="paymentSection" class="payment-section hidden">
-        <h3><i class="fas fa-plus-circle"></i> Deposit to Your Balance</h3>
-        <p style="color:#8899b5;margin-bottom:8px;font-size:13px;">Add funds to your account. Exam fee is 100 ETB.</p>
-        <div class="pay-option">
-            <input type="radio" name="paymentMethod" value="telebirr" id="payTelebirr" checked>
-            <label for="payTelebirr"><i class="fas fa-mobile-alt" style="color:#f5b342;"></i> Telebirr</label>
-            <span class="badge">+251912121212</span>
-        </div>
-        <div class="pay-option">
-            <input type="radio" name="paymentMethod" value="cbe" id="payCbe">
-            <label for="payCbe"><i class="fas fa-university" style="color:#2ecc71;"></i> CBE</label>
-            <span class="badge">13 digits</span>
-        </div>
-        <input type="text" id="paymentNumber" placeholder="Enter phone or account number" value="+251912121212">
-        <input type="number" id="paymentAmount" placeholder="Amount to Deposit (ETB)" value="100" min="10">
-        <div class="msg" id="paymentMsg"></div>
-        <button class="btn-primary" id="payBtn"><i class="fas fa-check-circle"></i> Deposit & Request Approval</button>
-        <div style="margin-top:6px;font-size:11px;color:#6a7a92;text-align:center;">Admin will approve your deposit before you can take the exam</div>
-    </div>
-
-    <!-- progress -->
-    <div class="progress-bar no-print" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
-
-    <!-- question selector -->
-    <div class="question-selector no-print" id="questionSelector">
-        <label><i class="fas fa-list"></i> Q:</label>
-        <input type="number" id="questionCountInput" value="70" min="10" max="70" step="1">
-        <button class="btn-primary" id="applyCountBtn"><i class="fas fa-sync-alt"></i></button>
-        <span class="q-count-badge" id="totalQBadge">70</span>
-        <span style="color:#8899b5;font-size:11px;margin-left:auto;"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> <span id="answeredCount">0</span></span>
-    </div>
-
-    <!-- question nav -->
-    <div class="q-nav-grid no-print" id="qNavGrid"></div>
-
-    <!-- exam area -->
-    <div id="examArea">
-        <div class="q-number" id="qNumber">Question 1 of 70</div>
-        <div class="q-text" id="qText">Loading...</div>
-        <div class="options" id="optionsContainer"></div>
-        <div class="result-msg" id="resultMsg"><i class="fas fa-info-circle"></i> Select an answer</div>
-        <div class="nav-row no-print">
-            <div>
-                <button class="nav-btn" id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
-                <button class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
-            </div>
-            <div class="score-area">
-                <span class="score-badge"><i class="fas fa-star"></i> <span id="scoreDisplay">0</span>/<span id="totalQDisplay">70</span></span>
-                <button class="nav-btn primary" id="submitBtn"><i class="fas fa-check-circle"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- RESULT & CERTIFICATE -->
-    <div id="resultCard" class="result-card hidden">
-        <div class="big-score" id="finalScore">0/70</div>
-        <div class="status" id="finalStatus">PASS</div>
-
-        <!-- Certificate View -->
-        <div class="certificate-wrapper" id="certificateWrapper">
-            <div class="certificate" id="certificateContent">
-                <div class="seal"><i class="fas fa-award"></i></div>
-                <div class="cert-header">🏛️ CERTIFICATE OF ACHIEVEMENT</div>
-                <div class="cert-moto">"Observed that knowledge is a permanent, personal treasure"</div>
-                <div class="cert-name" id="certName">John Doe</div>
-                <div class="cert-text">has successfully completed the professional examination</div>
-                <div class="cert-score" id="certScore">Score: 65/70</div>
-                <div class="cert-text" style="font-size:13px;color:#4a4a6a;">with a grade of <strong id="certGrade">PASS</strong></div>
-                <div class="cert-details">
-                    <span id="certDateDisplay">Date: January 1, 2025</span>
-                    <span id="certIdDisplay">Cert-ID: CERT-ABC123</span>
+            <div class="sub-header">
+                <div class="left">
+                    <span><span class="field-label">ጠያቂው የስራ ክፍል</span> <input type="text" class="input-field" id="requesterDept" placeholder="" value=""></span>
+                    <span><span class="field-label">የመስክ ጉዞ አጭር መግለጫ</span> <input type="text" class="input-field" id="tripDesc" placeholder="" value="" style="width:140px;"></span>
                 </div>
-                <div class="cert-signature">
-                    <div class="sig-block">
-                        <div class="sig-line"></div>
-                        <div class="sig-name">Dr. A. Ahmed</div>
-                        <div style="font-size:10px;color:#6a6a8a;">Examiner</div>
-                    </div>
-                    <div class="sig-block">
-                        <div class="sig-line"></div>
-                        <div class="sig-name">Prof. B. Bekele</div>
-                        <div style="font-size:10px;color:#6a6a8a;">Director</div>
-                    </div>
-                </div>
+                <div><span class="field-label">ቀን</span> <input type="date" class="input-field" id="tripDate" value="" style="width:120px;"></div>
+            </div>
+
+            <div class="vehicle-bar">
+                <span><span class="field-label">የጭነት መጠን</span> <input type="text" class="input-field small" id="loadSize" placeholder="" value=""></span>
+                <span><span class="field-label">የሰሌዳ ቁጥር</span> <input type="text" class="input-field small" id="plateNo" placeholder="" value=""></span>
+                <span><span class="field-label">የኪ.ሜ ንባብ</span> <input type="text" class="input-field small" id="kmReading" placeholder="" value=""></span>
+                <span><span class="field-label">የመስክ ስራው የሚወስደው ቀን ግምት</span> <input type="text" class="input-field small" id="estDays" placeholder="" value=""></span>
+                <span><span class="field-label">አሽከርካሪ</span> <input type="text" class="input-field med" id="driverName" placeholder="" value=""></span>
+            </div>
+
+            <table id="tripTable">
+                <thead>
+                    <tr>
+                        <th class="col-id">ተ.ቁ</th>
+                        <th class="col-origin">መነሻ</th>
+                        <th class="col-dest">መድረሻ</th>
+                        <th class="col-single-load">ነጠላ ጉዞ በጭነት በኪ.ሜትር</th>
+                        <th class="col-double-load">በጭነት ደርሶ መልስ በኪ.ሜትር</th>
+                        <th class="col-single-empty">ነጠላ ጉዞ ያለጭነት በኪ.ሜትር</th>
+                        <th class="col-double-empty">ያለጭነት ደርሶ መልስ በኪ.ሜትር</th>
+                        <th class="col-fuel-load">በጭነት ደርሶ መልስ አጠቃላይ የፈጀው ነዳጅ በሊትር</th>
+                        <th class="col-fuel-empty">ያለጭነት ደርሶ መልስ በኪ.ሜትርነዳጅ ዋጋ በሊትር</th>
+                        <th class="col-price">ነዳጅ ዋጋ በሊትር</th>
+                        <th class="col-birr-load">በጭነት የፈጀው ነዳጅ በብር</th>
+                        <th class="col-birr-empty">ያለጭነት የፈጀው ነዳጅ በብር</th>
+                        <th class="col-total">አጠቃላይ ድምር በብር</th>
+                        <th class="col-remark">ምርመራ</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+                <tfoot id="tableFoot">
+                    <tr class="total-row">
+                        <td colspan="2" style="text-align:right; font-weight:600;">ጠቅላላ</td>
+                        <td></td>
+                        <td id="totalSingleLoad">0</td>
+                        <td></td>
+                        <td id="totalSingleEmpty">0</td>
+                        <td></td>
+                        <td id="totalFuelLoad">0</td>
+                        <td id="totalFuelEmpty">0</td>
+                        <td id="totalFuelPrice">0</td>
+                        <td id="totalBirrLoad">0</td>
+                        <td id="totalBirrEmpty">0</td>
+                        <td id="totalBirrSum">0</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="signature-area">
+                <div class="signature-item"><span class="field-label">የጠያቂው ስም</span> <input type="text" class="input-field" id="reqSign" placeholder="" value=""> <span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="reqSignMark" placeholder="" style="width:60px;" value=""></div>
+                <div class="signature-item"><span class="field-label">ያዘጋጀው ስም</span> <input type="text" class="input-field" id="prepSign" placeholder="" value=""> <span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="prepSignMark" placeholder="" style="width:60px;" value=""></div>
+                <div class="signature-item"><span class="field-label">ያረጋገጠው ስም</span> <input type="text" class="input-field" id="verifSign" placeholder="" value=""> <span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="verifSignMark" placeholder="" style="width:60px;" value=""></div>
+                <div class="signature-item"><span class="field-label">ያፀደቀው ስም</span> <input type="text" class="input-field" id="approvSign" placeholder="" value=""> <span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="approvSignMark" placeholder="" style="width:60px;" value=""></div>
+            </div>
+
+            <div class="btn-container no-print">
+                <button class="btn add-row-btn" onclick="addRow()">➕ መስመር ጨምር</button>
+                <button class="btn green" onclick="submitForm()">✅ አስገባ / Submit</button>
+                <button class="btn grey" onclick="clearForm()">🗑️ አጽዳ</button>
             </div>
         </div>
 
-        <div class="download-actions no-print">
-            <button class="btn-primary" id="viewCertBtn"><i class="fas fa-eye"></i> View</button>
-            <button class="btn-primary" id="downloadWordBtn" style="background:#2b5797;color:#fff;"><i class="fas fa-file-word"></i> Word</button>
-            <button class="btn-primary" id="downloadPngBtn" style="background:#e67e22;color:#fff;"><i class="fas fa-image"></i> PNG</button>
+        <!-- All Data Section -->
+        <div id="allDataSection" class="page" style="display:none;">
+            <h2 style="color:#1e3a5f; margin-bottom:12px;">📊 ሁሉም የተመዘገበ ውሂብ</h2>
+            <div id="dataListContainer" class="data-list">
+                <!-- Data cards will be rendered here -->
+            </div>
+            <div class="btn-container no-print">
+                <button class="btn" onclick="showForm()">⬅️ ወደ ቅጽ ተመለስ</button>
+                <button class="btn grey" onclick="clearAllData()">🗑️ ሁሉንም አጥፋ</button>
+            </div>
         </div>
 
-        <div class="actions no-print" style="margin-top:8px;">
-            <button class="btn-primary" id="retakeBtn"><i class="fas fa-redo"></i> Retake</button>
-            <button class="btn-primary" id="printCertBtn" style="background:#2ecc71;color:#0b0e14;"><i class="fas fa-print"></i> Print</button>
-        </div>
-    </div>
-
-    <!-- admin panel -->
-    <div class="admin-panel no-print" id="adminPanel">
-        <span class="admin-title"><i class="fas fa-user-shield"></i> Admin</span>
-        <div class="admin-actions">
-            <select id="adminUserSelect" style="min-width:80px;">
-                <option value="">User</option>
-            </select>
-            <select id="adminActionSelect">
-                <option value="approve">✅ Approve Deposit</option>
-                <option value="reset">🔑 Reset PW</option>
-                <option value="addfunds">💰 Add Funds</option>
-            </select>
-            <button id="adminActionBtn" class="approve"><i class="fas fa-check"></i></button>
-            <button id="adminResultsBtn"><i class="fas fa-chart-line"></i></button>
+        <!-- View Single Data Section -->
+        <div id="viewSection" class="page" style="display:none;">
+            <div id="viewContent"></div>
+            <div class="btn-container no-print">
+                <button class="btn" onclick="showAllData()">⬅️ ወደ ውሂብ ዝርዝር</button>
+                <button class="btn" onclick="window.print()">🖨️ ማተሚያ</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal">
-    <div class="modal-box">
-        <h3 id="modalTitle">Action</h3>
-        <div id="modalBody">
-            <input type="text" id="modalInput1" placeholder="Value">
-            <input type="password" id="modalInput2" placeholder="Password">
-        </div>
-        <div class="modal-msg" id="modalMsg"></div>
-        <div class="modal-actions">
-            <button class="btn-cancel" id="modalCancel">Cancel</button>
-            <button class="btn-confirm" id="modalConfirm">Confirm</button>
-        </div>
-    </div>
-</div>
+    <script>
+        (function() {
+            // Data storage
+            let allSubmissions = JSON.parse(localStorage.getItem('transportSubmissions')) || [];
+            let currentViewIndex = -1;
 
-<script>
-    (function() {
-        // ---- FULL 70 QUESTIONS ----
-        const allQuestions = [
-            { q: "After implementing a solution, it is critical to:", options: ["Forget about the problem.", "Evaluate its effectiveness and make adjustments if needed.", "Immediately move to the next problem.", "Reward yourself regardless of outcome."], answer: 1 },
-            { q: "A common pitfall in decision-making is:", options: ["Being too logical.", "\"Groupthink,\" where the desire for harmony overrides critical evaluation.", "Considering too many alternatives.", "Consulting with others."], answer: 1 },
-            { q: "\"Evidence-based decision making\" relies on:", options: ["Gut feeling and intuition.", "Data, facts, and rigorous analysis.", "The highest-paid person's opinion (HiPPO).", "How things have always been done."], answer: 1 },
-            { q: "Creativity in problem-solving is important because it:", options: ["Is only needed for artistic work.", "Helps find novel and effective solutions to complex challenges.", "Always saves money.", "Is a natural talent that cannot be learned."], answer: 1 },
-            { q: "An ethical decision-making framework ensures that decisions:", options: ["Are made quickly.", "Align with laws, regulations, and core ethical values.", "Please the majority of people.", "Are always the cheapest option."], answer: 1 },
-            { q: "When faced with an unprecedented problem, the best first step is to:", options: ["Hide the problem.", "Gather relevant information and data about the problem.", "Immediately implement a solution from a similar past problem.", "Wait to see if it resolves itself."], answer: 1 },
-            { q: "A major advantage of group decision-making is:", options: ["It is always faster than individual decision-making.", "It reduces personal accountability.", "It can generate more ideas and promote buy-in.", "It avoids conflict entirely."], answer: 2 },
-            { q: "In decision-making, considering the 'stakeholders' means:", options: ["Considering only your supervisor's opinion.", "Considering only what is easiest for you.", "Identifying and considering all parties affected by the decision.", "Considering only the financial cost."], answer: 2 },
-            { q: "\"Root Cause Analysis\" aims to:", options: ["Treat the symptoms of a problem.", "Identify the underlying fundamental reason for a problem.", "Assign blame for a problem.", "Document the problem superficially."], answer: 1 },
-            { q: "The systematic process of problem-solving does NOT typically include:", options: ["Defining the problem clearly.", "Jumping immediately to the first solution.", "Generating and evaluating alternative solutions.", "Implementing and monitoring the chosen solution."], answer: 1 },
-            { q: "Risk management in planning involves:", options: ["Avoiding any risky activities.", "Identifying potential problems and planning how to prevent or mitigate them.", "Taking as many risks as possible.", "Ignoring small risks."], answer: 1 },
-            { q: "Which is a key element of a good work plan?", options: ["It is fixed and cannot be changed.", "It is known only to the manager.", "It includes clear activities, responsible persons, timelines, and indicators.", "It is highly theoretical."], answer: 2 },
-            { q: "Resource mobilization in the public sector refers to:", options: ["Only securing financial funds.", "Securing and efficiently using human, financial, and material resources.", "Moving resources from one department to another.", "Reducing resource usage."], answer: 1 },
-            { q: "\"Monitoring and Evaluation\" (M&E) is crucial to:", options: ["Find faults in employees.", "Track progress, learn, and improve ongoing and future work.", "Justify the budget at year-end.", "Create extra paperwork."], answer: 1 },
-            { q: "When a project is behind schedule, the best immediate action is to:", options: ["Blame team members.", "Ask for an extension without analysis.", "Assess the cause, re-prioritize, and reallocate resources if possible.", "Report that the project is on track."], answer: 2 },
-            { q: "Delegation is important because it:", options: ["Reduces the manager's workload only.", "Empowers team members and develops their skills.", "Avoids responsibility for outcomes.", "Is required by civil service rules."], answer: 1 },
-            { q: "A Gantt chart is primarily used for:", options: ["Financial budgeting.", "Visualizing project timelines and task dependencies.", "Organizational hierarchy.", "Employee performance evaluation."], answer: 1 },
-            { q: "Prioritizing tasks effectively means:", options: ["Doing the easiest tasks first.", "Doing the tasks you like first.", "Focusing on tasks that are most important and urgent.", "Letting your supervisor decide daily."], answer: 2 },
-            { q: "A 'SMART' goal is one that is:", options: ["Simple, Manageable, Achievable, Reasonable, Timely", "Specific, Measurable, Achievable, Relevant, Time-bound", "Strategic, Meaningful, Actionable, Responsible, Tracked", "Standard, Moderate, Actual, Realistic, Thoughtful"], answer: 1 },
-            { q: "The first step in effective planning is:", options: ["Allocating resources.", "Defining clear objectives and goals.", "Scheduling activities.", "Assigning tasks to team members."], answer: 1 },
-            { q: "If you receive an official letter in a language you do not understand, you should:", options: ["Guess the meaning and act on it.", "Discard it.", "Seek official translation through appropriate channels.", "Ask a friend who knows the language."], answer: 2 },
-            { q: "One of the following is not goals of communication?", options: ["Share information", "Persuading", "Building Relationships", "None"], answer: 3 },
-            { q: "When preparing a report for senior management, the executive summary should:", options: ["Introduce all the junior staff who worked on it.", "Provide a brief overview of the key findings, conclusions, and recommendations.", "Contain all the raw data.", "Be written last, after the main report is complete."], answer: 1 },
-            { q: "A 'barrier to effective communication' is:", options: ["Using simple language.", "Providing feedback.", "Using technical jargon with a non-technical audience.", "Making eye contact."], answer: 2 },
-            { q: "Which is the most effective way to give constructive feedback to a subordinate?", options: ["In front of their peers to serve as a lesson for all.", "Privately, focusing on specific behavior and suggesting improvement.", "Through a harshly worded written warning.", "By comparing them unfavorably to another employee."], answer: 1 },
-            { q: "The primary purpose of a 'CC' field in an email is to:", options: ["Send the main message to the person in CC.", "Send a copy to someone for their information, who is not the primary recipient.", "Blind copy someone secretly.", "Carbon copy the document to a printer."], answer: 1 },
-            { q: "In a meeting with a dissatisfied citizen who is speaking loudly, the best approach is to:", options: ["Speak louder to assert authority.", "Remain calm, listen patiently, and speak in a steady, respectful tone.", "Ask security to remove them.", "Ignore the tone and focus only on the factual content."], answer: 1 },
-            { q: "Non-verbal communication includes:", options: ["Email and reports.", "Body language, eye contact, and tone of voice.", "Only written words.", "Speaking loudly."], answer: 1 },
-            { q: "When writing an official memorandum, the most important principle is:", options: ["Using complex vocabulary to sound professional.", "Being clear, concise, and to the point.", "Making it as long as possible to cover all details.", "Using colorful fonts and formatting."], answer: 1 },
-            { q: "Active listening involves:", options: ["Waiting for your turn to speak.", "Paying full attention, understanding, and responding thoughtfully.", "Agreeing with everything the speaker says.", "Taking detailed notes of every word."], answer: 1 },
-            { q: "At the end of a workday, positive 'Stewardship' behavior is demonstrated by:", options: ["Rushing out exactly on time, leaving your workstation messy.", "Taking 10 minutes to organize your desk, secure documents, and shut down equipment properly.", "Staying late unnecessarily to appear dedicated.", "Taking office supplies home for personal use."], answer: 1 },
-            { q: "A citizen insists on seeing the department head for a routine matter that you are fully authorized to handle. You should:", options: ["Send them away for not following protocol.", "Acknowledge their wish, calmly explain your role and authority to resolve the issue, and assure them of your commitment to help.", "Immediately escort them to the department head's office without notice.", "Pretend the department head is out of the country."], answer: 1 },
-            { q: "You are tasked with training a new intern. Demonstrating positive coaching behavior involves:", options: ["Giving them all the boring, repetitive tasks.", "Explaining the 'why' behind tasks, providing clear examples, and encouraging questions.", "Leaving them alone to 'figure it out.'", "Doing all their work for them to ensure it's done correctly."], answer: 1 },
-            { q: "When the office photocopier jams repeatedly, negative behavior is to:", options: ["Leave it jammed for the next person to fix.", "Attempt to clear the jam following the posted instructions.", "Report the persistent fault to the responsible person or office.", "Learn the common cause and advise colleagues on how to avoid it."], answer: 0 },
-            { q: "Which behavior best demonstrates 'Respect for Diversity' in the workplace?", options: ["Tolerating colleagues from different ethnicities.", "Actively seeking to understand a colleague's cultural perspective to improve collaboration on a project.", "Socializing only with people from your own background.", "Making jokes about different regional accents."], answer: 1 },
-            { q: "Receiving conflicting instructions from two different supervisors tests your behavioral competency. You should:", options: ["Follow the instruction from the higher-ranking supervisor.", "Politely inform the second supervisor of the prior instruction and seek clarification on prioritization.", "Try to do half of each task.", "Do nothing and claim you were confused."], answer: 1 },
-            { q: "A visitor to the office asks for directions to another department. You are very busy. The minimal positive behavioral response is to:", options: ["Say 'I don't know' and look away.", "Give them incorrect directions to get rid of them quickly.", "Stop your work, stand up, and point them clearly in the right direction or escort them to the corridor.", "Shout the directions across the room while typing."], answer: 2 },
-            { q: "In a team project falling behind schedule, your positive behavioral contribution is to:", options: ["Point out who is responsible for the delay.", "Offer to take on an extra, manageable task to help get back on track.", "Focus only on your part and leave when the clock strikes 5:00.", "Suggest lowering the quality standards to meet the deadline."], answer: 1 },
-            { q: "After a stressful interaction with a difficult citizen, you feel angry. A positive behavioral strategy is to:", options: ["Take a short, sanctioned break if possible, breathe, and refocus before engaging the next citizen.", "Vent your anger on the next citizen who makes a small error.", "Complain loudly to your desk mate about 'ignorant citizens.'", "Go home early claiming a headache."], answer: 0 },
-            { q: "Demonstrating 'Initiative' behaviorally could be seen when you:", options: ["Wait for explicit instructions for every single task.", "Identify a recurring question from citizens and propose creating a simple FAQ handout.", "Complete only the tasks listed in your job description.", "Always ask colleagues before taking any small action."], answer: 1 },
-            { q: "A citizen praises your helpfulness and asks for your personal phone number to consult you in the future. You should:", options: ["Give it to them to be more helpful.", "Politely decline and direct them to the official office contact number or helpline for consistent service.", "Give them your colleague's number instead.", "Ask them why they need it."], answer: 1 },
-            { q: "When you strongly disagree with a new office policy, the most constructive behavior is to:", options: ["Campaign against it among junior staff to undermine it.", "Follow it reluctantly while expressing dissent at every opportunity.", "Request a formal channel (like a staff meeting) to respectfully voice your concerns with reasoned arguments.", "Simply refuse to implement it."], answer: 2 },
-            { q: "A positive behavioral trait in handling confidential citizen information is:", options: ["Discussing interesting case details with friends without using names.", "Leaving files open on your desk when you go for lunch.", "Securing physical and digital files immediately after use and only sharing information on a need-to-know basis.", "Using citizen data to help a family member's business."], answer: 2 },
-            { q: "Finding a significant error in a report you submitted last week, after it has been circulated, requires you to:", options: ["Hope no one notices it.", "Immediately inform your supervisor, present the corrected version, and apologize for the oversight.", "Quietly correct your personal copy only.", "Blame the data source department."], answer: 1 },
-            { q: "You are representing your office at a public forum. A community member asks a hostile question about government corruption. The most professional behavioral response is to:", options: ["Respond with equal hostility.", "Dismiss the question as irrelevant.", "Stay composed, acknowledge the concern, and focus on explaining the existing accountability mechanisms and channels for reporting.", "Defer the question to a higher official who is not present."], answer: 2 },
-            { q: "During an annual performance review, your supervisor points out an area for improvement. Demonstrating a growth mindset in your behavior means:", options: ["Getting defensive and arguing against the feedback.", "Listening attentively, asking for examples, and jointly developing a plan to address it.", "Blaming external factors for the shortcoming.", "Ignoring the feedback after the meeting."], answer: 1 },
-            { q: "Which of the following is a measurable behavioral indicator of 'Teamwork'?", options: ["Thinking that teamwork is important.", "Voluntarily assisting an overwhelmed colleague to meet a common deadline.", "Working well alone.", "Being liked by everyone."], answer: 1 },
-            { q: "A positive response to a sudden, high-priority directive from leadership that requires working late is to:", options: ["Grumble loudly about poor planning to demotivate the team.", "Acknowledge the task, reorganize your priorities, and focus on contributing effectively.", "Pretend to be sick and go home.", "Do the work slowly to protest the overtime."], answer: 1 },
-            { q: "When faced with an ambiguous rule while serving a citizen, negative behavior would be to:", options: ["Tell the citizen 'It's not my problem' and send them away.", "Say, 'Let me check the official guideline or consult with my supervisor to ensure I give you the correct information.'", "Make a reasonable interpretation based on similar cases and note your decision.", "Promise to get back to them by a specific time after you verify."], answer: 0 },
-            { q: "In a busy service queue, an elderly citizen is struggling to understand the forms. Positive behavior demonstrating empathy and service is to:", options: ["Tell them to find someone to help them at home and return.", "Ask them to step aside so you can serve the faster customers first.", "briefly step out from your station to guide them to a waiting area and ask a colleague or assign a junior to assist them.", "Process their forms incorrectly just to move the queue along."], answer: 2 },
-            { q: "You observe a colleague consistently leaving work one hour early without permission. A behavior aligned with institutional integrity is to:", options: ["Join them, since they are getting away with it.", "Report them anonymously to the director general to get them in trouble.", "Have a private conversation with the colleague, express your concern about fairness and rules, and encourage them to stop.", "Ignore it; it's none of your business."], answer: 2 },
-            { q: "When you make an honest mistake that delays a citizen's application, the best behavior is to:", options: ["Hide the mistake and blame the delay on the system.", "Acknowledge the error to the citizen immediately, apologize sincerely, and take swift action to correct it.", "Wait to see if anyone notices.", "Claim the citizen gave you wrong information."], answer: 1 },
-            { q: "A citizen thanks you profusely for your help and tries to give you a small gift of gratitude. The correct behavioral response is to:", options: ["Accept it quietly to avoid offending them.", "Politely but firmly decline, explaining that providing good service is your duty and policy does not allow gifts.", "Accept it and share it with the office.", "Suggest they give you a cash gift instead."], answer: 1 },
-            { q: "Your office is implementing a new digital filing system that you find confusing. Positive behavior includes:", options: ["Refusing to use it and sticking to the old manual method.", "Grudgingly using it while constantly criticizing it to peers.", "Attending training sessions, practicing actively, and asking specific questions for clarification.", "Blaming higher management for poor planning."], answer: 2 },
-            { q: "'Demonstrating thinking in practice' when dealing with a complex case most likely involves:", options: ["Acting on the first solution that comes to mind.", "Referring the case upward without any personal analysis.", "Systematically reviewing guidelines, gathering relevant facts, and explaining your reasoned decision to the client.", "Following what was done in the last similar case without question."], answer: 2 },
-            { q: "A citizen provides incorrect documentation for the third time. A negative behavioral response would be to:", options: ["Sigh loudly and roll your eyes in frustration.", "Patiently explain the requirement again, highlighting the specific error, and provide a written checklist.", "Offer to help them fill out the correct form.", "Ask a colleague to assist to ensure clarity."], answer: 0 },
-            { q: "You are faced with an urgent task from your manager and an equally urgent request from a citizen. You cannot do both simultaneously. The best behavioral approach is to:", options: ["Panic and do a poor job on both.", "Quickly assess priorities, politely inform the citizen of a slight delay, and briefly confirm with your manager.", "Focus only on the manager's task as they sign your evaluation.", "Tell the citizen to come back tomorrow."], answer: 1 },
-            { q: "During a team meeting, a colleague strongly criticizes an idea you proposed. A behavior that demonstrates professional maturity is to:", options: ["Personally insult the colleague in return.", "Shut down and refuse to contribute further.", "Acknowledge their perspective and ask for specific feedback to improve the idea.", "Immediately appeal to the team leader to sanction the colleague."], answer: 2 },
-            { q: "You notice a repetitive, inefficient step in a standard office process that wastes time. A positive behavioral response is to:", options: ["Complain about it to co-workers during lunch.", "Ignore it, as it's not your job to change processes.", "Analyze the issue and present a constructive suggestion for improvement to your supervisor.", "Secretly skip the step in your own work."], answer: 2 },
-            { q: "A citizen arrives at your office visibly upset and shouting about a delayed service. According to behavioral competency, your best FIRST response is to:", options: ["Shout back to establish control of the situation.", "Remain calm, make eye contact, and say, 'I can see you're upset. Please, have a seat and tell me what happened.'", "Ignore them until they calm down on their own.", "Immediately call security to remove them."], answer: 1 },
-            { q: "Using a government vehicle for personal errands is an example of:", options: ["Efficient resource use.", "Misuse of public property.", "A common benefit of the job.", "Saving personal transportation costs for the public good."], answer: 1 },
-            { q: "Accountability means:", options: ["Being able to count well.", "Taking responsibility for one's actions and decisions.", "Blaming others for failures.", "Working independently at all times."], answer: 1 },
-            { q: "Transparency in public service primarily means:", options: ["Keeping all processes secret until finalized.", "Making decisions and actions open to public scrutiny.", "Sharing information only with direct stakeholders.", "Using clear glass in office doors."], answer: 1 },
-            { q: "If you are ordered by a superior to do something you believe is unethical, you should:", options: ["Refuse outright and insult the superior.", "Follow the order to show respect for hierarchy.", "Clarify your concern with the superior and, if unresolved, follow formal channels (e.g., ethics office).", "Discuss it with your coworkers first to gather support."], answer: 2 },
-            { q: "Nepotism refers to:", options: ["Efficient management of resources.", "Favoritism shown to relatives or friends in appointments.", "A strict adherence to hierarchy.", "The process of networking"], answer: 1 },
-            { q: "The primary purpose of a code of conduct in the civil service is to:", options: ["Restrict the freedom of employees.", "Set standards for ethical and professional behavior.", "Create a basis for punishing employees.", "Replace existing laws."], answer: 1 },
-            { q: "Confidential government information should be disclosed:", options: ["To family members if they are interested.", "Only to authorized persons for official purposes.", "To the media if it is in the public interest.", "When it makes your work easier."], answer: 1 },
-            { q: "Accepting a gift from a service-seeking client is generally:", options: ["Permissible if it is of small value and after service is rendered.", "Encouraged as it builds good relationships.", "Prohibited, as it can create an obligation or perceived bias.", "Acceptable if it is a cultural norm."], answer: 2 },
-            { q: "Which of the following best describes 'Conflict of Interest'?", options: ["Disagreeing with a supervisor's decision.", "A situation where personal interests could improperly influence official duties.", "Having a debate with a co-worker during a meeting.", "Working on two different projects simultaneously."], answer: 1 },
-            { q: "A public servant discovers that a close colleague has been misusing a small amount of office stationary for personal use. What is the most appropriate first action?", options: ["Report the colleague directly to the anti-corruption commission.", "Confront the colleague privately and advise them to stop.", "Ignore it, as it is a minor issue and the colleague is a friend.", "Inform the immediate supervisor in writing about the observation."], answer: 1 }
-        ];
-
-        // ---- STATE ----
-        const EXAM_FEE = 100;
-        let currentUser = null;
-        let users = JSON.parse(localStorage.getItem('examUsers')) || { 
-            'admin': { password: 'admin123', role: 'admin', balance: 9999, paid: true, approved: true },
-            'demo': { password: 'demo123', role: 'user', balance: 0, paid: false, approved: false }
-        };
-        let paymentRequests = JSON.parse(localStorage.getItem('examPayments')) || {};
-        let results = JSON.parse(localStorage.getItem('examResults')) || {};
-
-        let totalQuestions = 70;
-        let questions = allQuestions.slice(0, totalQuestions);
-        let userAnswers = new Array(totalQuestions).fill(null);
-        let submitted = new Array(totalQuestions).fill(false);
-        let currentIndex = 0;
-        let examCompleted = false;
-        let isExamActive = false;
-        let lastResult = null;
-        let examPaid = false; // track if current exam fee has been paid
-
-        // DOM refs
-        const homePage = document.getElementById('homePage');
-        const homeBtn = document.getElementById('homeBtn');
-        const startExamBtn = document.getElementById('startExamBtn');
-        const authScreen = document.getElementById('authScreen');
-        const authTitle = document.getElementById('authTitle');
-        const authSub = document.getElementById('authSub');
-        const authUsername = document.getElementById('authUsername');
-        const authPassword = document.getElementById('authPassword');
-        const authMsg = document.getElementById('authMsg');
-        const authActionBtn = document.getElementById('authActionBtn');
-        const authToggleText = document.getElementById('authToggleText');
-        const authToggleLink = document.getElementById('authToggleLink');
-        let isLoginMode = true;
-
-        const paymentSection = document.getElementById('paymentSection');
-        const paymentNumber = document.getElementById('paymentNumber');
-        const paymentAmount = document.getElementById('paymentAmount');
-        const paymentMsg = document.getElementById('paymentMsg');
-        const payBtn = document.getElementById('payBtn');
-
-        const balanceDisplay = document.getElementById('balanceDisplay');
-
-        const qNumber = document.getElementById('qNumber');
-        const qText = document.getElementById('qText');
-        const optionsContainer = document.getElementById('optionsContainer');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        const scoreDisplay = document.getElementById('scoreDisplay');
-        const totalQDisplay = document.getElementById('totalQDisplay');
-        const progressFill = document.getElementById('progressFill');
-        const resultMsg = document.getElementById('resultMsg');
-        const examArea = document.getElementById('examArea');
-        const resultCard = document.getElementById('resultCard');
-        const finalScore = document.getElementById('finalScore');
-        const finalStatus = document.getElementById('finalStatus');
-        const retakeBtn = document.getElementById('retakeBtn');
-        const printCertBtn = document.getElementById('printCertBtn');
-        const viewCertBtn = document.getElementById('viewCertBtn');
-        const downloadWordBtn = document.getElementById('downloadWordBtn');
-        const downloadPngBtn = document.getElementById('downloadPngBtn');
-        const qNavGrid = document.getElementById('qNavGrid');
-        const questionCountInput = document.getElementById('questionCountInput');
-        const applyCountBtn = document.getElementById('applyCountBtn');
-        const totalQBadge = document.getElementById('totalQBadge');
-        const answeredCount = document.getElementById('answeredCount');
-        const greeting = document.getElementById('greeting');
-        const roleBadge = document.getElementById('roleBadge');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const adminPanel = document.getElementById('adminPanel');
-        const adminUserSelect = document.getElementById('adminUserSelect');
-        const adminActionSelect = document.getElementById('adminActionSelect');
-        const adminActionBtn = document.getElementById('adminActionBtn');
-        const adminResultsBtn = document.getElementById('adminResultsBtn');
-        const progressBar = document.getElementById('progressBar');
-
-        // Certificate elements
-        const certName = document.getElementById('certName');
-        const certScore = document.getElementById('certScore');
-        const certGrade = document.getElementById('certGrade');
-        const certDateDisplay = document.getElementById('certDateDisplay');
-        const certIdDisplay = document.getElementById('certIdDisplay');
-        const certificateContent = document.getElementById('certificateContent');
-
-        // modal
-        const modal = document.getElementById('modal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalInput1 = document.getElementById('modalInput1');
-        const modalInput2 = document.getElementById('modalInput2');
-        const modalMsg = document.getElementById('modalMsg');
-        const modalConfirm = document.getElementById('modalConfirm');
-        const modalCancel = document.getElementById('modalCancel');
-        let modalResolve = null;
-
-        // ---- HELPERS ----
-        function saveUsers() { localStorage.setItem('examUsers', JSON.stringify(users)); }
-        function savePayments() { localStorage.setItem('examPayments', JSON.stringify(paymentRequests)); }
-        function saveResults() { localStorage.setItem('examResults', JSON.stringify(results)); }
-
-        function getScore() {
-            return userAnswers.reduce((acc, ans, i) => acc + (ans !== null && ans === questions[i].answer ? 1 : 0), 0);
-        }
-
-        function isPassed(score) { return score >= Math.ceil(totalQuestions * 0.5); }
-        function getAnswered() { return userAnswers.filter(a => a !== null).length; }
-
-        function getUserBalance() {
-            if (!currentUser) return 0;
-            return users[currentUser.username]?.balance || 0;
-        }
-
-        function updateBalanceDisplay() {
-            const balance = getUserBalance();
-            balanceDisplay.innerHTML = `<i class="fas fa-coins"></i> ${balance.toFixed(2)} ETB`;
-        }
-
-        function canTakeExam() {
-            const balance = getUserBalance();
-            return balance >= EXAM_FEE;
-        }
-
-        function deductExamFee() {
-            if (!currentUser) return false;
-            const balance = getUserBalance();
-            if (balance < EXAM_FEE) return false;
-            users[currentUser.username].balance = balance - EXAM_FEE;
-            saveUsers();
-            updateBalanceDisplay();
-            return true;
-        }
-
-        // ---- NAVIGATION ----
-        function goHome() {
-            homePage.classList.remove('hidden');
-            authScreen.classList.add('hidden');
-            paymentSection.classList.add('hidden');
-            progressBar.classList.add('hidden');
-            document.getElementById('questionSelector').classList.add('hidden');
-            document.getElementById('qNavGrid').classList.add('hidden');
-            examArea.classList.add('hidden');
-            resultCard.classList.add('hidden');
-            isExamActive = false;
-            updateUI();
-        }
-
-        function goToExam() {
-            if (currentUser) {
-                homePage.classList.add('hidden');
-                authScreen.classList.add('hidden');
-                checkExamAccess();
-            } else {
-                homePage.classList.add('hidden');
-                authScreen.classList.remove('hidden');
-                authScreen.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function updateUI() {
-            const answered = getAnswered();
-            progressFill.style.width = `${(answered / totalQuestions) * 100}%`;
-            scoreDisplay.textContent = getScore();
-            totalQDisplay.textContent = totalQuestions;
-            totalQBadge.textContent = totalQuestions;
-            answeredCount.textContent = answered;
-            updateBalanceDisplay();
-            
-            if (currentUser) {
-                greeting.textContent = `👋 ${currentUser.username}`;
-                roleBadge.textContent = currentUser.role.toUpperCase();
-                logoutBtn.classList.remove('hidden');
-                adminPanel.style.display = currentUser.role === 'admin' ? 'flex' : 'none';
-                if (currentUser.role === 'admin') updateAdminSelect();
-                
-                // Update start button status
-                if (canTakeExam()) {
-                    startExamBtn.disabled = false;
-                    startExamBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Start Exam';
-                } else {
-                    startExamBtn.disabled = true;
-                    startExamBtn.innerHTML = '<i class="fas fa-lock"></i> Insufficient Balance (Need 100 ETB)';
-                }
-            } else {
-                greeting.textContent = '👋 Guest';
-                roleBadge.textContent = 'USER';
-                logoutBtn.classList.add('hidden');
-                adminPanel.style.display = 'none';
-                startExamBtn.disabled = false;
-                startExamBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Start Exam';
-            }
-            renderNavGrid();
-        }
-
-        function updateAdminSelect() {
-            adminUserSelect.innerHTML = '<option value="">User</option>';
-            for (const [username, data] of Object.entries(users)) {
-                if (username !== 'admin') {
-                    const opt = document.createElement('option');
-                    opt.value = username;
-                    opt.textContent = `${username} (${data.balance || 0} ETB) ${data.paid && data.approved ? '✅' : '⏳'}`;
-                    adminUserSelect.appendChild(opt);
-                }
-            }
-        }
-
-        // ---- AUTH ----
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            if (isLoginMode) {
-                authTitle.textContent = 'Welcome Back';
-                authSub.textContent = 'Login to continue your exam journey';
-                authActionBtn.textContent = 'Login';
-                authToggleText.textContent = "Don't have an account?";
-                authToggleLink.textContent = 'Register';
-            } else {
-                authTitle.textContent = 'Create Account';
-                authSub.textContent = 'Register to start your professional exam';
-                authActionBtn.textContent = 'Register';
-                authToggleText.textContent = "Already have an account?";
-                authToggleLink.textContent = 'Login';
-            }
-            authMsg.textContent = '';
-            authMsg.className = 'msg';
-        }
-
-        function handleAuth() {
-            const username = authUsername.value.trim();
-            const password = authPassword.value.trim();
-            if (!username || !password) {
-                authMsg.textContent = '❌ Please fill all fields';
-                authMsg.className = 'msg';
-                return;
-            }
-            if (isLoginMode) {
-                const user = users[username];
-                if (user && user.password === password) {
-                    currentUser = { username, role: user.role, balance: user.balance || 0, paid: user.paid || false, approved: user.approved || false };
-                    authMsg.textContent = '✅ Login successful!';
-                    authMsg.className = 'msg success';
-                    setTimeout(() => {
-                        authScreen.classList.add('hidden');
-                        homePage.classList.add('hidden');
-                        checkExamAccess();
-                    }, 500);
-                } else {
-                    authMsg.textContent = '❌ Invalid credentials';
-                    authMsg.className = 'msg';
-                }
-            } else {
-                if (users[username]) {
-                    authMsg.textContent = '❌ Username already exists';
-                    authMsg.className = 'msg';
-                    return;
-                }
-                if (password.length < 4) {
-                    authMsg.textContent = '❌ Password min 4 characters';
-                    authMsg.className = 'msg';
-                    return;
-                }
-                users[username] = { password, role: 'user', balance: 0, paid: false, approved: false };
-                saveUsers();
-                authMsg.textContent = '✅ Account created! Please login.';
-                authMsg.className = 'msg success';
-                setTimeout(toggleAuthMode, 800);
-            }
-        }
-
-        function checkExamAccess() {
-            if (!currentUser) return;
-            const userData = users[currentUser.username];
-            
-            // Check if user has enough balance
-            if (userData.balance >= EXAM_FEE && userData.approved) {
-                // User has sufficient balance and is approved
-                paymentSection.classList.add('hidden');
-                progressBar.classList.remove('hidden');
-                document.getElementById('questionSelector').classList.remove('hidden');
-                document.getElementById('qNavGrid').classList.remove('hidden');
-                examArea.classList.remove('hidden');
-                resultCard.classList.add('hidden');
-                isExamActive = true;
-                examPaid = false; // reset exam payment flag
-                applyQuestionCount();
-                updateUI();
-            } else if (userData.approved && userData.balance < EXAM_FEE) {
-                // Approved but insufficient balance - show deposit option
-                paymentSection.classList.remove('hidden');
-                progressBar.classList.add('hidden');
-                document.getElementById('questionSelector').classList.add('hidden');
-                document.getElementById('qNavGrid').classList.add('hidden');
-                examArea.classList.add('hidden');
-                resultCard.classList.add('hidden');
-                isExamActive = false;
-                paymentMsg.textContent = `⚠️ Your balance (${userData.balance} ETB) is insufficient. Minimum 100 ETB required.`;
-                paymentMsg.className = 'msg error';
-            } else if (!userData.approved) {
-                // Not approved - show deposit request
-                paymentSection.classList.remove('hidden');
-                progressBar.classList.add('hidden');
-                document.getElementById('questionSelector').classList.add('hidden');
-                document.getElementById('qNavGrid').classList.add('hidden');
-                examArea.classList.add('hidden');
-                resultCard.classList.add('hidden');
-                isExamActive = false;
-                if (userData.paid) {
-                    paymentMsg.textContent = '⏳ Deposit submitted. Awaiting admin approval.';
-                    paymentMsg.className = 'msg';
-                } else {
-                    paymentMsg.textContent = '💳 Please make a deposit to start your exam. Minimum 100 ETB.';
-                    paymentMsg.className = 'msg';
-                }
-            }
-            updateUI();
-        }
-
-        // ---- PAYMENT / DEPOSIT ----
-        function handlePayment() {
-            if (!currentUser) return;
-            const method = document.querySelector('input[name="paymentMethod"]:checked');
-            const number = paymentNumber.value.trim();
-            const amount = parseInt(paymentAmount.value) || 100;
-            if (!number || number.length < 5) {
-                paymentMsg.textContent = '❌ Please enter valid payment number';
-                paymentMsg.className = 'msg error';
-                return;
-            }
-            if (amount < EXAM_FEE) {
-                paymentMsg.textContent = `❌ Minimum deposit is ${EXAM_FEE} ETB`;
-                paymentMsg.className = 'msg error';
-                return;
-            }
-            const methodName = method ? method.value : 'telebirr';
-            paymentRequests[currentUser.username] = {
-                method: methodName,
-                number: number,
-                amount: amount,
-                approved: false,
-                date: new Date().toISOString()
+            // Form state
+            const FUEL_PRICE = 180.46;
+            const tbody = document.getElementById('tableBody');
+            const totalCells = {
+                singleLoad: document.getElementById('totalSingleLoad'),
+                singleEmpty: document.getElementById('totalSingleEmpty'),
+                fuelLoad: document.getElementById('totalFuelLoad'),
+                fuelEmpty: document.getElementById('totalFuelEmpty'),
+                birrLoad: document.getElementById('totalBirrLoad'),
+                birrEmpty: document.getElementById('totalBirrEmpty'),
+                birrSum: document.getElementById('totalBirrSum'),
+                totalFuelPrice: document.getElementById('totalFuelPrice')
             };
-            savePayments();
-            users[currentUser.username].paid = true;
-            users[currentUser.username].approved = false;
-            // Don't add balance yet - admin approves
-            saveUsers();
-            paymentMsg.textContent = `✅ Deposit of ${amount} ETB submitted! Admin will approve.`;
-            paymentMsg.className = 'msg success';
-            setTimeout(() => { checkExamAccess(); }, 1200);
-        }
+            let rowInputs = [];
 
-        // ---- ADMIN ACTIONS ----
-        function adminExecute() {
-            if (!currentUser || currentUser.role !== 'admin') { alert('Admin only'); return; }
-            const username = adminUserSelect.value;
-            const action = adminActionSelect.value;
-            if (!username) { alert('Select a user'); return; }
-            if (!users[username]) { alert('User not found'); return; }
+            const defaultRows = [
+                { origin: '', dest: '', singleLoad: '', doubleLoad: '', singleEmpty: '', doubleEmpty: '' },
+                { origin: '', dest: '', singleLoad: '', doubleLoad: '', singleEmpty: '', doubleEmpty: '' },
+                { origin: '', dest: '', singleLoad: '', doubleLoad: '', singleEmpty: '', doubleEmpty: '' },
+                { origin: '', dest: '', singleLoad: '', doubleLoad: '', singleEmpty: '', doubleEmpty: '' }
+            ];
 
-            if (action === 'approve') {
-                // Approve deposit - add balance
-                const user = users[username];
-                const req = paymentRequests[username];
-                if (req && !req.approved) {
-                    const amount = req.amount || EXAM_FEE;
-                    user.balance = (user.balance || 0) + amount;
-                    req.approved = true;
-                    savePayments();
-                }
-                user.approved = true;
-                user.paid = true;
-                saveUsers();
-                alert(`✅ Deposit for ${username} approved. Balance updated.`);
-                updateAdminSelect();
-                if (currentUser.username === username) checkExamAccess();
-            } else if (action === 'reset') {
-                const newPw = prompt(`Enter new password for ${username}:`);
-                if (newPw && newPw.length >= 4) {
-                    users[username].password = newPw;
-                    saveUsers();
-                    alert(`✅ Password for ${username} reset.`);
-                } else {
-                    alert('❌ Invalid password (min 4 chars)');
-                }
-            } else if (action === 'addfunds') {
-                const amount = prompt(`Enter amount to add to ${username}'s balance:`);
-                const numAmount = parseFloat(amount);
-                if (isNaN(numAmount) || numAmount <= 0) {
-                    alert('❌ Invalid amount');
-                    return;
-                }
-                users[username].balance = (users[username].balance || 0) + numAmount;
-                saveUsers();
-                alert(`✅ Added ${numAmount} ETB to ${username}'s balance. New balance: ${users[username].balance} ETB`);
-                updateAdminSelect();
-                if (currentUser.username === username) {
-                    updateBalanceDisplay();
-                    checkExamAccess();
-                }
+            // --- Row creation ---
+            function createRowElement(rowData, index) {
+                const tr = document.createElement('tr');
+                tr.dataset.rowIndex = index;
+
+                const tdIdx = document.createElement('td');
+                tdIdx.textContent = index + 1;
+                tr.appendChild(tdIdx);
+
+                const tdOrigin = document.createElement('td');
+                const inpOrigin = document.createElement('input');
+                inpOrigin.type = 'text';
+                inpOrigin.value = rowData?.origin || '';
+                inpOrigin.placeholder = '';
+                tdOrigin.appendChild(inpOrigin);
+                tr.appendChild(tdOrigin);
+
+                const tdDest = document.createElement('td');
+                const inpDest = document.createElement('input');
+                inpDest.type = 'text';
+                inpDest.value = rowData?.dest || '';
+                inpDest.placeholder = '';
+                tdDest.appendChild(inpDest);
+                tr.appendChild(tdDest);
+
+                const fields = ['singleLoad', 'doubleLoad', 'singleEmpty', 'doubleEmpty'];
+                const inputRefs = {};
+                fields.forEach(f => {
+                    const td = document.createElement('td');
+                    const inp = document.createElement('input');
+                    inp.type = 'number';
+                    inp.step = 'any';
+                    inp.value = (rowData && rowData[f] !== undefined && rowData[f] !== '') ? rowData[f] : '';
+                    inp.placeholder = '';
+                    td.appendChild(inp);
+                    tr.appendChild(td);
+                    inputRefs[f] = inp;
+                });
+
+                const tdFuelLoad = document.createElement('td');
+                const inpFuelLoad = document.createElement('input');
+                inpFuelLoad.type = 'text';
+                inpFuelLoad.readOnly = true;
+                inpFuelLoad.value = '';
+                tdFuelLoad.appendChild(inpFuelLoad);
+                tr.appendChild(tdFuelLoad);
+
+                const tdFuelEmpty = document.createElement('td');
+                const inpFuelEmpty = document.createElement('input');
+                inpFuelEmpty.type = 'text';
+                inpFuelEmpty.readOnly = true;
+                inpFuelEmpty.value = '';
+                tdFuelEmpty.appendChild(inpFuelEmpty);
+                tr.appendChild(tdFuelEmpty);
+
+                const tdFuelPrice = document.createElement('td');
+                const inpFuelPrice = document.createElement('input');
+                inpFuelPrice.type = 'text';
+                inpFuelPrice.readOnly = true;
+                inpFuelPrice.value = '';
+                tdFuelPrice.appendChild(inpFuelPrice);
+                tr.appendChild(tdFuelPrice);
+
+                const tdBirrLoad = document.createElement('td');
+                const inpBirrLoad = document.createElement('input');
+                inpBirrLoad.type = 'text';
+                inpBirrLoad.readOnly = true;
+                inpBirrLoad.value = '';
+                tdBirrLoad.appendChild(inpBirrLoad);
+                tr.appendChild(tdBirrLoad);
+
+                const tdBirrEmpty = document.createElement('td');
+                const inpBirrEmpty = document.createElement('input');
+                inpBirrEmpty.type = 'text';
+                inpBirrEmpty.readOnly = true;
+                inpBirrEmpty.value = '';
+                tdBirrEmpty.appendChild(inpBirrEmpty);
+                tr.appendChild(tdBirrEmpty);
+
+                const tdTotal = document.createElement('td');
+                const inpTotal = document.createElement('input');
+                inpTotal.type = 'text';
+                inpTotal.readOnly = true;
+                inpTotal.value = '';
+                tdTotal.appendChild(inpTotal);
+                tr.appendChild(tdTotal);
+
+                const tdRemark = document.createElement('td');
+                const inpRemark = document.createElement('input');
+                inpRemark.type = 'text';
+                inpRemark.value = rowData?.remark || '';
+                inpRemark.placeholder = '';
+                tdRemark.appendChild(inpRemark);
+                tr.appendChild(tdRemark);
+
+                const rowObj = {
+                    origin: inpOrigin,
+                    dest: inpDest,
+                    singleLoad: inputRefs.singleLoad,
+                    doubleLoad: inputRefs.doubleLoad,
+                    singleEmpty: inputRefs.singleEmpty,
+                    doubleEmpty: inputRefs.doubleEmpty,
+                    fuelLoad: inpFuelLoad,
+                    fuelEmpty: inpFuelEmpty,
+                    fuelPrice: inpFuelPrice,
+                    birrLoad: inpBirrLoad,
+                    birrEmpty: inpBirrEmpty,
+                    totalBirr: inpTotal,
+                    remark: inpRemark
+                };
+
+                [inputRefs.singleLoad, inputRefs.doubleLoad, inputRefs.singleEmpty, inputRefs.doubleEmpty].forEach(inp => {
+                    inp.addEventListener('input', function() { recalcRow(rowObj); });
+                    inp.addEventListener('change', function() { recalcRow(rowObj); });
+                });
+
+                return { tr, rowObj };
             }
-            updateUI();
-        }
 
-        function adminShowResults() {
-            if (!currentUser || currentUser.role !== 'admin') { alert('Admin only'); return; }
-            let msg = '📊 ALL RESULTS:\n';
-            for (const [user, entries] of Object.entries(results)) {
-                msg += `\n${user}: ${entries.length} attempts\n`;
-                entries.forEach((e, i) => {
-                    msg += `  #${i+1}: ${e.score}/${e.total || 70} ${e.passed ? '✅ PASS' : '❌ FAIL'}\n`;
+            function recalcRow(r) {
+                if (!r) return;
+                const sl = parseFloat(r.singleLoad.value) || 0;
+                const dl = parseFloat(r.doubleLoad.value) || 0;
+                const se = parseFloat(r.singleEmpty.value) || 0;
+                const de = parseFloat(r.doubleEmpty.value) || 0;
+
+                const fuelLoad = (sl + dl) / 1.2;
+                const fuelEmpty = (se + de) / 2.1;
+                const fL = isFinite(fuelLoad) ? fuelLoad : 0;
+                const fE = isFinite(fuelEmpty) ? fuelEmpty : 0;
+
+                const hasData = (sl > 0 || dl > 0 || se > 0 || de > 0);
+                const price = hasData ? FUEL_PRICE : 0;
+
+                r.fuelLoad.value = hasData ? fL.toFixed(2) : '';
+                r.fuelEmpty.value = hasData ? fE.toFixed(2) : '';
+                r.fuelPrice.value = hasData ? price.toFixed(2) : '';
+
+                const birrLoad = fL * price;
+                const birrEmpty = fE * price;
+                r.birrLoad.value = hasData ? birrLoad.toFixed(2) : '';
+                r.birrEmpty.value = hasData ? birrEmpty.toFixed(2) : '';
+                r.totalBirr.value = hasData ? (birrLoad + birrEmpty).toFixed(2) : '';
+                updateTotals();
+            }
+
+            function recalcAll() {
+                rowInputs.forEach(r => recalcRow(r));
+                updateTotals();
+            }
+
+            function updateTotals() {
+                let sumSL = 0,
+                    sumSE = 0,
+                    sumFL = 0,
+                    sumFE = 0,
+                    sumBL = 0,
+                    sumBE = 0,
+                    sumBT = 0;
+                let hasAnyData = false;
+
+                rowInputs.forEach(r => {
+                    const sl = parseFloat(r.singleLoad.value) || 0;
+                    const se = parseFloat(r.singleEmpty.value) || 0;
+                    const fl = parseFloat(r.fuelLoad.value) || 0;
+                    const fe = parseFloat(r.fuelEmpty.value) || 0;
+                    const bl = parseFloat(r.birrLoad.value) || 0;
+                    const be = parseFloat(r.birrEmpty.value) || 0;
+                    if (sl > 0 || se > 0) hasAnyData = true;
+                    sumSL += sl;
+                    sumSE += se;
+                    sumFL += fl;
+                    sumFE += fe;
+                    sumBL += bl;
+                    sumBE += be;
+                    sumBT += (bl + be);
+                });
+
+                totalCells.singleLoad.textContent = hasAnyData ? sumSL.toFixed(0) : '0';
+                totalCells.singleEmpty.textContent = hasAnyData ? sumSE.toFixed(0) : '0';
+                totalCells.fuelLoad.textContent = hasAnyData ? sumFL.toFixed(2) : '0';
+                totalCells.fuelEmpty.textContent = hasAnyData ? sumFE.toFixed(2) : '0';
+                totalCells.birrLoad.textContent = hasAnyData ? sumBL.toFixed(2) : '0';
+                totalCells.birrEmpty.textContent = hasAnyData ? sumBE.toFixed(2) : '0';
+                totalCells.birrSum.textContent = hasAnyData ? sumBT.toFixed(2) : '0';
+                totalCells.totalFuelPrice.textContent = hasAnyData ? FUEL_PRICE.toFixed(2) : '0';
+            }
+
+            function buildRows(dataArray) {
+                tbody.innerHTML = '';
+                rowInputs = [];
+                dataArray.forEach((row, idx) => {
+                    const { tr, rowObj } = createRowElement(row, idx);
+                    tbody.appendChild(tr);
+                    rowInputs.push(rowObj);
+                });
+                recalcAll();
+            }
+
+            // --- Form actions ---
+            window.addRow = function() {
+                const newIndex = rowInputs.length;
+                const { tr, rowObj } = createRowElement({ origin: '', dest: '', singleLoad: '', doubleLoad: '',
+                    singleEmpty: '', doubleEmpty: '', remark: '' }, newIndex);
+                tbody.appendChild(tr);
+                rowInputs.push(rowObj);
+                updateRowNumbers();
+                recalcAll();
+            };
+
+            function updateRowNumbers() {
+                const rows = tbody.querySelectorAll('tr');
+                rows.forEach((tr, idx) => {
+                    const td = tr.querySelector('td:first-child');
+                    if (td) td.textContent = idx + 1;
                 });
             }
-            msg += '\n📋 PAYMENT REQUESTS:\n';
-            for (const [user, req] of Object.entries(paymentRequests)) {
-                msg += `${user}: ${req.method} ${req.amount} ETB - ${req.approved ? '✅ Approved' : '⏳ Pending'}\n`;
-            }
-            msg += '\n💰 USER BALANCES:\n';
-            for (const [user, data] of Object.entries(users)) {
-                if (user !== 'admin') {
-                    msg += `${user}: ${data.balance || 0} ETB ${data.approved ? '✅' : '⏳'}\n`;
-                }
-            }
-            alert(msg || 'No data.');
-        }
 
-        // ---- EXAM FUNCTIONS ----
-        function applyQuestionCount() {
-            let count = parseInt(questionCountInput.value) || 70;
-            count = Math.min(70, Math.max(10, count));
-            questionCountInput.value = count;
-            totalQuestions = count;
-            questions = allQuestions.slice(0, totalQuestions);
-            userAnswers = new Array(totalQuestions).fill(null);
-            submitted = new Array(totalQuestions).fill(false);
-            examCompleted = false;
-            currentIndex = 0;
-            examArea.classList.remove('hidden');
-            resultCard.classList.add('hidden');
-            renderQuestion();
-            updateUI();
-        }
+            function getFormData() {
+                const rows = rowInputs.map(r => ({
+                    origin: r.origin.value,
+                    dest: r.dest.value,
+                    singleLoad: r.singleLoad.value,
+                    doubleLoad: r.doubleLoad.value,
+                    singleEmpty: r.singleEmpty.value,
+                    doubleEmpty: r.doubleEmpty.value,
+                    fuelLoad: r.fuelLoad.value,
+                    fuelEmpty: r.fuelEmpty.value,
+                    fuelPrice: r.fuelPrice.value,
+                    birrLoad: r.birrLoad.value,
+                    birrEmpty: r.birrEmpty.value,
+                    totalBirr: r.totalBirr.value,
+                    remark: r.remark.value
+                }));
 
-        function renderNavGrid() {
-            qNavGrid.innerHTML = '';
-            for (let i = 0; i < totalQuestions; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'q-nav-btn';
-                btn.textContent = i + 1;
-                if (i === currentIndex) btn.classList.add('current');
-                if (submitted[i]) {
-                    if (userAnswers[i] === questions[i].answer) btn.classList.add('answered');
-                    else btn.classList.add('wrong');
-                } else if (userAnswers[i] !== null) {
-                    btn.classList.add('answered');
-                }
-                btn.addEventListener('click', () => { if (isExamActive) { currentIndex = i; renderQuestion(); } });
-                qNavGrid.appendChild(btn);
+                return {
+                    id: Date.now(),
+                    timestamp: new Date().toLocaleString(),
+                    requesterDept: document.getElementById('requesterDept').value,
+                    tripDesc: document.getElementById('tripDesc').value,
+                    tripDate: document.getElementById('tripDate').value,
+                    loadSize: document.getElementById('loadSize').value,
+                    plateNo: document.getElementById('plateNo').value,
+                    kmReading: document.getElementById('kmReading').value,
+                    estDays: document.getElementById('estDays').value,
+                    driverName: document.getElementById('driverName').value,
+                    reqSign: document.getElementById('reqSign').value,
+                    reqSignMark: document.getElementById('reqSignMark').value,
+                    prepSign: document.getElementById('prepSign').value,
+                    prepSignMark: document.getElementById('prepSignMark').value,
+                    verifSign: document.getElementById('verifSign').value,
+                    verifSignMark: document.getElementById('verifSignMark').value,
+                    approvSign: document.getElementById('approvSign').value,
+                    approvSignMark: document.getElementById('approvSignMark').value,
+                    rows: rows,
+                    totals: {
+                        singleLoad: document.getElementById('totalSingleLoad').textContent,
+                        singleEmpty: document.getElementById('totalSingleEmpty').textContent,
+                        fuelLoad: document.getElementById('totalFuelLoad').textContent,
+                        fuelEmpty: document.getElementById('totalFuelEmpty').textContent,
+                        birrLoad: document.getElementById('totalBirrLoad').textContent,
+                        birrEmpty: document.getElementById('totalBirrEmpty').textContent,
+                        birrSum: document.getElementById('totalBirrSum').textContent,
+                        fuelPrice: document.getElementById('totalFuelPrice').textContent
+                    }
+                };
             }
-        }
 
-        function renderQuestion() {
-            if (examCompleted || !questions.length || !isExamActive) return;
-            const q = questions[currentIndex];
-            qNumber.textContent = `Q${currentIndex + 1} of ${totalQuestions}`;
-            qText.textContent = q.q;
-            optionsContainer.innerHTML = '';
-            q.options.forEach((opt, idx) => {
-                const div = document.createElement('div');
-                div.className = 'option';
-                if (submitted[currentIndex]) {
-                    div.classList.add('disabled');
-                    if (idx === q.answer) div.classList.add('correct');
-                    else if (userAnswers[currentIndex] === idx && idx !== q.answer) div.classList.add('wrong');
-                }
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = 'question';
-                radio.value = idx;
-                radio.disabled = submitted[currentIndex];
-                if (userAnswers[currentIndex] === idx) radio.checked = true;
-                const label = document.createElement('label');
-                label.textContent = opt;
-                div.appendChild(radio);
-                div.appendChild(label);
-                optionsContainer.appendChild(div);
-                if (!submitted[currentIndex]) {
-                    radio.addEventListener('change', function() {
-                        if (this.checked) {
-                            userAnswers[currentIndex] = idx;
-                            submitSingle(currentIndex);
-                        }
+            function setFormData(data) {
+                document.getElementById('requesterDept').value = data.requesterDept || '';
+                document.getElementById('tripDesc').value = data.tripDesc || '';
+                document.getElementById('tripDate').value = data.tripDate || '';
+                document.getElementById('loadSize').value = data.loadSize || '';
+                document.getElementById('plateNo').value = data.plateNo || '';
+                document.getElementById('kmReading').value = data.kmReading || '';
+                document.getElementById('estDays').value = data.estDays || '';
+                document.getElementById('driverName').value = data.driverName || '';
+                document.getElementById('reqSign').value = data.reqSign || '';
+                document.getElementById('reqSignMark').value = data.reqSignMark || '';
+                document.getElementById('prepSign').value = data.prepSign || '';
+                document.getElementById('prepSignMark').value = data.prepSignMark || '';
+                document.getElementById('verifSign').value = data.verifSign || '';
+                document.getElementById('verifSignMark').value = data.verifSignMark || '';
+                document.getElementById('approvSign').value = data.approvSign || '';
+                document.getElementById('approvSignMark').value = data.approvSignMark || '';
+
+                if (data.rows && data.rows.length > 0) {
+                    tbody.innerHTML = '';
+                    rowInputs = [];
+                    data.rows.forEach((row, idx) => {
+                        const { tr, rowObj } = createRowElement(row, idx);
+                        tbody.appendChild(tr);
+                        rowInputs.push(rowObj);
                     });
+                    updateRowNumbers();
+                    recalcAll();
                 }
-            });
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex === totalQuestions - 1;
-            if (submitted[currentIndex]) {
-                const isCorrect = userAnswers[currentIndex] === q.answer;
-                resultMsg.innerHTML = isCorrect ? `<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Correct!` : `<i class="fas fa-times-circle" style="color:#e74c3c;"></i> Incorrect. Answer: ${q.options[q.answer]}`;
-            } else {
-                resultMsg.innerHTML = `<i class="fas fa-info-circle"></i> Select an answer`;
             }
-            updateUI();
-        }
 
-        function submitSingle(index) {
-            if (submitted[index] || userAnswers[index] === null) return;
-            submitted[index] = true;
-            renderQuestion();
-            if (currentIndex < totalQuestions - 1) {
-                setTimeout(() => { currentIndex++; renderQuestion(); }, 300);
-            }
-        }
-
-        function submitExam() {
-            if (!isExamActive) return;
-            
-            // Check if exam fee has been paid for this attempt
-            if (!examPaid) {
-                if (!deductExamFee()) {
-                    resultMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f5b342;"></i> Insufficient balance. Need ${EXAM_FEE} ETB to take exam.`;
+            window.submitForm = function() {
+                const data = getFormData();
+                // Check if there's any data
+                const hasData = data.rows.some(r => r.origin || r.dest || r.singleLoad || r.doubleLoad || r.singleEmpty || r
+                    .doubleEmpty);
+                if (!hasData && !data.requesterDept && !data.tripDesc) {
+                    alert('እባክዎ ቅጹን ይሙሉ / Please fill the form first.');
                     return;
                 }
-                examPaid = true;
+                allSubmissions.push(data);
+                localStorage.setItem('transportSubmissions', JSON.stringify(allSubmissions));
+                updateDataCount();
+                alert('ውሂብ በተሳካ ሁኔታ ተመዝግቧል! / Data submitted successfully!');
+                clearForm();
+            };
+
+            window.clearForm = function() {
+                buildRows(defaultRows);
+                ['requesterDept', 'tripDesc', 'tripDate', 'loadSize', 'plateNo', 'kmReading', 'estDays', 'driverName',
+                    'reqSign', 'reqSignMark', 'prepSign', 'prepSignMark', 'verifSign', 'verifSignMark',
+                    'approvSign', 'approvSignMark'
+                ].forEach(id => document.getElementById(id).value = '');
+                recalcAll();
+            };
+
+            // --- Navigation ---
+            window.showForm = function() {
+                document.getElementById('formSection').style.display = 'block';
+                document.getElementById('allDataSection').style.display = 'none';
+                document.getElementById('viewSection').style.display = 'none';
+                document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+                document.querySelector('.nav-bar a:first-child').classList.add('active');
+            };
+
+            window.showAllData = function() {
+                document.getElementById('formSection').style.display = 'none';
+                document.getElementById('allDataSection').style.display = 'block';
+                document.getElementById('viewSection').style.display = 'none';
+                document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+                document.querySelector('.nav-bar a:nth-child(2)').classList.add('active');
+                renderDataList();
+            };
+
+            function renderDataList() {
+                const container = document.getElementById('dataListContainer');
+                if (allSubmissions.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📭</div>
+                            <h3>ምንም ውሂብ የለም</h3>
+                            <p>እባክዎ ቅጹን ይሙሉ እና ያስገቡ</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                allSubmissions.slice().reverse().forEach((data, idx) => {
+                    const realIdx = allSubmissions.length - 1 - idx;
+                    html += `
+                        <div class="data-card">
+                            <div class="info">
+                                <strong>#${realIdx + 1}</strong> | 
+                                ${data.requesterDept || 'ክፍል የለም'} | 
+                                ${data.tripDesc || 'መግለጫ የለም'} | 
+                                ${data.tripDate || 'ቀን የለም'} |
+                                📅 ${data.timestamp}
+                            </div>
+                            <div class="actions">
+                                <button class="btn" onclick="viewData(${realIdx})">👁️ አሳይ</button>
+                                <button class="btn green" onclick="printData(${realIdx})">🖨️ አትም</button>
+                                <button class="btn grey" onclick="deleteData(${realIdx})">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
             }
-            
-            const unanswered = userAnswers.filter(a => a === null).length;
-            if (unanswered > 0) {
-                resultMsg.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#f5b342;"></i> ${unanswered} unanswered.`;
-                return;
+
+            window.viewData = function(index) {
+                currentViewIndex = index;
+                const data = allSubmissions[index];
+                if (!data) return;
+
+                document.getElementById('formSection').style.display = 'none';
+                document.getElementById('allDataSection').style.display = 'none';
+                document.getElementById('viewSection').style.display = 'block';
+
+                const container = document.getElementById('viewContent');
+                container.innerHTML = generateViewHTML(data);
+            };
+
+            window.printData = function(index) {
+                const data = allSubmissions[index];
+                if (!data) return;
+                // Open print view
+                const printWindow = window.open('', '_blank', 'width=800,height=600');
+                printWindow.document.write(`
+                    <html>
+                    <head><title>Print Data #${index+1}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; }
+                        .commission-header { text-align: center; font-weight: 700; font-size: 1.2rem; border-bottom: 2px solid #1e3a5f; padding-bottom: 8px; margin-bottom: 12px; }
+                        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+                        th { background: #1e3a5f; color: white; padding: 6px; border: 1px solid #1e3a5f; }
+                        td { border: 1px solid #bac9db; padding: 4px; text-align: center; }
+                        .total-row td { background: #dce5f0; font-weight: 600; }
+                        .signature-area { display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid #b7c7dd; }
+                        .signature-item { display: flex; gap: 8px; }
+                        .field-label { font-weight: 600; }
+                        .print-btn { display: none; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                    </head>
+                    <body>
+                        ${generateViewHTML(data)}
+                        <div style="text-align:center; margin-top:20px;" class="no-print">
+                            <button onclick="window.print()">🖨️ Print</button>
+                            <button onclick="window.close()">Close</button>
+                        </div>
+                        <script>
+                            window.onload = function() { window.print(); }
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            };
+
+            window.deleteData = function(index) {
+                if (!confirm(`እርግጠኛ ነዎት ይህንን ውሂብ መሰረዝ ይፈልጋሉ? / Delete this entry?`)) return;
+                allSubmissions.splice(index, 1);
+                localStorage.setItem('transportSubmissions', JSON.stringify(allSubmissions));
+                updateDataCount();
+                renderDataList();
+            };
+
+            window.clearAllData = function() {
+                if (!confirm('ሁሉንም ውሂብ ያጠፋል? / Delete all data?')) return;
+                allSubmissions = [];
+                localStorage.setItem('transportSubmissions', JSON.stringify(allSubmissions));
+                updateDataCount();
+                renderDataList();
+            };
+
+            function generateViewHTML(data) {
+                let rowsHtml = '';
+                data.rows.forEach((row, idx) => {
+                    rowsHtml += `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td>${row.origin || ''}</td>
+                            <td>${row.dest || ''}</td>
+                            <td>${row.singleLoad || ''}</td>
+                            <td>${row.doubleLoad || ''}</td>
+                            <td>${row.singleEmpty || ''}</td>
+                            <td>${row.doubleEmpty || ''}</td>
+                            <td>${row.fuelLoad || ''}</td>
+                            <td>${row.fuelEmpty || ''}</td>
+                            <td>${row.fuelPrice || ''}</td>
+                            <td>${row.birrLoad || ''}</td>
+                            <td>${row.birrEmpty || ''}</td>
+                            <td>${row.totalBirr || ''}</td>
+                            <td>${row.remark || ''}</td>
+                        </tr>
+                    `;
+                });
+
+                return `
+                    <div class="commission-header">የአደጋ ስጋት አመራር ኮሚሽን</div>
+                    <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">የሎጂስቲክስ ትራንስፖርት ኦፕሬሽን ስራ አስፈፃሚ</div>
+
+                    <div style="display:flex; flex-wrap:wrap; gap:8px 20px; background:#f4f7fc; padding:6px 12px; border-radius:5px; margin-bottom:8px; font-size:0.8rem;">
+                        <span><strong>ጠያቂ ክፍል:</strong> ${data.requesterDept || ''}</span>
+                        <span><strong>ጉዞ:</strong> ${data.tripDesc || ''}</span>
+                        <span><strong>ቀን:</strong> ${data.tripDate || ''}</span>
+                        <span><strong>ጭነት:</strong> ${data.loadSize || ''}</span>
+                        <span><strong>ሰሌዳ:</strong> ${data.plateNo || ''}</span>
+                        <span><strong>ኪ.ሜ:</strong> ${data.kmReading || ''}</span>
+                        <span><strong>ቀናት:</strong> ${data.estDays || ''}</span>
+                        <span><strong>አሽከርካሪ:</strong> ${data.driverName || ''}</span>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ተ.ቁ</th><th>መነሻ</th><th>መድረሻ</th>
+                                <th>ነጠላ ጭነት</th><th>ደርሶ መልስ ጭ</th>
+                                <th>ነጠላ ያለጭ</th><th>ደርሶ መልስ ያለ</th>
+                                <th>ነዳጅ ጭ</th><th>ነዳጅ ያለ</th>
+                                <th>ዋጋ/ሊትር</th><th>ብር ጭ</th><th>ብር ያለ</th>
+                                <th>አጠቃላይ</th><th>ምርመራ</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHtml}</tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="2" style="text-align:right; font-weight:600;">ጠቅላላ</td>
+                                <td></td>
+                                <td>${data.totals.singleLoad || '0'}</td>
+                                <td></td>
+                                <td>${data.totals.singleEmpty || '0'}</td>
+                                <td></td>
+                                <td>${data.totals.fuelLoad || '0'}</td>
+                                <td>${data.totals.fuelEmpty || '0'}</td>
+                                <td>${data.totals.fuelPrice || '0'}</td>
+                                <td>${data.totals.birrLoad || '0'}</td>
+                                <td>${data.totals.birrEmpty || '0'}</td>
+                                <td>${data.totals.birrSum || '0'}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="signature-area">
+                        <div class="signature-item"><span class="field-label">የጠያቂው ስም:</span> ${data.reqSign || ''} <span class="field-label">ፊርማ:</span> ${data.reqSignMark || ''}</div>
+                        <div class="signature-item"><span class="field-label">ያዘጋጀው ስም:</span> ${data.prepSign || ''} <span class="field-label">ፊርማ:</span> ${data.prepSignMark || ''}</div>
+                        <div class="signature-item"><span class="field-label">ያረጋገጠው ስም:</span> ${data.verifSign || ''} <span class="field-label">ፊርማ:</span> ${data.verifSignMark || ''}</div>
+                        <div class="signature-item"><span class="field-label">ያፀደቀው ስም:</span> ${data.approvSign || ''} <span class="field-label">ፊርማ:</span> ${data.approvSignMark || ''}</div>
+                    </div>
+                    <div style="margin-top:8px; font-size:0.7rem; color:#666;">📅 የተመዘገበ: ${data.timestamp}</div>
+                `;
             }
-            for (let i = 0; i < totalQuestions; i++) submitted[i] = true;
-            const score = getScore();
-            const passed = isPassed(score);
-            examCompleted = true;
-            examArea.classList.add('hidden');
-            resultCard.classList.remove('hidden');
-            finalScore.textContent = `${score}/${totalQuestions}`;
-            finalStatus.textContent = passed ? '✅ PASS' : '❌ FAIL';
-            finalStatus.className = `status ${passed ? 'pass' : 'fail'}`;
 
-            const certIdStr = 'CERT-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase();
-            const username = currentUser ? currentUser.username : 'Guest';
-            certName.textContent = username;
-            certScore.textContent = `Score: ${score}/${totalQuestions}`;
-            certGrade.textContent = passed ? 'PASS' : 'FAIL';
-            certDateDisplay.textContent = `Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
-            certIdDisplay.textContent = `Cert-ID: ${certIdStr}`;
-
-            lastResult = { score, passed, total: totalQuestions, certId: certIdStr };
-            if (currentUser) {
-                if (!results[currentUser.username]) results[currentUser.username] = [];
-                results[currentUser.username].push({ score, passed, total: totalQuestions, date: new Date().toISOString(), certId: certIdStr });
-                saveResults();
+            function updateDataCount() {
+                document.getElementById('dataCount').textContent = allSubmissions.length;
             }
-            updateUI();
-        }
 
-        function retakeExam() {
-            if (!isExamActive) return;
-            // Reset exam state but keep balance (already paid)
-            userAnswers = new Array(totalQuestions).fill(null);
-            submitted = new Array(totalQuestions).fill(false);
-            examCompleted = false;
-            currentIndex = 0;
-            examArea.classList.remove('hidden');
-            resultCard.classList.add('hidden');
-            examPaid = false; // Reset so fee is deducted again on next attempt
-            renderQuestion();
-            updateUI();
-        }
+            // --- Init ---
+            buildRows(defaultRows);
+            updateDataCount();
 
-        // ---- CERTIFICATE DOWNLOADS ----
-        function downloadWord() {
-            const content = certificateContent.cloneNode(true);
-            const html = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-                      xmlns:w='urn:schemas-microsoft-com:office:word' 
-                      xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset="utf-8">
-                <style>
-                    body { font-family: 'Georgia', serif; background: #f5edd6; padding: 40px; }
-                    .certificate { max-width: 700px; margin: 0 auto; background: #fbf7e9; padding: 40px; border: 4px double #b8860b; text-align: center; }
-                    .cert-header { font-size: 28px; font-weight: 800; color: #1a1a2e; border-bottom: 2px solid #b8860b; padding-bottom: 10px; }
-                    .cert-moto { font-size: 16px; font-style: italic; color: #4a4a6a; margin: 12px 0; }
-                    .cert-name { font-size: 34px; font-weight: 700; color: #1a1a2e; margin: 12px 0; text-transform: uppercase; }
-                    .cert-text { font-size: 18px; color: #2a2a4e; margin: 8px 0; }
-                    .cert-score { font-size: 24px; font-weight: 700; color: #b8860b; margin: 8px 0; }
-                    .cert-details { display: flex; justify-content: space-between; font-size: 14px; color: #4a4a6a; margin-top: 12px; padding-top: 10px; border-top: 1px dashed #b8860b; }
-                    .cert-signature { margin-top: 16px; padding-top: 12px; border-top: 1px solid #b8860b; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
-                    .sig-block { text-align: center; font-size: 14px; color: #4a4a6a; }
-                    .sig-line { width: 140px; height: 2px; background: #1a1a2e; margin: 6px auto; }
-                    .sig-name { font-weight: 600; font-size: 15px; color: #1a1a2e; }
-                    .seal { display: none; }
-                </style>
-                </head>
-                <body>
-                    ${content.outerHTML}
-                </body>
-                </html>
-            `;
-            const blob = new Blob([html], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Certificate_${currentUser ? currentUser.username : 'User'}.doc`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
+            // Load saved form data if any
+            const savedForm = localStorage.getItem('transportFormData');
+            if (savedForm) {
+                try {
+                    const data = JSON.parse(savedForm);
+                    if (data.rows) {
+                        setFormData(data);
+                    }
+                } catch (e) {}
+            }
 
-        function downloadPng() {
-            html2canvas(certificateContent, {
-                scale: 2,
-                backgroundColor: '#fbf7e9',
-                useCORS: true,
-                logging: false
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Certificate_${currentUser ? currentUser.username : 'User'}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            }).catch(err => {
-                alert('PNG download failed. Please use Print or Word option.');
-                console.error(err);
+            // Set default date to empty
+            document.getElementById('tripDate').value = '';
+
+            // Expose for debugging
+            window.allSubmissions = allSubmissions;
+
+            // Auto-save form data on change
+            document.addEventListener('input', function() {
+                const data = getFormData();
+                localStorage.setItem('transportFormData', JSON.stringify(data));
             });
-        }
-
-        function viewCertificate() {
-            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            certificateContent.style.transition = 'box-shadow 0.3s';
-            certificateContent.style.boxShadow = '0 0 30px #f5b34288';
-            setTimeout(() => { certificateContent.style.boxShadow = 'none'; }, 1500);
-        }
-
-        function printCertificate() { window.print(); }
-
-        // ---- NAV ----
-        function goPrev() { if (currentIndex > 0 && isExamActive) { currentIndex--; renderQuestion(); } }
-        function goNext() { if (currentIndex < totalQuestions - 1 && isExamActive) { currentIndex++; renderQuestion(); } }
-
-        // ---- LOGOUT ----
-        function logout() {
-            currentUser = null;
-            examPaid = false;
-            goHome();
-            authScreen.classList.remove('hidden');
-            homePage.classList.remove('hidden');
-            authMsg.textContent = '';
-            authMsg.className = 'msg';
-            updateUI();
-        }
-
-        // ---- MODAL ----
-        function showModal(title, input1Placeholder, input2Placeholder, isPassword = true) {
-            return new Promise((resolve) => {
-                modalTitle.textContent = title;
-                modalInput1.placeholder = input1Placeholder || 'Value';
-                modalInput2.placeholder = input2Placeholder || 'Password';
-                modalInput2.type = isPassword ? 'password' : 'text';
-                modalInput1.value = '';
-                modalInput2.value = '';
-                modalMsg.textContent = '';
-                document.getElementById('modalBody').style.display = 'block';
-                modal.classList.add('active');
-                modalResolve = resolve;
-            });
-        }
-        function closeModal() {
-            modal.classList.remove('active');
-            if (modalResolve) modalResolve(null);
-            modalResolve = null;
-        }
-        modalConfirm.addEventListener('click', () => {
-            const val1 = modalInput1.value.trim();
-            const val2 = modalInput2.value.trim();
-            if (modalResolve) modalResolve({ val1, val2 });
-            closeModal();
-        });
-        modalCancel.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-
-        // ---- EVENT BINDINGS ----
-        homeBtn.addEventListener('click', goHome);
-        startExamBtn.addEventListener('click', goToExam);
-        authActionBtn.addEventListener('click', handleAuth);
-        authToggleLink.addEventListener('click', toggleAuthMode);
-        authUsername.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAuth(); });
-        authPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAuth(); });
-
-        payBtn.addEventListener('click', handlePayment);
-
-        logoutBtn.addEventListener('click', logout);
-        prevBtn.addEventListener('click', goPrev);
-        nextBtn.addEventListener('click', goNext);
-        submitBtn.addEventListener('click', submitExam);
-        retakeBtn.addEventListener('click', retakeExam);
-        printCertBtn.addEventListener('click', printCertificate);
-        viewCertBtn.addEventListener('click', viewCertificate);
-        downloadWordBtn.addEventListener('click', downloadWord);
-        downloadPngBtn.addEventListener('click', downloadPng);
-        applyCountBtn.addEventListener('click', applyQuestionCount);
-        questionCountInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') applyQuestionCount(); });
-
-        adminActionBtn.addEventListener('click', adminExecute);
-        adminResultsBtn.addEventListener('click', adminShowResults);
-
-        // ---- INIT ----
-        if (!users['admin']) {
-            users['admin'] = { password: 'admin123', role: 'admin', balance: 9999, paid: true, approved: true };
-            saveUsers();
-        }
-        if (!users['demo']) {
-            users['demo'] = { password: 'demo123', role: 'user', balance: 0, paid: false, approved: false };
-            saveUsers();
-        }
-        authUsername.value = 'demo';
-        authPassword.value = 'demo123';
-        updateUI();
-        console.log('👑 Admin: admin / admin123');
-        console.log('👤 Demo: demo / demo123');
-        console.log('💰 Exam Fee: 100 ETB');
-    })();
-</script>
+        })();
+    </script>
 </body>
 </html>
