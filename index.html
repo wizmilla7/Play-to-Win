@@ -7,6 +7,9 @@
     <!-- SheetJS for professional Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
     </script>
+    <!-- Chart.js for dashboard charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
+    </script>
     <style>
         /* ── reset & base ── */
         * {
@@ -29,6 +32,69 @@
             border-radius: 6px;
             padding: 12px 10px 18px;
             margin-bottom: 20px;
+        }
+
+        /* ── Auth screens ── */
+        .auth-container {
+            max-width: 420px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px 25px;
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+        .auth-container h2 {
+            text-align: center;
+            color: #1e3a5f;
+            margin-bottom: 20px;
+        }
+        .auth-container .form-group {
+            margin-bottom: 16px;
+        }
+        .auth-container label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: #1e2f4e;
+        }
+        .auth-container input[type="text"],
+        .auth-container input[type="password"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #bac9db;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .auth-container .btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            justify-content: center;
+            margin-top: 6px;
+        }
+        .auth-container .auth-switch {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 0.85rem;
+        }
+        .auth-container .auth-switch a {
+            color: #1e3a5f;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        .auth-container .error-msg {
+            color: #c0392b;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            text-align: center;
+        }
+        .auth-container .success-msg {
+            color: #2a6d4a;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            text-align: center;
         }
 
         /* ── navigation ── */
@@ -65,6 +131,24 @@
             padding: 2px 10px;
             font-size: 0.75rem;
             margin-left: 4px;
+        }
+        .nav-bar .user-info {
+            color: white;
+            font-size: 0.8rem;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-bar .user-info .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .nav-bar .user-info .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
         }
 
         /* ── headers ── */
@@ -198,7 +282,7 @@
             transform: scale(0.95);
         }
 
-        /* ── signatures with extra spacing ── */
+        /* ── signatures ── */
         .signature-area {
             display: flex;
             flex-wrap: wrap;
@@ -305,6 +389,22 @@
         .btn.outline:hover {
             background: #eef3fa;
             transform: scale(0.96);
+        }
+        .btn.danger {
+            background: #c0392b;
+        }
+        .btn.danger:hover {
+            background: #a93226;
+        }
+        .btn.warning {
+            background: #e67e22;
+        }
+        .btn.warning:hover {
+            background: #ca6f1e;
+        }
+        .btn.small {
+            padding: 3px 10px;
+            font-size: 0.7rem;
         }
 
         /* ── column widths ── */
@@ -440,6 +540,171 @@
             font-size: 0.7rem;
         }
 
+        /* ── Admin panel ── */
+        .admin-panel {
+            padding: 10px 0;
+        }
+        .admin-panel table {
+            font-size: 0.75rem;
+            table-layout: auto;
+        }
+        .admin-panel th {
+            background: #2c3e50;
+            color: white;
+            padding: 6px 8px;
+            font-size: 0.7rem;
+        }
+        .admin-panel td {
+            padding: 6px 8px;
+            border: 1px solid #bdc3c7;
+            vertical-align: middle;
+        }
+        .admin-panel .actions-cell {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .admin-panel .actions-cell .btn {
+            padding: 2px 8px;
+            font-size: 0.6rem;
+        }
+        .admin-panel select {
+            padding: 2px 4px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            border: 1px solid #bdc3c7;
+        }
+        .admin-panel .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .admin-panel .status-badge.approved {
+            background: #d5f5e3;
+            color: #1a7a4a;
+        }
+        .admin-panel .status-badge.pending {
+            background: #fdebd0;
+            color: #b9770e;
+        }
+
+        /* ── Dashboard ── */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 14px 16px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .stat-card .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e3a5f;
+            line-height: 1.2;
+        }
+        .stat-card .stat-label {
+            font-size: 0.7rem;
+            color: #5a6f8a;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        .stat-card .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+        .stat-card.blue .stat-number {
+            color: #2c6b9e;
+        }
+        .stat-card.green .stat-number {
+            color: #2a7a4a;
+        }
+        .stat-card.orange .stat-number {
+            color: #d4772a;
+        }
+        .stat-card.purple .stat-number {
+            color: #6c3a8a;
+        }
+        .stat-card.teal .stat-number {
+            color: #1f8a7a;
+        }
+        .stat-card.red .stat-number {
+            color: #c0392b;
+        }
+
+        .dashboard-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+        }
+        .chart-box {
+            background: #fafcfe;
+            border-radius: 8px;
+            padding: 12px 14px 8px;
+            border: 1px solid #e8edf4;
+        }
+        .chart-box h4 {
+            font-size: 0.8rem;
+            color: #1e3a5f;
+            margin-bottom: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .chart-box canvas {
+            max-height: 200px;
+            max-width: 100%;
+        }
+        .chart-box .chart-container {
+            position: relative;
+            height: 200px;
+        }
+        .dashboard-summary-table {
+            margin-top: 16px;
+            font-size: 0.75rem;
+        }
+        .dashboard-summary-table table {
+            font-size: 0.7rem;
+            table-layout: auto;
+        }
+        .dashboard-summary-table th {
+            background: #2c3e50;
+            padding: 6px 10px;
+            font-size: 0.7rem;
+        }
+        .dashboard-summary-table td {
+            padding: 5px 10px;
+            border: 1px solid #dce3ed;
+        }
+        .dashboard-summary-table .total-row td {
+            background: #dce5f0;
+            font-weight: 600;
+        }
+
+        .no-data-msg {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7a8ba3;
+            font-size: 0.9rem;
+        }
+        .no-data-msg .icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
         /* ── print ── */
         @media print {
             body {
@@ -548,6 +813,16 @@
             .btn-remove-row {
                 display: none !important;
             }
+            .admin-panel {
+                display: none !important;
+            }
+            .dashboard-charts {
+                display: none !important;
+            }
+            .stat-card {
+                border: 1px solid #ccc !important;
+                page-break-inside: avoid;
+            }
         }
 
         @media (max-width: 700px) {
@@ -587,1084 +862,1538 @@
                 flex-direction: column;
                 align-items: stretch;
             }
+            .admin-panel table {
+                font-size: 0.6rem;
+            }
+            .admin-panel td,
+            .admin-panel th {
+                padding: 4px;
+            }
+            .admin-panel .actions-cell {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .dashboard-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .stat-card .stat-number {
+                font-size: 1.3rem;
+            }
+            .dashboard-charts {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container" id="app">
+    <div id="app">
 
-        <!-- Navigation -->
-        <div class="nav-bar no-print">
-            <a href="#" class="active" onclick="showForm()">📝 ቅጽ ሙላ</a>
-            <a href="#" onclick="showAllData()">📊 ሁሉም ውሂብ <span class="badge" id="dataCount">0</span></a>
-            <span style="flex:1"></span>
-            <a href="#" onclick="window.print()" style="background:rgba(255,255,255,0.15)">🖨️ ማተሚያ</a>
-        </div>
-
-        <!-- Form Section -->
-        <div id="formSection" class="page">
-            <div class="commission-header">የአደጋ ስጋት አመራር ኮሚሽን</div>
-            <div style="font-weight:600; font-size:0.95rem; color:#0a2647; margin-bottom:3px;">የሎጂስቲክስ ትራንስፖርት ኦፕሬሽን ስራ አስፈፃሚ</div>
-
-            <div class="sub-header">
-                <div class="left">
-                    <span><span class="field-label">ጠያቂው የስራ ክፍል</span> <input type="text" class="input-field" id="requesterDept" placeholder="" value="" /></span>
-                    <span><span class="field-label">የመስክ ጉዞ አጭር መግለጫ</span> <input type="text" class="input-field" id="tripDesc" placeholder="" value="" style="width:140px;" /></span>
+        <!-- ======================== AUTH SCREENS ======================== -->
+        <div id="authScreen" style="display:block;">
+            <div class="auth-container" id="loginForm">
+                <h2>🔐 ግባ / Login</h2>
+                <div class="form-group">
+                    <label>የተጠቃሚ ስም / Username</label>
+                    <input type="text" id="loginUsername" placeholder="ስም ያስገቡ" />
                 </div>
-                <div><span class="field-label">ቀን</span> <input type="date" class="input-field" id="tripDate" value="" style="width:120px;" /></div>
-            </div>
-
-            <div class="vehicle-bar">
-                <span><span class="field-label">የጭነት መጠን</span> <input type="text" class="input-field small" id="loadSize" placeholder="" value="" /></span>
-                <span><span class="field-label">የሰሌዳ ቁጥር</span> <input type="text" class="input-field small" id="plateNo" placeholder="" value="" /></span>
-                <span><span class="field-label">የኪ.ሜ ንባብ</span> <input type="text" class="input-field small" id="kmReading" placeholder="" value="" /></span>
-                <span><span class="field-label">የመስክ ስራው የሚወስደው ቀን ግምት</span> <input type="text" class="input-field small" id="estDays" placeholder="" value="" /></span>
-                <span><span class="field-label">አሽከርካሪ</span> <input type="text" class="input-field med" id="driverName" placeholder="" value="" /></span>
-            </div>
-
-            <table id="tripTable">
-                <thead>
-                    <tr>
-                        <th class="col-id">ተ.ቁ</th>
-                        <th class="col-origin">መነሻ</th>
-                        <th class="col-dest">መድረሻ</th>
-                        <th class="col-single-load">ነጠላ ጉዞ በጭነት በኪ.ሜትር</th>
-                        <th class="col-double-load">በጭነት ደርሶ መልስ በኪ.ሜትር</th>
-                        <th class="col-single-empty">ነጠላ ጉዞ ያለጭነት በኪ.ሜትር</th>
-                        <th class="col-double-empty">ያለጭነት ደርሶ መልስ በኪ.ሜትር</th>
-                        <th class="col-fuel-load">በጭነት ደርሶ መልስ አጠቃላይ የፈጀው ነዳጅ በሊትር</th>
-                        <th class="col-fuel-empty">ያለጭነት ደርሶ መልስ በኪ.ሜትርነዳጅ ዋጋ በሊትር</th>
-                        <th class="col-price">ነዳጅ ዋጋ በሊትር</th>
-                        <th class="col-birr-load">በጭነት የፈጀው ነዳጅ በብር</th>
-                        <th class="col-birr-empty">ያለጭነት የፈጀው ነዳጅ በብር</th>
-                        <th class="col-total">አጠቃላይ ድምር በብር</th>
-                        <th class="col-remark">ምርመራ</th>
-                        <th class="col-remove">ሰርዝ</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-                <tfoot id="tableFoot">
-                    <tr class="total-row">
-                        <td colspan="2" style="text-align:right; font-weight:600;">ጠቅላላ</td>
-                        <td></td>
-                        <td id="totalSingleLoad">0</td>
-                        <td></td>
-                        <td id="totalSingleEmpty">0</td>
-                        <td></td>
-                        <td id="totalFuelLoad">0</td>
-                        <td id="totalFuelEmpty">0</td>
-                        <td id="totalFuelPrice">0</td>
-                        <td id="totalBirrLoad">0</td>
-                        <td id="totalBirrEmpty">0</td>
-                        <td id="totalBirrSum">0</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            <div class="signature-area">
-                <div class="signature-item">
-                    <span class="name-group"><span class="field-label">የጠያቂው ስም</span> <input type="text" class="input-field" id="reqSign" placeholder="" value="" /></span>
-                    <span class="sign-group"><span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="reqSignMark" placeholder="" style="width:60px;" value="" /></span>
+                <div class="form-group">
+                    <label>የይለፍ ቃል / Password</label>
+                    <input type="password" id="loginPassword" placeholder="የይለፍ ቃል ያስገቡ" />
                 </div>
-                <div class="signature-item">
-                    <span class="name-group"><span class="field-label">ያዘጋጀው ስም</span> <input type="text" class="input-field" id="prepSign" placeholder="" value="" /></span>
-                    <span class="sign-group"><span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="prepSignMark" placeholder="" style="width:60px;" value="" /></span>
-                </div>
-                <div class="signature-item">
-                    <span class="name-group"><span class="field-label">ያረጋገጠው ስም</span> <input type="text" class="input-field" id="verifSign" placeholder="" value="" /></span>
-                    <span class="sign-group"><span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="verifSignMark" placeholder="" style="width:60px;" value="" /></span>
-                </div>
-                <div class="signature-item">
-                    <span class="name-group"><span class="field-label">ያፀደቀው ስም</span> <input type="text" class="input-field" id="approvSign" placeholder="" value="" /></span>
-                    <span class="sign-group"><span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="approvSignMark" placeholder="" style="width:60px;" value="" /></span>
+                <button class="btn green" onclick="handleLogin()">ግባ / Login</button>
+                <div id="loginError" class="error-msg"></div>
+                <div class="auth-switch">
+                    አዲስ ተጠቃሚ ነዎት? <a onclick="showRegister()">ይመዝገቡ / Register</a>
                 </div>
             </div>
 
-            <div class="btn-container no-print">
-                <button class="btn add-row-btn" onclick="addRow()">➕ መስመር ጨምር</button>
-                <button class="btn green" onclick="submitForm()">✅ አስገባ / Submit</button>
-                <button class="btn grey" onclick="clearForm()">🗑️ አጽዳ</button>
+            <div class="auth-container" id="registerForm" style="display:none;">
+                <h2>📝 ይመዝገቡ / Register</h2>
+                <div class="form-group">
+                    <label>የተጠቃሚ ስም / Username</label>
+                    <input type="text" id="regUsername" placeholder="ስም ይምረጡ" />
+                </div>
+                <div class="form-group">
+                    <label>የይለፍ ቃል / Password</label>
+                    <input type="password" id="regPassword" placeholder="የይለፍ ቃል ይምረጡ" />
+                </div>
+                <div class="form-group">
+                    <label>የይለፍ ቃል ድጋሚ / Confirm Password</label>
+                    <input type="password" id="regPasswordConfirm" placeholder="የይለፍ ቃል ይድገሙ" />
+                </div>
+                <button class="btn green" onclick="handleRegister()">መዝገብ / Register</button>
+                <div id="registerError" class="error-msg"></div>
+                <div id="registerSuccess" class="success-msg"></div>
+                <div class="auth-switch">
+                    ቀድሞ መዝግበዋል? <a onclick="showLogin()">ወደ መግቢያ / Login</a>
+                </div>
+            </div>
+
+            <div class="auth-container" id="pendingApproval" style="display:none;">
+                <h2>⏳ እባክዎ ይጠብቁ</h2>
+                <p style="text-align:center; margin:20px 0; font-size:1rem;">
+                    መለያዎ አሁን በአስተዳዳሪ እየተገመገመ ነው።<br>
+                    እባክዎ ከተፈቀደ በኋላ ይግቡ።
+                </p>
+                <p style="text-align:center; margin-top:10px;">
+                    <button class="btn grey" onclick="logout()">ውጣ / Logout</button>
+                </p>
             </div>
         </div>
 
-        <!-- All Data Section -->
-        <div id="allDataSection" class="page" style="display:none;">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
-                <h2 style="color:#1e3a5f;">📊 ሁሉም የተመዘገበ ውሂብ</h2>
-            </div>
+        <!-- ======================== MAIN APP ======================== -->
+        <div id="mainApp" style="display:none;">
+            <div class="container">
 
-            <!-- Selection Toolbar -->
-            <div class="selection-toolbar no-print" id="selectionToolbar">
-                <span class="select-info" id="selectInfo">0 ተመርጧል</span>
-                <button class="btn outline" onclick="selectAll()">☑ ሁሉንም ምረጥ</button>
-                <button class="btn outline" onclick="clearSelection()">☐ ምርጫ አጽዳ</button>
-                <span style="flex:1"></span>
-                <button class="btn teal" onclick="exportSelectedToExcel()">📊 የተመረጡትን ወደ Excel ላክ</button>
-                <button class="btn orange" onclick="printSelected()">🖨️ የተመረጡትን አትም</button>
-                <button class="btn purple" onclick="exportAllToExcel()">📊 ሁሉንም ወደ Excel ላክ</button>
-            </div>
+                <!-- Navigation -->
+                <div class="nav-bar no-print">
+                    <a href="#" class="active" onclick="showForm()">📝 ቅጽ ሙላ</a>
+                    <a href="#" onclick="showAllData()">📊 ሁሉም ውሂብ <span class="badge" id="dataCount">0</span></a>
+                    <a href="#" onclick="showDashboard()">📈 ሪፖርት</a>
+                    <a href="#" id="adminLink" style="display:none;" onclick="showAdminPanel()">⚙️ አስተዳዳሪ</a>
+                    <span class="user-info">
+                        <span id="userDisplayName">User</span>
+                        <span class="logout-btn" onclick="logout()">🚪 ውጣ</span>
+                    </span>
+                </div>
 
-            <div id="dataListContainer" class="data-list"></div>
-            <div class="btn-container no-print">
-                <button class="btn" onclick="showForm()">⬅️ ወደ ቅጽ ተመለስ</button>
-                <button class="btn grey" onclick="clearAllData()">🗑️ ሁሉንም አጥፋ</button>
-            </div>
-        </div>
+                <!-- Form Section -->
+                <div id="formSection" class="page">
+                    <div class="commission-header">የአደጋ ስጋት አመራር ኮሚሽን</div>
+                    <div style="font-weight:600; font-size:0.95rem; color:#0a2647; margin-bottom:3px;">የሎጂስቲክስ ትራንስፖርት ኦፕሬሽን ስራ አስፈፃሚ</div>
 
-        <!-- View Single Data Section -->
-        <div id="viewSection" class="page" style="display:none;">
-            <div id="viewContent"></div>
-            <div class="btn-container no-print">
-                <button class="btn" onclick="showAllData()">⬅️ ወደ ውሂብ ዝርዝር</button>
-                <button class="btn" onclick="window.print()">🖨️ ማተሚያ</button>
+                    <div class="sub-header">
+                        <div class="left">
+                            <span><span class="field-label">ጠያቂው የስራ ክፍል</span> <input type="text" class="input-field" id="requesterDept" placeholder="" value="" /></span>
+                            <span><span class="field-label">የመስክ ጉዞ አጭር መግለጫ</span> <input type="text" class="input-field" id="tripDesc" placeholder="" value="" style="width:140px;" /></span>
+                        </div>
+                        <div><span class="field-label">ቀን</span> <input type="date" class="input-field" id="tripDate" value="" style="width:120px;" /></div>
+                    </div>
+
+                    <div class="vehicle-bar">
+                        <span><span class="field-label">የጭነት መጠን</span> <input type="text" class="input-field small" id="loadSize" placeholder="" value="" /></span>
+                        <span><span class="field-label">የሰሌዳ ቁጥር</span> <input type="text" class="input-field small" id="plateNo" placeholder="" value="" /></span>
+                        <span><span class="field-label">የኪ.ሜ ንባብ</span> <input type="text" class="input-field small" id="kmReading" placeholder="" value="" /></span>
+                        <span><span class="field-label">የመስክ ስራው የሚወስደው ቀን ግምት</span> <input type="text" class="input-field small" id="estDays" placeholder="" value="" /></span>
+                        <span><span class="field-label">አሽከርካሪ</span> <input type="text" class="input-field med" id="driverName" placeholder="" value="" /></span>
+                    </div>
+
+                    <table id="tripTable">
+                        <thead>
+                            <tr>
+                                <th class="col-id">ተ.ቁ</th>
+                                <th class="col-origin">መነሻ</th>
+                                <th class="col-dest">መድረሻ</th>
+                                <th class="col-single-load">ነጠላ ጉዞ በጭነት በኪ.ሜትር</th>
+                                <th class="col-double-load">በጭነት ደርሶ መልስ በኪ.ሜትር</th>
+                                <th class="col-single-empty">ነጠላ ጉዞ ያለጭነት በኪ.ሜትር</th>
+                                <th class="col-double-empty">ያለጭነት ደርሶ መልስ በኪ.ሜትር</th>
+                                <th class="col-fuel-load">በጭነት ደርሶ መልስ አጠቃላይ የፈጀው ነዳጅ በሊትር</th>
+                                <th class="col-fuel-empty">ያለጭነት ደርሶ መልስ በኪ.ሜትርነዳጅ ዋጋ በሊትር</th>
+                                <th class="col-price">ነዳጅ ዋጋ በሊትር</th>
+                                <th class="col-birr-load">በጭነት የፈጀው ነዳጅ በብር</th>
+                                <th class="col-birr-empty">ያለጭነት የፈጀው ነዳጅ በብር</th>
+                                <th class="col-total">አጠቃላይ ድምር በብር</th>
+                                <th class="col-remark">ምርመራ</th>
+                                <th class="col-remove">ሰርዝ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                        <tfoot id="tableFoot">
+                            <tr class="total-row">
+                                <td colspan="2" style="text-align:right; font-weight:600;">ጠቅላላ</td>
+                                <td></td>
+                                <td id="totalSingleLoad">0</td>
+                                <td></td>
+                                <td id="totalSingleEmpty">0</td>
+                                <td></td>
+                                <td id="totalFuelLoad">0</td>
+                                <td id="totalFuelEmpty">0</td>
+                                <td id="totalFuelPrice">0</td>
+                                <td id="totalBirrLoad">0</td>
+                                <td id="totalBirrEmpty">0</td>
+                                <td id="totalBirrSum">0</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="signature-area">
+                        <div class="signature-item">
+                            <span class="name-group"><span class="field-label">የጠያቂው ስም</span> <input type="text" class="input-field" id="reqSign" placeholder="" value="" /></span>
+                            <span class="sign-group"><span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="reqSignMark" placeholder="" style="width:60px;" value="" /></span>
+                        </div>
+                        <div class="signature-item">
+                            <span class="name-group"><span class="field-label">ያዘጋጀው ስም</span> <input type="text" class="input-field" id="prepSign" placeholder="" value="" /></span>
+                            <span class="sign-group"><span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="prepSignMark" placeholder="" style="width:60px;" value="" /></span>
+                        </div>
+                        <div class="signature-item">
+                            <span class="name-group"><span class="field-label">ያረጋገጠው ስም</span> <input type="text" class="input-field" id="verifSign" placeholder="" value="" /></span>
+                            <span class="sign-group"><span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="verifSignMark" placeholder="" style="width:60px;" value="" /></span>
+                        </div>
+                        <div class="signature-item">
+                            <span class="name-group"><span class="field-label">ያፀደቀው ስም</span> <input type="text" class="input-field" id="approvSign" placeholder="" value="" /></span>
+                            <span class="sign-group"><span class="field-label">ፊርማ</span> <input type="text" class="input-field" id="approvSignMark" placeholder="" style="width:60px;" value="" /></span>
+                        </div>
+                    </div>
+
+                    <div class="btn-container no-print" id="formButtons">
+                        <button class="btn add-row-btn" onclick="addRow()">➕ መስመር ጨምር</button>
+                        <button class="btn green" onclick="submitForm()">✅ አስገባ / Submit</button>
+                        <button class="btn grey" onclick="clearForm()">🗑️ አጽዳ</button>
+                    </div>
+                </div>
+
+                <!-- All Data Section -->
+                <div id="allDataSection" class="page" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                        <h2 style="color:#1e3a5f;">📊 ሁሉም የተመዘገበ ውሂብ</h2>
+                    </div>
+
+                    <!-- Selection Toolbar -->
+                    <div class="selection-toolbar no-print" id="selectionToolbar">
+                        <span class="select-info" id="selectInfo">0 ተመርጧል</span>
+                        <button class="btn outline" onclick="selectAll()">☑ ሁሉንም ምረጥ</button>
+                        <button class="btn outline" onclick="clearSelection()">☐ ምርጫ አጽዳ</button>
+                        <span style="flex:1"></span>
+                        <button class="btn teal" onclick="exportSelectedToExcel()">📊 የተመረጡትን ወደ Excel ላክ</button>
+                        <button class="btn orange" onclick="printSelected()">🖨️ የተመረጡትን አትም</button>
+                        <button class="btn purple" onclick="exportAllToExcel()">📊 ሁሉንም ወደ Excel ላክ</button>
+                    </div>
+
+                    <div id="dataListContainer" class="data-list"></div>
+                    <div class="btn-container no-print">
+                        <button class="btn" onclick="showForm()">⬅️ ወደ ቅጽ ተመለስ</button>
+                        <button class="btn grey" onclick="clearAllData()">🗑️ ሁሉንም አጥፋ</button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="page" style="display:none;">
+                    <h2 style="color:#1e3a5f; margin-bottom:12px;">📈 ሪፖርት ዳሽቦርድ / Report Dashboard</h2>
+                    <div id="dashboardContent">
+                        <!-- Stats cards -->
+                        <div class="dashboard-stats" id="statsContainer">
+                            <div class="stat-card blue">
+                                <div class="stat-icon">📋</div>
+                                <div class="stat-number" id="statTrips">0</div>
+                                <div class="stat-label">ጠቅላላ ጉዞዎች / Total Trips</div>
+                            </div>
+                            <div class="stat-card green">
+                                <div class="stat-icon">📏</div>
+                                <div class="stat-number" id="statDistance">0</div>
+                                <div class="stat-label">ጠቅላላ ኪሎሜትር / Total KM</div>
+                            </div>
+                            <div class="stat-card orange">
+                                <div class="stat-icon">⛽</div>
+                                <div class="stat-number" id="statFuel">0</div>
+                                <div class="stat-label">ጠቅላላ ነዳጅ (ሊትር) / Total Fuel</div>
+                            </div>
+                            <div class="stat-card purple">
+                                <div class="stat-icon">💰</div>
+                                <div class="stat-number" id="statCost">0</div>
+                                <div class="stat-label">ጠቅላላ ወጪ (ብር) / Total Cost</div>
+                            </div>
+                            <div class="stat-card teal">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-number" id="statAvgFuel">0</div>
+                                <div class="stat-label">አማካኝ ነዳጅ በጉዞ / Avg Fuel/Trip</div>
+                            </div>
+                            <div class="stat-card red">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-number" id="statDepts">0</div>
+                                <div class="stat-label">የስራ ክፍሎች / Departments</div>
+                            </div>
+                        </div>
+
+                        <!-- Charts -->
+                        <div class="dashboard-charts">
+                            <div class="chart-box">
+                                <h4>📊 የኪሎሜትር ስርጭት / Distance Breakdown</h4>
+                                <div class="chart-container">
+                                    <canvas id="distanceChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-box">
+                                <h4>⛽ የነዳጅ ፍጆታ ስርጭት / Fuel Consumption</h4>
+                                <div class="chart-container">
+                                    <canvas id="fuelChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-box">
+                                <h4>🏢 ጉዞ በስራ ክፍል / Trips by Department</h4>
+                                <div class="chart-container">
+                                    <canvas id="deptChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-box">
+                                <h4>📈 የወጪ ስርጭት / Cost Distribution</h4>
+                                <div class="chart-container">
+                                    <canvas id="costChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Table -->
+                        <div class="dashboard-summary-table">
+                            <h4 style="color:#1e3a5f; margin: 16px 0 8px; font-size:0.9rem;">📋 ዝርዝር ማጠቃለያ / Summary by Department</h4>
+                            <div style="overflow-x:auto;">
+                                <table id="deptSummaryTable">
+                                    <thead>
+                                        <tr>
+                                            <th>የስራ ክፍል</th>
+                                            <th>የጉዞ ብዛት</th>
+                                            <th>ጠቅላላ ኪሜ</th>
+                                            <th>ጠቅላላ ነዳጅ</th>
+                                            <th>ጠቅላላ ወጪ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="deptSummaryBody"></tbody>
+                                    <tfoot id="deptSummaryFoot"></tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-container no-print">
+                        <button class="btn" onclick="showForm()">⬅️ ወደ ቅጽ ተመለስ</button>
+                        <button class="btn teal" onclick="window.print()">🖨️ ሪፖርት አትም</button>
+                    </div>
+                </div>
+
+                <!-- Admin Panel -->
+                <div id="adminSection" class="page" style="display:none;">
+                    <h2 style="color:#1e3a5f; margin-bottom:12px;">⚙️ የአስተዳዳሪ ፓነል / Admin Panel</h2>
+                    <div class="admin-panel">
+                        <div style="overflow-x:auto;">
+                            <table id="userTable">
+                                <thead>
+                                    <tr>
+                                        <th>ተ.ቁ</th>
+                                        <th>የተጠቃሚ ስም</th>
+                                        <th>ሚና</th>
+                                        <th>ሁኔታ</th>
+                                        <th>ፈቃድ</th>
+                                        <th>ድርጊቶች</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="btn-container no-print">
+                        <button class="btn" onclick="showForm()">⬅️ ወደ ቅጽ ተመለስ</button>
+                    </div>
+                </div>
+
+                <!-- View Single Data Section -->
+                <div id="viewSection" class="page" style="display:none;">
+                    <div id="viewContent"></div>
+                    <div class="btn-container no-print">
+                        <button class="btn" onclick="showAllData()">⬅️ ወደ ውሂብ ዝርዝር</button>
+                        <button class="btn" onclick="window.print()">🖨️ ማተሚያ</button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script>
-        (function() {
-            // ================================================================
-            //  🛑  HIDDEN CONFIGURATION  –  NOT PRINTABLE  –  NOT VIEWABLE
-            //  ================================================================
-            const FUEL_CONFIG = {
-                LOADED_RATE: 1.2,
-                EMPTY_RATE: 2.1
-            };
-            // ================================================================
+        // ================================================================
+        //  🛑  HIDDEN CONFIGURATION  –  NOT PRINTABLE  –  NOT VIEWABLE
+        //  ================================================================
+        const FUEL_CONFIG = {
+            LOADED_RATE: 1.2,
+            EMPTY_RATE: 2.1
+        };
+        // ================================================================
 
-            // ── storage ──
-            let allSubmissions = JSON.parse(localStorage.getItem('transportSubmissions')) || [];
-            let currentViewIndex = -1;
-            let selectedIndices = new Set();
+        // ─── AUTHENTICATION SYSTEM ──────────────────────────────────────────
 
-            // ── DOM refs ──
-            const tbody = document.getElementById('tableBody');
-            const totalCells = {
-                singleLoad: document.getElementById('totalSingleLoad'),
-                singleEmpty: document.getElementById('totalSingleEmpty'),
-                fuelLoad: document.getElementById('totalFuelLoad'),
-                fuelEmpty: document.getElementById('totalFuelEmpty'),
-                birrLoad: document.getElementById('totalBirrLoad'),
-                birrEmpty: document.getElementById('totalBirrEmpty'),
-                birrSum: document.getElementById('totalBirrSum'),
-                totalFuelPrice: document.getElementById('totalFuelPrice')
-            };
-            let rowInputs = [];
+        const USERS_KEY = 'transport_users';
+        const SESSION_KEY = 'transport_session';
 
-            const defaultRows = [
-                { origin: '', dest: '', singleLoad: '', doubleLoad: '', singleEmpty: '', doubleEmpty: '' }
-            ];
+        function getUsers() {
+            try {
+                return JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+            } catch { return []; }
+        }
 
-            function getLoadedRate() { return FUEL_CONFIG.LOADED_RATE; }
+        function saveUsers(users) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        }
 
-            function getEmptyRate() { return FUEL_CONFIG.EMPTY_RATE; }
+        function hashPassword(pw) {
+            return btoa(pw);
+        }
 
-            // ── row creation with remove button ──
-            function createRowElement(rowData, index) {
-                const tr = document.createElement('tr');
-                tr.dataset.rowIndex = index;
-
-                // Index cell
-                const tdIdx = document.createElement('td');
-                tdIdx.textContent = index + 1;
-                tr.appendChild(tdIdx);
-
-                // Origin
-                const tdOrigin = document.createElement('td');
-                const inpOrigin = document.createElement('input');
-                inpOrigin.type = 'text';
-                inpOrigin.value = rowData?.origin || '';
-                inpOrigin.placeholder = '';
-                tdOrigin.appendChild(inpOrigin);
-                tr.appendChild(tdOrigin);
-
-                // Dest
-                const tdDest = document.createElement('td');
-                const inpDest = document.createElement('input');
-                inpDest.type = 'text';
-                inpDest.value = rowData?.dest || '';
-                inpDest.placeholder = '';
-                tdDest.appendChild(inpDest);
-                tr.appendChild(tdDest);
-
-                // Distance fields
-                const fields = ['singleLoad', 'doubleLoad', 'singleEmpty', 'doubleEmpty'];
-                const inputRefs = {};
-                fields.forEach(f => {
-                    const td = document.createElement('td');
-                    const inp = document.createElement('input');
-                    inp.type = 'number';
-                    inp.step = 'any';
-                    inp.value = (rowData && rowData[f] !== undefined && rowData[f] !== '') ? rowData[f] : '';
-                    inp.placeholder = '';
-                    td.appendChild(inp);
-                    tr.appendChild(td);
-                    inputRefs[f] = inp;
+        function initUsers() {
+            let users = getUsers();
+            if (users.length === 0) {
+                users.push({
+                    username: 'admin',
+                    password: hashPassword('admin123'),
+                    role: 'admin',
+                    approved: true,
+                    permission: 'edit'
                 });
-
-                // Fuel load (readonly)
-                const tdFuelLoad = document.createElement('td');
-                const inpFuelLoad = document.createElement('input');
-                inpFuelLoad.type = 'text';
-                inpFuelLoad.readOnly = true;
-                inpFuelLoad.value = '';
-                tdFuelLoad.appendChild(inpFuelLoad);
-                tr.appendChild(tdFuelLoad);
-
-                // Fuel empty (readonly)
-                const tdFuelEmpty = document.createElement('td');
-                const inpFuelEmpty = document.createElement('input');
-                inpFuelEmpty.type = 'text';
-                inpFuelEmpty.readOnly = true;
-                inpFuelEmpty.value = '';
-                tdFuelEmpty.appendChild(inpFuelEmpty);
-                tr.appendChild(tdFuelEmpty);
-
-                // Fuel price (readonly)
-                const tdFuelPrice = document.createElement('td');
-                const inpFuelPrice = document.createElement('input');
-                inpFuelPrice.type = 'text';
-                inpFuelPrice.readOnly = true;
-                inpFuelPrice.value = '';
-                tdFuelPrice.appendChild(inpFuelPrice);
-                tr.appendChild(tdFuelPrice);
-
-                // Birr load (readonly)
-                const tdBirrLoad = document.createElement('td');
-                const inpBirrLoad = document.createElement('input');
-                inpBirrLoad.type = 'text';
-                inpBirrLoad.readOnly = true;
-                inpBirrLoad.value = '';
-                tdBirrLoad.appendChild(inpBirrLoad);
-                tr.appendChild(tdBirrLoad);
-
-                // Birr empty (readonly)
-                const tdBirrEmpty = document.createElement('td');
-                const inpBirrEmpty = document.createElement('input');
-                inpBirrEmpty.type = 'text';
-                inpBirrEmpty.readOnly = true;
-                inpBirrEmpty.value = '';
-                tdBirrEmpty.appendChild(inpBirrEmpty);
-                tr.appendChild(tdBirrEmpty);
-
-                // Total (readonly)
-                const tdTotal = document.createElement('td');
-                const inpTotal = document.createElement('input');
-                inpTotal.type = 'text';
-                inpTotal.readOnly = true;
-                inpTotal.value = '';
-                tdTotal.appendChild(inpTotal);
-                tr.appendChild(tdTotal);
-
-                // Remark
-                const tdRemark = document.createElement('td');
-                const inpRemark = document.createElement('input');
-                inpRemark.type = 'text';
-                inpRemark.value = rowData?.remark || '';
-                inpRemark.placeholder = '';
-                tdRemark.appendChild(inpRemark);
-                tr.appendChild(tdRemark);
-
-                // Remove button
-                const tdRemove = document.createElement('td');
-                const btnRemove = document.createElement('button');
-                btnRemove.type = 'button';
-                btnRemove.className = 'btn-remove-row';
-                btnRemove.textContent = '✕';
-                btnRemove.title = 'ሰርዝ ረድፍ';
-                btnRemove.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    removeRow(index);
-                });
-                tdRemove.appendChild(btnRemove);
-                tr.appendChild(tdRemove);
-
-                const rowObj = {
-                    origin: inpOrigin,
-                    dest: inpDest,
-                    singleLoad: inputRefs.singleLoad,
-                    doubleLoad: inputRefs.doubleLoad,
-                    singleEmpty: inputRefs.singleEmpty,
-                    doubleEmpty: inputRefs.doubleEmpty,
-                    fuelLoad: inpFuelLoad,
-                    fuelEmpty: inpFuelEmpty,
-                    fuelPrice: inpFuelPrice,
-                    birrLoad: inpBirrLoad,
-                    birrEmpty: inpBirrEmpty,
-                    totalBirr: inpTotal,
-                    remark: inpRemark,
-                    tr: tr
-                };
-
-                [inputRefs.singleLoad, inputRefs.doubleLoad, inputRefs.singleEmpty, inputRefs.doubleEmpty].forEach(inp => {
-                    inp.addEventListener('input', function() { recalcRow(rowObj); });
-                    inp.addEventListener('change', function() { recalcRow(rowObj); });
-                });
-
-                return { tr, rowObj };
+                saveUsers(users);
             }
+        }
+        initUsers();
 
-            // ── remove row function ──
-            function removeRow(index) {
-                if (rowInputs.length <= 1) {
-                    alert('ቢያንስ አንድ ረድፍ መቀረት አለበት / At least one row must remain.');
-                    return;
-                }
-                if (index < 0 || index >= rowInputs.length) return;
-                // Remove the row object from array
-                const removed = rowInputs.splice(index, 1);
-                // Remove the TR from DOM
-                if (removed[0] && removed[0].tr) {
-                    removed[0].tr.remove();
-                }
-                // Re-index remaining rows
-                rowInputs.forEach((r, i) => {
-                    const td = r.tr.querySelector('td:first-child');
-                    if (td) td.textContent = i + 1;
-                    r.tr.dataset.rowIndex = i;
-                });
-                // Update remove buttons' event listeners to use new indices
-                // We'll re-bind by re-creating buttons? Simpler: we'll just recreate all rows? 
-                // But that would lose input values. Instead, we update the click handler by reassigning.
-                // We can store the row index in the button's dataset and re-attach.
-                rowInputs.forEach((r, i) => {
-                    const btn = r.tr.querySelector('.btn-remove-row');
-                    if (btn) {
-                        // Replace the button with a new one that has the correct index
-                        const newBtn = document.createElement('button');
-                        newBtn.type = 'button';
-                        newBtn.className = 'btn-remove-row';
-                        newBtn.textContent = '✕';
-                        newBtn.title = 'ሰርዝ ረድፍ';
-                        const idx = i;
-                        newBtn.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            removeRow(idx);
-                        });
-                        btn.replaceWith(newBtn);
+        let currentUser = null;
+
+        function getSession() {
+            try {
+                const data = JSON.parse(localStorage.getItem(SESSION_KEY));
+                if (data && data.username) {
+                    const users = getUsers();
+                    const user = users.find(u => u.username === data.username);
+                    if (user) {
+                        currentUser = user;
+                        return user;
                     }
-                });
-                recalcAll();
+                }
+            } catch { /* ignore */ }
+            return null;
+        }
+
+        function setSession(user) {
+            if (user) {
+                localStorage.setItem(SESSION_KEY, JSON.stringify({ username: user.username }));
+                currentUser = user;
+            } else {
+                localStorage.removeItem(SESSION_KEY);
+                currentUser = null;
+            }
+        }
+
+        // ─── UI Helpers ─────────────────────────────────────────────────────
+
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('pendingApproval').style.display = 'none';
+            clearAuthErrors();
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('pendingApproval').style.display = 'none';
+            clearAuthErrors();
+        }
+
+        function clearAuthErrors() {
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerSuccess').textContent = '';
+        }
+
+        function showPending() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('pendingApproval').style.display = 'block';
+        }
+
+        function showMainApp() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            if (currentUser && currentUser.role === 'admin') {
+                document.getElementById('adminLink').style.display = 'inline';
+            } else {
+                document.getElementById('adminLink').style.display = 'none';
+            }
+            document.getElementById('userDisplayName').textContent = currentUser ? currentUser.username : '';
+            const canEdit = currentUser && (currentUser.role === 'admin' || currentUser.permission === 'edit');
+            document.getElementById('formButtons').style.display = canEdit ? 'flex' : 'none';
+            updateDataCount();
+            showForm();
+        }
+
+        // ─── Authentication Handlers ──────────────────────────────────────
+
+        function handleLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const errorEl = document.getElementById('loginError');
+            errorEl.textContent = '';
+
+            if (!username || !password) {
+                errorEl.textContent = 'እባክዎ ሁለቱንም መስኮች ይሙሉ / Please fill all fields.';
+                return;
             }
 
-            function recalcRow(r) {
-                if (!r) return;
+            const users = getUsers();
+            const user = users.find(u => u.username === username && u.password === hashPassword(password));
+            if (!user) {
+                errorEl.textContent = 'የተሳሳተ የተጠቃሚ ስም ወይም የይለፍ ቃል / Invalid credentials.';
+                return;
+            }
+            if (!user.approved) {
+                errorEl.textContent = 'መለያዎ እስካሁን አልፀደቀም። እባክዎ ይጠብቁ / Account not approved yet.';
+                return;
+            }
+
+            setSession(user);
+            showMainApp();
+        }
+
+        function handleRegister() {
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const confirm = document.getElementById('regPasswordConfirm').value.trim();
+            const errorEl = document.getElementById('registerError');
+            const successEl = document.getElementById('registerSuccess');
+            errorEl.textContent = '';
+            successEl.textContent = '';
+
+            if (!username || !password || !confirm) {
+                errorEl.textContent = 'እባክዎ ሁሉንም መስኮች ይሙሉ / Please fill all fields.';
+                return;
+            }
+            if (password.length < 4) {
+                errorEl.textContent = 'የይለፍ ቃል ቢያንስ 4 ፊደላት ሊኖረው ይገባል / Password must be at least 4 characters.';
+                return;
+            }
+            if (password !== confirm) {
+                errorEl.textContent = 'የይለፍ ቃሎች አይዛመዱም / Passwords do not match.';
+                return;
+            }
+
+            const users = getUsers();
+            if (users.find(u => u.username === username)) {
+                errorEl.textContent = 'ይህ የተጠቃሚ ስም አስቀድሞ ተወስዷል / Username already exists.';
+                return;
+            }
+
+            users.push({
+                username: username,
+                password: hashPassword(password),
+                role: 'user',
+                approved: false,
+                permission: 'view'
+            });
+            saveUsers(users);
+            successEl.textContent = 'በተሳካ ሁኔታ ተመዝግበዋል! እባክዎ አስተዳዳሪ እስኪፀድቁ ይጠብቁ። / Registered successfully! Please wait for admin approval.';
+            document.getElementById('regUsername').value = '';
+            document.getElementById('regPassword').value = '';
+            document.getElementById('regPasswordConfirm').value = '';
+            setTimeout(() => {
+                showLogin();
+                document.getElementById('loginError').textContent = 'መለያዎ ተፈጥሯል። እባክዎ ከተፈቀደ በኋላ ይግቡ።';
+            }, 2000);
+        }
+
+        // ─── LOGOUT – FIXED to return to login screen ─────────────────────
+        function logout() {
+            setSession(null);          // clear session
+            currentUser = null;        // reset in-memory
+            // Hide main app, show auth screen
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('authScreen').style.display = 'block';
+            // Show the login form (first page)
+            showLogin();
+            // Clear any error messages
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            // Optionally reset the form data in localStorage? We'll keep it.
+        }
+
+        // ─── Admin Functions ──────────────────────────────────────────────
+
+        function renderAdminPanel() {
+            const users = getUsers();
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = '';
+            users.forEach((user, index) => {
+                const tr = document.createElement('tr');
+                const tdNum = document.createElement('td');
+                tdNum.textContent = index + 1;
+                tr.appendChild(tdNum);
+
+                const tdUser = document.createElement('td');
+                tdUser.textContent = user.username;
+                tr.appendChild(tdUser);
+
+                const tdRole = document.createElement('td');
+                tdRole.textContent = user.role === 'admin' ? 'አስተዳዳሪ' : 'ተጠቃሚ';
+                tr.appendChild(tdRole);
+
+                const tdStatus = document.createElement('td');
+                const badge = document.createElement('span');
+                badge.className = 'status-badge ' + (user.approved ? 'approved' : 'pending');
+                badge.textContent = user.approved ? '✅ ተፈቅዷል' : '⏳ በመጠባበቅ ላይ';
+                tdStatus.appendChild(badge);
+                tr.appendChild(tdStatus);
+
+                const tdPerm = document.createElement('td');
+                if (user.role === 'admin') {
+                    tdPerm.textContent = 'ሙሉ ፈቃድ';
+                } else {
+                    const select = document.createElement('select');
+                    select.innerHTML =
+                        `<option value="view" ${user.permission === 'view' ? 'selected' : ''}>ብቻ ማየት</option>
+                                  <option value="edit" ${user.permission === 'edit' ? 'selected' : ''}>ማስተካከል</option>`;
+                    select.addEventListener('change', function() {
+                        updateUserPermission(user.username, this.value);
+                    });
+                    tdPerm.appendChild(select);
+                }
+                tr.appendChild(tdPerm);
+
+                const tdActions = document.createElement('td');
+                tdActions.className = 'actions-cell';
+                if (user.role !== 'admin') {
+                    if (!user.approved) {
+                        const btnApprove = document.createElement('button');
+                        btnApprove.className = 'btn green small';
+                        btnApprove.textContent = '✅ ፀድቅ';
+                        btnApprove.addEventListener('click', function() { approveUser(user.username); });
+                        tdActions.appendChild(btnApprove);
+                    } else {
+                        const btnDeny = document.createElement('button');
+                        btnDeny.className = 'btn warning small';
+                        btnDeny.textContent = '⛔ አትፍቀድ';
+                        btnDeny.addEventListener('click', function() { denyUser(user.username); });
+                        tdActions.appendChild(btnDeny);
+                    }
+                    const btnReset = document.createElement('button');
+                    btnReset.className = 'btn orange small';
+                    btnReset.textContent = '🔑 የይለፍ ቃል አስተካክል';
+                    btnReset.addEventListener('click', function() { resetUserPassword(user.username); });
+                    tdActions.appendChild(btnReset);
+                    const btnRemove = document.createElement('button');
+                    btnRemove.className = 'btn danger small';
+                    btnRemove.textContent = '🗑️ አጥፋ';
+                    btnRemove.addEventListener('click', function() { removeUser(user.username); });
+                    tdActions.appendChild(btnRemove);
+                } else {
+                    tdActions.textContent = '-';
+                }
+                tr.appendChild(tdActions);
+                tbody.appendChild(tr);
+            });
+        }
+
+        function approveUser(username) {
+            const users = getUsers();
+            const user = users.find(u => u.username === username);
+            if (user) {
+                user.approved = true;
+                saveUsers(users);
+                renderAdminPanel();
+            }
+        }
+
+        function denyUser(username) {
+            const users = getUsers();
+            const user = users.find(u => u.username === username);
+            if (user) {
+                user.approved = false;
+                saveUsers(users);
+                renderAdminPanel();
+            }
+        }
+
+        function updateUserPermission(username, permission) {
+            const users = getUsers();
+            const user = users.find(u => u.username === username);
+            if (user && user.role !== 'admin') {
+                user.permission = permission;
+                saveUsers(users);
+                if (currentUser && currentUser.username === username) {
+                    currentUser.permission = permission;
+                    setSession(currentUser);
+                }
+                renderAdminPanel();
+            }
+        }
+
+        function resetUserPassword(username) {
+            const newPassword = prompt('አዲስ የይለፍ ቃል ያስገቡ / Enter new password:');
+            if (newPassword && newPassword.length >= 4) {
+                const users = getUsers();
+                const user = users.find(u => u.username === username);
+                if (user) {
+                    user.password = hashPassword(newPassword);
+                    saveUsers(users);
+                    alert('የይለፍ ቃል ተለውጧል / Password reset successfully.');
+                    renderAdminPanel();
+                }
+            } else if (newPassword !== null) {
+                alert('የይለፍ ቃል ቢያንስ 4 ፊደላት ሊኖረው ይገባል / Password must be at least 4 characters.');
+            }
+        }
+
+        function removeUser(username) {
+            if (!confirm(`እርግጠኛ ነዎት "${username}" ን ማጥፋት ይፈልጋሉ? / Delete user "${username}"?`)) return;
+            let users = getUsers();
+            users = users.filter(u => u.username !== username);
+            saveUsers(users);
+            if (currentUser && currentUser.username === username) {
+                logout();
+            } else {
+                renderAdminPanel();
+            }
+        }
+
+        // ─── Navigation ────────────────────────────────────────────────────
+
+        window.showForm = function() {
+            document.getElementById('formSection').style.display = 'block';
+            document.getElementById('allDataSection').style.display = 'none';
+            document.getElementById('viewSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+            document.querySelector('.nav-bar a:nth-child(1)').classList.add('active');
+            const canEdit = currentUser && (currentUser.role === 'admin' || currentUser.permission === 'edit');
+            document.getElementById('formButtons').style.display = canEdit ? 'flex' : 'none';
+        };
+
+        window.showAllData = function() {
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('allDataSection').style.display = 'block';
+            document.getElementById('viewSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+            document.querySelector('.nav-bar a:nth-child(2)').classList.add('active');
+            renderDataList();
+        };
+
+        window.showDashboard = function() {
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('allDataSection').style.display = 'none';
+            document.getElementById('viewSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+            document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+            document.querySelector('.nav-bar a:nth-child(3)').classList.add('active');
+            renderDashboard();
+        };
+
+        window.showAdminPanel = function() {
+            if (!currentUser || currentUser.role !== 'admin') {
+                alert('ይህ ክፍል ለአስተዳዳሪ ብቻ ነው / Admin access only.');
+                return;
+            }
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('allDataSection').style.display = 'none';
+            document.getElementById('viewSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'block';
+            document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+            document.querySelector('#adminLink').classList.add('active');
+            renderAdminPanel();
+        };
+
+        // ─── MAIN APP LOGIC ──────────────────────────────────────────────
+
+        let allSubmissions = JSON.parse(localStorage.getItem('transportSubmissions')) || [];
+        let currentViewIndex = -1;
+        let selectedIndices = new Set();
+
+        const tbody = document.getElementById('tableBody');
+        const totalCells = {
+            singleLoad: document.getElementById('totalSingleLoad'),
+            singleEmpty: document.getElementById('totalSingleEmpty'),
+            fuelLoad: document.getElementById('totalFuelLoad'),
+            fuelEmpty: document.getElementById('totalFuelEmpty'),
+            birrLoad: document.getElementById('totalBirrLoad'),
+            birrEmpty: document.getElementById('totalBirrEmpty'),
+            birrSum: document.getElementById('totalBirrSum'),
+            totalFuelPrice: document.getElementById('totalFuelPrice')
+        };
+        let rowInputs = [];
+
+        const defaultRows = [
+            { origin: '', dest: '', singleLoad: '', doubleLoad: '', singleEmpty: '', doubleEmpty: '' }
+        ];
+
+        function getLoadedRate() { return FUEL_CONFIG.LOADED_RATE; }
+
+        function getEmptyRate() { return FUEL_CONFIG.EMPTY_RATE; }
+
+        // ── row creation ──
+        function createRowElement(rowData, index) {
+            const tr = document.createElement('tr');
+            tr.dataset.rowIndex = index;
+
+            const tdIdx = document.createElement('td');
+            tdIdx.textContent = index + 1;
+            tr.appendChild(tdIdx);
+
+            const tdOrigin = document.createElement('td');
+            const inpOrigin = document.createElement('input');
+            inpOrigin.type = 'text';
+            inpOrigin.value = rowData?.origin || '';
+            inpOrigin.placeholder = '';
+            tdOrigin.appendChild(inpOrigin);
+            tr.appendChild(tdOrigin);
+
+            const tdDest = document.createElement('td');
+            const inpDest = document.createElement('input');
+            inpDest.type = 'text';
+            inpDest.value = rowData?.dest || '';
+            inpDest.placeholder = '';
+            tdDest.appendChild(inpDest);
+            tr.appendChild(tdDest);
+
+            const fields = ['singleLoad', 'doubleLoad', 'singleEmpty', 'doubleEmpty'];
+            const inputRefs = {};
+            fields.forEach(f => {
+                const td = document.createElement('td');
+                const inp = document.createElement('input');
+                inp.type = 'number';
+                inp.step = 'any';
+                inp.value = (rowData && rowData[f] !== undefined && rowData[f] !== '') ? rowData[f] : '';
+                inp.placeholder = '';
+                td.appendChild(inp);
+                tr.appendChild(td);
+                inputRefs[f] = inp;
+            });
+
+            const tdFuelLoad = document.createElement('td');
+            const inpFuelLoad = document.createElement('input');
+            inpFuelLoad.type = 'text';
+            inpFuelLoad.readOnly = true;
+            inpFuelLoad.value = '';
+            tdFuelLoad.appendChild(inpFuelLoad);
+            tr.appendChild(tdFuelLoad);
+
+            const tdFuelEmpty = document.createElement('td');
+            const inpFuelEmpty = document.createElement('input');
+            inpFuelEmpty.type = 'text';
+            inpFuelEmpty.readOnly = true;
+            inpFuelEmpty.value = '';
+            tdFuelEmpty.appendChild(inpFuelEmpty);
+            tr.appendChild(tdFuelEmpty);
+
+            const tdFuelPrice = document.createElement('td');
+            const inpFuelPrice = document.createElement('input');
+            inpFuelPrice.type = 'text';
+            inpFuelPrice.readOnly = true;
+            inpFuelPrice.value = '';
+            tdFuelPrice.appendChild(inpFuelPrice);
+            tr.appendChild(tdFuelPrice);
+
+            const tdBirrLoad = document.createElement('td');
+            const inpBirrLoad = document.createElement('input');
+            inpBirrLoad.type = 'text';
+            inpBirrLoad.readOnly = true;
+            inpBirrLoad.value = '';
+            tdBirrLoad.appendChild(inpBirrLoad);
+            tr.appendChild(tdBirrLoad);
+
+            const tdBirrEmpty = document.createElement('td');
+            const inpBirrEmpty = document.createElement('input');
+            inpBirrEmpty.type = 'text';
+            inpBirrEmpty.readOnly = true;
+            inpBirrEmpty.value = '';
+            tdBirrEmpty.appendChild(inpBirrEmpty);
+            tr.appendChild(tdBirrEmpty);
+
+            const tdTotal = document.createElement('td');
+            const inpTotal = document.createElement('input');
+            inpTotal.type = 'text';
+            inpTotal.readOnly = true;
+            inpTotal.value = '';
+            tdTotal.appendChild(inpTotal);
+            tr.appendChild(tdTotal);
+
+            const tdRemark = document.createElement('td');
+            const inpRemark = document.createElement('input');
+            inpRemark.type = 'text';
+            inpRemark.value = rowData?.remark || '';
+            inpRemark.placeholder = '';
+            tdRemark.appendChild(inpRemark);
+            tr.appendChild(tdRemark);
+
+            const tdRemove = document.createElement('td');
+            const btnRemove = document.createElement('button');
+            btnRemove.type = 'button';
+            btnRemove.className = 'btn-remove-row';
+            btnRemove.textContent = '✕';
+            btnRemove.title = 'ሰርዝ ረድፍ';
+            btnRemove.addEventListener('click', function(e) {
+                e.stopPropagation();
+                removeRow(index);
+            });
+            tdRemove.appendChild(btnRemove);
+            tr.appendChild(tdRemove);
+
+            const rowObj = {
+                origin: inpOrigin,
+                dest: inpDest,
+                singleLoad: inputRefs.singleLoad,
+                doubleLoad: inputRefs.doubleLoad,
+                singleEmpty: inputRefs.singleEmpty,
+                doubleEmpty: inputRefs.doubleEmpty,
+                fuelLoad: inpFuelLoad,
+                fuelEmpty: inpFuelEmpty,
+                fuelPrice: inpFuelPrice,
+                birrLoad: inpBirrLoad,
+                birrEmpty: inpBirrEmpty,
+                totalBirr: inpTotal,
+                remark: inpRemark,
+                tr: tr
+            };
+
+            [inputRefs.singleLoad, inputRefs.doubleLoad, inputRefs.singleEmpty, inputRefs.doubleEmpty].forEach(inp => {
+                inp.addEventListener('input', function() { recalcRow(rowObj); });
+                inp.addEventListener('change', function() { recalcRow(rowObj); });
+            });
+
+            return { tr, rowObj };
+        }
+
+        function removeRow(index) {
+            if (rowInputs.length <= 1) {
+                alert('ቢያንስ አንድ ረድፍ መቀረት አለበት / At least one row must remain.');
+                return;
+            }
+            if (index < 0 || index >= rowInputs.length) return;
+            const removed = rowInputs.splice(index, 1);
+            if (removed[0] && removed[0].tr) {
+                removed[0].tr.remove();
+            }
+            rowInputs.forEach((r, i) => {
+                const td = r.tr.querySelector('td:first-child');
+                if (td) td.textContent = i + 1;
+                r.tr.dataset.rowIndex = i;
+            });
+            rowInputs.forEach((r, i) => {
+                const btn = r.tr.querySelector('.btn-remove-row');
+                if (btn) {
+                    const newBtn = document.createElement('button');
+                    newBtn.type = 'button';
+                    newBtn.className = 'btn-remove-row';
+                    newBtn.textContent = '✕';
+                    newBtn.title = 'ሰርዝ ረድፍ';
+                    const idx = i;
+                    newBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        removeRow(idx);
+                    });
+                    btn.replaceWith(newBtn);
+                }
+            });
+            recalcAll();
+        }
+
+        function recalcRow(r) {
+            if (!r) return;
+            const sl = parseFloat(r.singleLoad.value) || 0;
+            const dl = parseFloat(r.doubleLoad.value) || 0;
+            const se = parseFloat(r.singleEmpty.value) || 0;
+            const de = parseFloat(r.doubleEmpty.value) || 0;
+
+            const loadedRate = getLoadedRate();
+            const emptyRate = getEmptyRate();
+
+            const fuelLoad = (sl + dl) / loadedRate;
+            const fuelEmpty = (se + de) / emptyRate;
+            const fL = isFinite(fuelLoad) ? fuelLoad : 0;
+            const fE = isFinite(fuelEmpty) ? fuelEmpty : 0;
+
+            const hasData = (sl > 0 || dl > 0 || se > 0 || de > 0);
+            const price = hasData ? 180.46 : 0;
+
+            r.fuelLoad.value = hasData ? fL.toFixed(2) : '';
+            r.fuelEmpty.value = hasData ? fE.toFixed(2) : '';
+            r.fuelPrice.value = hasData ? price.toFixed(2) : '';
+
+            const birrLoad = fL * price;
+            const birrEmpty = fE * price;
+            r.birrLoad.value = hasData ? birrLoad.toFixed(2) : '';
+            r.birrEmpty.value = hasData ? birrEmpty.toFixed(2) : '';
+            r.totalBirr.value = hasData ? (birrLoad + birrEmpty).toFixed(2) : '';
+            updateTotals();
+        }
+
+        function recalcAll() {
+            rowInputs.forEach(r => recalcRow(r));
+            updateTotals();
+        }
+
+        function updateTotals() {
+            let sumSL = 0,
+                sumSE = 0,
+                sumFL = 0,
+                sumFE = 0,
+                sumBL = 0,
+                sumBE = 0,
+                sumBT = 0;
+            let hasAnyData = false;
+
+            rowInputs.forEach(r => {
                 const sl = parseFloat(r.singleLoad.value) || 0;
-                const dl = parseFloat(r.doubleLoad.value) || 0;
                 const se = parseFloat(r.singleEmpty.value) || 0;
-                const de = parseFloat(r.doubleEmpty.value) || 0;
+                const fl = parseFloat(r.fuelLoad.value) || 0;
+                const fe = parseFloat(r.fuelEmpty.value) || 0;
+                const bl = parseFloat(r.birrLoad.value) || 0;
+                const be = parseFloat(r.birrEmpty.value) || 0;
+                if (sl > 0 || se > 0) hasAnyData = true;
+                sumSL += sl;
+                sumSE += se;
+                sumFL += fl;
+                sumFE += fe;
+                sumBL += bl;
+                sumBE += be;
+                sumBT += (bl + be);
+            });
 
-                const loadedRate = getLoadedRate();
-                const emptyRate = getEmptyRate();
+            totalCells.singleLoad.textContent = hasAnyData ? sumSL.toFixed(0) : '0';
+            totalCells.singleEmpty.textContent = hasAnyData ? sumSE.toFixed(0) : '0';
+            totalCells.fuelLoad.textContent = hasAnyData ? sumFL.toFixed(2) : '0';
+            totalCells.fuelEmpty.textContent = hasAnyData ? sumFE.toFixed(2) : '0';
+            totalCells.birrLoad.textContent = hasAnyData ? sumBL.toFixed(2) : '0';
+            totalCells.birrEmpty.textContent = hasAnyData ? sumBE.toFixed(2) : '0';
+            totalCells.birrSum.textContent = hasAnyData ? sumBT.toFixed(2) : '0';
+            totalCells.totalFuelPrice.textContent = hasAnyData ? '180.46' : '0';
+        }
 
-                const fuelLoad = (sl + dl) / loadedRate;
-                const fuelEmpty = (se + de) / emptyRate;
-                const fL = isFinite(fuelLoad) ? fuelLoad : 0;
-                const fE = isFinite(fuelEmpty) ? fuelEmpty : 0;
+        function buildRows(dataArray) {
+            tbody.innerHTML = '';
+            rowInputs = [];
+            dataArray.forEach((row, idx) => {
+                const { tr, rowObj } = createRowElement(row, idx);
+                tbody.appendChild(tr);
+                rowInputs.push(rowObj);
+            });
+            recalcAll();
+        }
 
-                const hasData = (sl > 0 || dl > 0 || se > 0 || de > 0);
-                const price = hasData ? 180.46 : 0;
-
-                r.fuelLoad.value = hasData ? fL.toFixed(2) : '';
-                r.fuelEmpty.value = hasData ? fE.toFixed(2) : '';
-                r.fuelPrice.value = hasData ? price.toFixed(2) : '';
-
-                const birrLoad = fL * price;
-                const birrEmpty = fE * price;
-                r.birrLoad.value = hasData ? birrLoad.toFixed(2) : '';
-                r.birrEmpty.value = hasData ? birrEmpty.toFixed(2) : '';
-                r.totalBirr.value = hasData ? (birrLoad + birrEmpty).toFixed(2) : '';
-                updateTotals();
+        window.addRow = function() {
+            if (!currentUser || (currentUser.role !== 'admin' && currentUser.permission !== 'edit')) {
+                alert('ይህን ለማድረግ ፈቃድ የለዎትም / You do not have permission to edit.');
+                return;
             }
+            const newIndex = rowInputs.length;
+            const { tr, rowObj } = createRowElement({ origin: '', dest: '', singleLoad: '', doubleLoad: '',
+                singleEmpty: '', doubleEmpty: '', remark: '' }, newIndex);
+            tbody.appendChild(tr);
+            rowInputs.push(rowObj);
+            updateRowNumbers();
+            recalcAll();
+        };
 
-            function recalcAll() {
-                rowInputs.forEach(r => recalcRow(r));
-                updateTotals();
-            }
+        function updateRowNumbers() {
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach((tr, idx) => {
+                const td = tr.querySelector('td:first-child');
+                if (td) td.textContent = idx + 1;
+            });
+        }
 
-            function updateTotals() {
-                let sumSL = 0,
-                    sumSE = 0,
-                    sumFL = 0,
-                    sumFE = 0,
-                    sumBL = 0,
-                    sumBE = 0,
-                    sumBT = 0;
-                let hasAnyData = false;
+        function getFormData() {
+            const rows = rowInputs.map(r => ({
+                origin: r.origin.value,
+                dest: r.dest.value,
+                singleLoad: r.singleLoad.value,
+                doubleLoad: r.doubleLoad.value,
+                singleEmpty: r.singleEmpty.value,
+                doubleEmpty: r.doubleEmpty.value,
+                fuelLoad: r.fuelLoad.value,
+                fuelEmpty: r.fuelEmpty.value,
+                fuelPrice: r.fuelPrice.value,
+                birrLoad: r.birrLoad.value,
+                birrEmpty: r.birrEmpty.value,
+                totalBirr: r.totalBirr.value,
+                remark: r.remark.value
+            }));
 
-                rowInputs.forEach(r => {
-                    const sl = parseFloat(r.singleLoad.value) || 0;
-                    const se = parseFloat(r.singleEmpty.value) || 0;
-                    const fl = parseFloat(r.fuelLoad.value) || 0;
-                    const fe = parseFloat(r.fuelEmpty.value) || 0;
-                    const bl = parseFloat(r.birrLoad.value) || 0;
-                    const be = parseFloat(r.birrEmpty.value) || 0;
-                    if (sl > 0 || se > 0) hasAnyData = true;
-                    sumSL += sl;
-                    sumSE += se;
-                    sumFL += fl;
-                    sumFE += fe;
-                    sumBL += bl;
-                    sumBE += be;
-                    sumBT += (bl + be);
-                });
+            return {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString(),
+                requesterDept: document.getElementById('requesterDept').value,
+                tripDesc: document.getElementById('tripDesc').value,
+                tripDate: document.getElementById('tripDate').value,
+                loadSize: document.getElementById('loadSize').value,
+                plateNo: document.getElementById('plateNo').value,
+                kmReading: document.getElementById('kmReading').value,
+                estDays: document.getElementById('estDays').value,
+                driverName: document.getElementById('driverName').value,
+                reqSign: document.getElementById('reqSign').value,
+                reqSignMark: document.getElementById('reqSignMark').value,
+                prepSign: document.getElementById('prepSign').value,
+                prepSignMark: document.getElementById('prepSignMark').value,
+                verifSign: document.getElementById('verifSign').value,
+                verifSignMark: document.getElementById('verifSignMark').value,
+                approvSign: document.getElementById('approvSign').value,
+                approvSignMark: document.getElementById('approvSignMark').value,
+                rows: rows,
+                totals: {
+                    singleLoad: document.getElementById('totalSingleLoad').textContent,
+                    singleEmpty: document.getElementById('totalSingleEmpty').textContent,
+                    fuelLoad: document.getElementById('totalFuelLoad').textContent,
+                    fuelEmpty: document.getElementById('totalFuelEmpty').textContent,
+                    birrLoad: document.getElementById('totalBirrLoad').textContent,
+                    birrEmpty: document.getElementById('totalBirrEmpty').textContent,
+                    birrSum: document.getElementById('totalBirrSum').textContent,
+                    fuelPrice: document.getElementById('totalFuelPrice').textContent
+                }
+            };
+        }
 
-                totalCells.singleLoad.textContent = hasAnyData ? sumSL.toFixed(0) : '0';
-                totalCells.singleEmpty.textContent = hasAnyData ? sumSE.toFixed(0) : '0';
-                totalCells.fuelLoad.textContent = hasAnyData ? sumFL.toFixed(2) : '0';
-                totalCells.fuelEmpty.textContent = hasAnyData ? sumFE.toFixed(2) : '0';
-                totalCells.birrLoad.textContent = hasAnyData ? sumBL.toFixed(2) : '0';
-                totalCells.birrEmpty.textContent = hasAnyData ? sumBE.toFixed(2) : '0';
-                totalCells.birrSum.textContent = hasAnyData ? sumBT.toFixed(2) : '0';
-                totalCells.totalFuelPrice.textContent = hasAnyData ? '180.46' : '0';
-            }
+        function setFormData(data) {
+            document.getElementById('requesterDept').value = data.requesterDept || '';
+            document.getElementById('tripDesc').value = data.tripDesc || '';
+            document.getElementById('tripDate').value = data.tripDate || '';
+            document.getElementById('loadSize').value = data.loadSize || '';
+            document.getElementById('plateNo').value = data.plateNo || '';
+            document.getElementById('kmReading').value = data.kmReading || '';
+            document.getElementById('estDays').value = data.estDays || '';
+            document.getElementById('driverName').value = data.driverName || '';
+            document.getElementById('reqSign').value = data.reqSign || '';
+            document.getElementById('reqSignMark').value = data.reqSignMark || '';
+            document.getElementById('prepSign').value = data.prepSign || '';
+            document.getElementById('prepSignMark').value = data.prepSignMark || '';
+            document.getElementById('verifSign').value = data.verifSign || '';
+            document.getElementById('verifSignMark').value = data.verifSignMark || '';
+            document.getElementById('approvSign').value = data.approvSign || '';
+            document.getElementById('approvSignMark').value = data.approvSignMark || '';
 
-            function buildRows(dataArray) {
+            if (data.rows && data.rows.length > 0) {
                 tbody.innerHTML = '';
                 rowInputs = [];
-                dataArray.forEach((row, idx) => {
+                data.rows.forEach((row, idx) => {
                     const { tr, rowObj } = createRowElement(row, idx);
                     tbody.appendChild(tr);
                     rowInputs.push(rowObj);
                 });
-                recalcAll();
-            }
-
-            window.addRow = function() {
-                const newIndex = rowInputs.length;
-                const { tr, rowObj } = createRowElement({ origin: '', dest: '', singleLoad: '', doubleLoad: '',
-                    singleEmpty: '', doubleEmpty: '', remark: '' }, newIndex);
-                tbody.appendChild(tr);
-                rowInputs.push(rowObj);
-                // Re-index row numbers (should be fine because we just appended)
-                // But we need to update the remove button index for the new row? Already set via closure.
-                // Also update all remove buttons to ensure correct indices (already handled in createRowElement using current index)
-                // However we need to re-bind for all rows because the indices may have changed?
-                // Actually we don't need to re-bind because we used the index variable captured at creation time, 
-                // but after adding, the new row's index is correct, others remain the same.
-                // So we just need to update the row numbers displayed.
                 updateRowNumbers();
                 recalcAll();
-            };
+            }
+        }
 
-            function updateRowNumbers() {
-                const rows = tbody.querySelectorAll('tr');
-                rows.forEach((tr, idx) => {
-                    const td = tr.querySelector('td:first-child');
-                    if (td) td.textContent = idx + 1;
-                });
+        window.submitForm = function() {
+            if (!currentUser || (currentUser.role !== 'admin' && currentUser.permission !== 'edit')) {
+                alert('ይህን ለማድረግ ፈቃድ የለዎትም / You do not have permission to submit.');
+                return;
+            }
+            const data = getFormData();
+            const hasData = data.rows.some(r => r.origin || r.dest || r.singleLoad || r.doubleLoad || r.singleEmpty || r
+                .doubleEmpty);
+            if (!hasData && !data.requesterDept && !data.tripDesc) {
+                alert('እባክዎ ቅጹን ይሙሉ / Please fill the form first.');
+                return;
+            }
+            allSubmissions.push(data);
+            localStorage.setItem('transportSubmissions', JSON.stringify(allSubmissions));
+            updateDataCount();
+            alert('ውሂብ በተሳካ ሁኔታ ተመዝግቧል! / Data submitted successfully!');
+            clearForm();
+        };
+
+        window.clearForm = function() {
+            if (!currentUser || (currentUser.role !== 'admin' && currentUser.permission !== 'edit')) {
+                alert('ይህን ለማድረግ ፈቃድ የለዎትም / You do not have permission to clear.');
+                return;
+            }
+            buildRows(defaultRows);
+            ['requesterDept', 'tripDesc', 'tripDate', 'loadSize', 'plateNo', 'kmReading', 'estDays', 'driverName',
+                'reqSign', 'reqSignMark', 'prepSign', 'prepSignMark', 'verifSign', 'verifSignMark',
+                'approvSign', 'approvSignMark'
+            ].forEach(id => document.getElementById(id).value = '');
+            recalcAll();
+        };
+
+        // ── selection helpers ──
+        function updateSelectionInfo() {
+            const count = selectedIndices.size;
+            document.getElementById('selectInfo').textContent = count + ' ተመርጧል';
+            document.querySelectorAll('.data-card').forEach(card => {
+                const idx = parseInt(card.dataset.index);
+                if (selectedIndices.has(idx)) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+            document.querySelectorAll('.data-card input[type="checkbox"]').forEach(cb => {
+                const idx = parseInt(cb.dataset.index);
+                cb.checked = selectedIndices.has(idx);
+            });
+        }
+
+        window.selectAll = function() {
+            allSubmissions.forEach((_, idx) => selectedIndices.add(idx));
+            updateSelectionInfo();
+        };
+
+        window.clearSelection = function() {
+            selectedIndices.clear();
+            updateSelectionInfo();
+        };
+
+        function toggleSelection(index) {
+            if (selectedIndices.has(index)) {
+                selectedIndices.delete(index);
+            } else {
+                selectedIndices.add(index);
+            }
+            updateSelectionInfo();
+        }
+
+        function getSelectedData() {
+            const selected = [];
+            const sorted = Array.from(selectedIndices).sort((a, b) => a - b);
+            sorted.forEach(idx => {
+                if (idx >= 0 && idx < allSubmissions.length) {
+                    selected.push(allSubmissions[idx]);
+                }
+            });
+            return selected;
+        }
+
+        // ── render data list ──
+        function renderDataList() {
+            const container = document.getElementById('dataListContainer');
+            if (allSubmissions.length === 0) {
+                container.innerHTML =
+                    `
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <h3>ምንም ውሂብ የለም</h3>
+                        <p>እባክዎ ቅጹን ይሙሉ እና ያስገቡ</p>
+                    </div>
+                `;
+                document.getElementById('selectionToolbar').style.display = 'none';
+                return;
+            }
+            document.getElementById('selectionToolbar').style.display = 'flex';
+
+            let html = '';
+            allSubmissions.slice().reverse().forEach((data, idx) => {
+                const realIdx = allSubmissions.length - 1 - idx;
+                const checked = selectedIndices.has(realIdx) ? 'checked' : '';
+                html += `
+                    <div class="data-card ${checked ? 'selected' : ''}" data-index="${realIdx}">
+                        <div class="card-left">
+                            <div class="checkbox-wrap">
+                                <input type="checkbox" data-index="${realIdx}" ${checked} onchange="toggleSelection(${realIdx})" />
+                            </div>
+                            <div class="info">
+                                <strong>#${realIdx + 1}</strong> | 
+                                ${data.requesterDept || 'ክፍል የለም'} | 
+                                ${data.tripDesc || 'መግለጫ የለም'} | 
+                                ${data.tripDate || 'ቀን የለም'} |
+                                📅 ${data.timestamp}
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <button class="btn" onclick="viewData(${realIdx})">👁️ አሳይ</button>
+                            <button class="btn green" onclick="printData(${realIdx})">🖨️ አትም</button>
+                            <button class="btn grey" onclick="deleteData(${realIdx})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            updateSelectionInfo();
+        }
+
+        window.toggleSelection = toggleSelection;
+
+        // ── view / print single ──
+        window.viewData = function(index) {
+            currentViewIndex = index;
+            const data = allSubmissions[index];
+            if (!data) return;
+
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('allDataSection').style.display = 'none';
+            document.getElementById('viewSection').style.display = 'block';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'none';
+
+            const container = document.getElementById('viewContent');
+            container.innerHTML = generateViewHTML(data);
+        };
+
+        window.printData = function(index) {
+            const data = allSubmissions[index];
+            if (!data) return;
+            printSingleData(data, index);
+        };
+
+        function printSingleData(data, index) {
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            printWindow.document.write(`
+                <html>
+                <head><title>Print Data #${index+1}</title>
+                <style>
+                    body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; }
+                    .commission-header { text-align: center; font-weight: 700; font-size: 1.2rem; border-bottom: 2px solid #1e3a5f; padding-bottom: 8px; margin-bottom: 12px; }
+                    table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+                    th { background: #1e3a5f; color: white; padding: 6px; border: 1px solid #1e3a5f; }
+                    td { border: 1px solid #bac9db; padding: 4px; text-align: center; }
+                    .total-row td { background: #dce5f0; font-weight: 600; }
+                    .signature-area { display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid #b7c7dd; gap: 6px 16px; }
+                    .signature-item { display: flex; gap: 8px 16px; flex-wrap: wrap; }
+                    .field-label { font-weight: 600; }
+                    .print-btn { display: none; }
+                    .name-group, .sign-group { display: inline-flex; gap: 4px; align-items: center; }
+                    .name-group { margin-right: 6px; }
+                    @media print { .no-print { display: none; } }
+                </style>
+                </head>
+                <body>
+                    ${generateViewHTML(data)}
+                    <div style="text-align:center; margin-top:20px;" class="no-print">
+                        <button onclick="window.print()">🖨️ Print</button>
+                        <button onclick="window.close()">Close</button>
+                    </div>
+                    <script>
+                        window.onload = function() { window.print(); }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        window.printSelected = function() {
+            const selected = getSelectedData();
+            if (selected.length === 0) {
+                alert('እባክዎ ቢያንስ አንድ ውሂብ ይምረጡ / Please select at least one entry.');
+                return;
+            }
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            let htmlContent = `
+                <html>
+                <head><title>Print Selected Data</title>
+                <style>
+                    body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; }
+                    .commission-header { text-align: center; font-weight: 700; font-size: 1.2rem; border-bottom: 2px solid #1e3a5f; padding-bottom: 8px; margin-bottom: 12px; }
+                    table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+                    th { background: #1e3a5f; color: white; padding: 6px; border: 1px solid #1e3a5f; }
+                    td { border: 1px solid #bac9db; padding: 4px; text-align: center; }
+                    .total-row td { background: #dce5f0; font-weight: 600; }
+                    .signature-area { display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid #b7c7dd; gap: 6px 16px; }
+                    .signature-item { display: flex; gap: 8px 16px; flex-wrap: wrap; }
+                    .field-label { font-weight: 600; }
+                    .print-btn { display: none; }
+                    .name-group, .sign-group { display: inline-flex; gap: 4px; align-items: center; }
+                    .name-group { margin-right: 6px; }
+                    .entry-divider { border-top: 3px double #1e3a5f; margin: 30px 0 20px 0; }
+                    @media print { .no-print { display: none; } }
+                </style>
+                </head>
+                <body>
+            `;
+
+            selected.forEach((data, idx) => {
+                if (idx > 0) {
+                    htmlContent += `<div class="entry-divider"></div>`;
+                }
+                htmlContent += generateViewHTML(data);
+            });
+
+            htmlContent += `
+                    <div style="text-align:center; margin-top:20px;" class="no-print">
+                        <button onclick="window.print()">🖨️ Print</button>
+                        <button onclick="window.close()">Close</button>
+                    </div>
+                    <script>
+                        window.onload = function() { window.print(); }
+                    <\/script>
+                </body>
+                </html>
+            `;
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
+        };
+
+        window.deleteData = function(index) {
+            if (!currentUser || (currentUser.role !== 'admin' && currentUser.permission !== 'edit')) {
+                alert('ይህን ለማድረግ ፈቃድ የለዎትም / You do not have permission to delete.');
+                return;
+            }
+            if (!confirm(`እርግጠኛ ነዎት ይህንን ውሂብ መሰረዝ ይፈልጋሉ? / Delete this entry?`)) return;
+            selectedIndices.delete(index);
+            allSubmissions.splice(index, 1);
+            const newSelected = new Set();
+            selectedIndices.forEach(i => {
+                if (i > index) newSelected.add(i - 1);
+                else if (i < index) newSelected.add(i);
+            });
+            selectedIndices = newSelected;
+            localStorage.setItem('transportSubmissions', JSON.stringify(allSubmissions));
+            updateDataCount();
+            renderDataList();
+        };
+
+        window.clearAllData = function() {
+            if (!currentUser || (currentUser.role !== 'admin' && currentUser.permission !== 'edit')) {
+                alert('ይህን ለማድረግ ፈቃድ የለዎትም / You do not have permission to delete all.');
+                return;
+            }
+            if (!confirm('ሁሉንም ውሂብ ያጠፋል? / Delete all data?')) return;
+            allSubmissions = [];
+            selectedIndices.clear();
+            localStorage.setItem('transportSubmissions', JSON.stringify(allSubmissions));
+            updateDataCount();
+            renderDataList();
+        };
+
+        // ── export functions ──
+        window.exportSelectedToExcel = function() {
+            const selected = getSelectedData();
+            if (selected.length === 0) {
+                alert('እባክዎ ቢያንስ አንድ ውሂብ ይምረጡ / Please select at least one entry.');
+                return;
+            }
+            exportDataToExcel(selected);
+        };
+
+        window.exportAllToExcel = function() {
+            if (allSubmissions.length === 0) {
+                alert('ምንም ውሂብ የለም / No data to export.');
+                return;
+            }
+            if (selectedIndices.size > 0 && selectedIndices.size < allSubmissions.length) {
+                if (!confirm(`የተመረጡትን ${selectedIndices.size} ውሂቦች ብቻ ላክ? "አይ" ከመረጡ ሁሉንም ይልካል።\n\nExport only ${selectedIndices.size} selected entries? Click "No" to export all.`)) {
+                    exportDataToExcel(allSubmissions);
+                } else {
+                    exportDataToExcel(getSelectedData());
+                }
+            } else {
+                exportDataToExcel(allSubmissions);
+            }
+        };
+
+        function exportDataToExcel(submissions) {
+            if (!submissions || submissions.length === 0) {
+                alert('ምንም ውሂብ የለም / No data to export.');
+                return;
             }
 
-            function getFormData() {
-                const rows = rowInputs.map(r => ({
-                    origin: r.origin.value,
-                    dest: r.dest.value,
-                    singleLoad: r.singleLoad.value,
-                    doubleLoad: r.doubleLoad.value,
-                    singleEmpty: r.singleEmpty.value,
-                    doubleEmpty: r.doubleEmpty.value,
-                    fuelLoad: r.fuelLoad.value,
-                    fuelEmpty: r.fuelEmpty.value,
-                    fuelPrice: r.fuelPrice.value,
-                    birrLoad: r.birrLoad.value,
-                    birrEmpty: r.birrEmpty.value,
-                    totalBirr: r.totalBirr.value,
-                    remark: r.remark.value
-                }));
+            const TABLE_HEADERS = [
+                'ተ.ቁ', 'መነሻ', 'መድረሻ',
+                'ነጠላ ጉዞ በጭነት በኪ.ሜትር',
+                'በጭነት ደርሶ መልስ በኪ.ሜትር',
+                'ነጠላ ጉዞ ያለጭነት በኪ.ሜትር',
+                'ያለጭነት ደርሶ መልስ በኪ.ሜትር',
+                'በጭነት ደርሶ መልስ አጠቃላይ የፈጀው ነዳጅ በሊትር',
+                'ያለጭነት ደርሶ መልስ በኪ.ሜትርነዳጅ ዋጋ በሊትር',
+                'ነዳጅ ዋጋ በሊትር',
+                'በጭነት የፈጀው ነዳጅ በብር',
+                'ያለጭነት የፈጀው ነዳጅ በብር',
+                'አጠቃላይ ድምር በብር',
+                'ምርመራ'
+            ];
 
-                return {
-                    id: Date.now(),
-                    timestamp: new Date().toLocaleString(),
-                    requesterDept: document.getElementById('requesterDept').value,
-                    tripDesc: document.getElementById('tripDesc').value,
-                    tripDate: document.getElementById('tripDate').value,
-                    loadSize: document.getElementById('loadSize').value,
-                    plateNo: document.getElementById('plateNo').value,
-                    kmReading: document.getElementById('kmReading').value,
-                    estDays: document.getElementById('estDays').value,
-                    driverName: document.getElementById('driverName').value,
-                    reqSign: document.getElementById('reqSign').value,
-                    reqSignMark: document.getElementById('reqSignMark').value,
-                    prepSign: document.getElementById('prepSign').value,
-                    prepSignMark: document.getElementById('prepSignMark').value,
-                    verifSign: document.getElementById('verifSign').value,
-                    verifSignMark: document.getElementById('verifSignMark').value,
-                    approvSign: document.getElementById('approvSign').value,
-                    approvSignMark: document.getElementById('approvSignMark').value,
-                    rows: rows,
-                    totals: {
-                        singleLoad: document.getElementById('totalSingleLoad').textContent,
-                        singleEmpty: document.getElementById('totalSingleEmpty').textContent,
-                        fuelLoad: document.getElementById('totalFuelLoad').textContent,
-                        fuelEmpty: document.getElementById('totalFuelEmpty').textContent,
-                        birrLoad: document.getElementById('totalBirrLoad').textContent,
-                        birrEmpty: document.getElementById('totalBirrEmpty').textContent,
-                        birrSum: document.getElementById('totalBirrSum').textContent,
-                        fuelPrice: document.getElementById('totalFuelPrice').textContent
-                    }
-                };
-            }
+            const rows = [];
+            const merges = [];
+            let currentRow = 0;
 
-            function setFormData(data) {
-                document.getElementById('requesterDept').value = data.requesterDept || '';
-                document.getElementById('tripDesc').value = data.tripDesc || '';
-                document.getElementById('tripDate').value = data.tripDate || '';
-                document.getElementById('loadSize').value = data.loadSize || '';
-                document.getElementById('plateNo').value = data.plateNo || '';
-                document.getElementById('kmReading').value = data.kmReading || '';
-                document.getElementById('estDays').value = data.estDays || '';
-                document.getElementById('driverName').value = data.driverName || '';
-                document.getElementById('reqSign').value = data.reqSign || '';
-                document.getElementById('reqSignMark').value = data.reqSignMark || '';
-                document.getElementById('prepSign').value = data.prepSign || '';
-                document.getElementById('prepSignMark').value = data.prepSignMark || '';
-                document.getElementById('verifSign').value = data.verifSign || '';
-                document.getElementById('verifSignMark').value = data.verifSignMark || '';
-                document.getElementById('approvSign').value = data.approvSign || '';
-                document.getElementById('approvSignMark').value = data.approvSignMark || '';
+            submissions.forEach((data, subIdx) => {
+                if (subIdx > 0) {
+                    rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+                    currentRow++;
+                }
+
+                rows.push(['የአደጋ ስጋት አመራር ኮሚሽን']);
+                merges.push({ s: { r: currentRow, c: 0 }, e: { r: currentRow, c: 13 } });
+                currentRow++;
+
+                rows.push(['የሎጂስቲክስ ትራንስፖርት ኦፕሬሽን ስራ አስፈፃሚ']);
+                merges.push({ s: { r: currentRow, c: 0 }, e: { r: currentRow, c: 13 } });
+                currentRow++;
+
+                const reqDept = data.requesterDept || '';
+                const tripDesc = data.tripDesc || '';
+                const tripDate = data.tripDate || '';
+                rows.push([
+                    `ጠያቂው የስራ ክፍል: ${reqDept}`,
+                    '', '', '', '',
+                    `የመስክ ጉዞ አጭር መግለጫ: ${tripDesc}`,
+                    '', '', '', '',
+                    `ቀን: ${tripDate}`,
+                    '', '', ''
+                ]);
+                currentRow++;
+
+                const loadSize = data.loadSize || '';
+                const plateNo = data.plateNo || '';
+                const kmReading = data.kmReading || '';
+                const estDays = data.estDays || '';
+                const driverName = data.driverName || '';
+                rows.push([
+                    `የጭነት መጠን: ${loadSize}`,
+                    '',
+                    `የሰሌዳ ቁጥር: ${plateNo}`,
+                    '',
+                    `የኪ.ሜ ንባብ: ${kmReading}`,
+                    '',
+                    `የመስክ ስራው የሚወስደው ቀን ግምት: ${estDays}`,
+                    '',
+                    `አሽከርካሪ: ${driverName}`,
+                    '', '', '', '', ''
+                ]);
+                currentRow++;
+
+                rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+                currentRow++;
+
+                rows.push(TABLE_HEADERS);
+                const headerRow = currentRow;
+                currentRow++;
 
                 if (data.rows && data.rows.length > 0) {
-                    tbody.innerHTML = '';
-                    rowInputs = [];
-                    data.rows.forEach((row, idx) => {
-                        const { tr, rowObj } = createRowElement(row, idx);
-                        tbody.appendChild(tr);
-                        rowInputs.push(rowObj);
+                    data.rows.forEach((row) => {
+                        rows.push([
+                            '',
+                            row.origin || '',
+                            row.dest || '',
+                            row.singleLoad || '',
+                            row.doubleLoad || '',
+                            row.singleEmpty || '',
+                            row.doubleEmpty || '',
+                            row.fuelLoad || '',
+                            row.fuelEmpty || '',
+                            row.fuelPrice || '',
+                            row.birrLoad || '',
+                            row.birrEmpty || '',
+                            row.totalBirr || '',
+                            row.remark || ''
+                        ]);
+                        currentRow++;
                     });
-                    updateRowNumbers();
-                    recalcAll();
-                }
-            }
-
-            window.submitForm = function() {
-                const data = getFormData();
-                const hasData = data.rows.some(r => r.origin || r.dest || r.singleLoad || r.doubleLoad || r.singleEmpty || r
-                    .doubleEmpty);
-                if (!hasData && !data.requesterDept && !data.tripDesc) {
-                    alert('እባክዎ ቅጹን ይሙሉ / Please fill the form first.');
-                    return;
-                }
-                allSubmissions.push(data);
-                localStorage.setItem('transportSubmissions', JSON.stringify(allSubmissions));
-                updateDataCount();
-                alert('ውሂብ በተሳካ ሁኔታ ተመዝግቧል! / Data submitted successfully!');
-                clearForm();
-            };
-
-            window.clearForm = function() {
-                buildRows(defaultRows);
-                ['requesterDept', 'tripDesc', 'tripDate', 'loadSize', 'plateNo', 'kmReading', 'estDays', 'driverName',
-                    'reqSign', 'reqSignMark', 'prepSign', 'prepSignMark', 'verifSign', 'verifSignMark',
-                    'approvSign', 'approvSignMark'
-                ].forEach(id => document.getElementById(id).value = '');
-                recalcAll();
-            };
-
-            // ── navigation ──
-            window.showForm = function() {
-                document.getElementById('formSection').style.display = 'block';
-                document.getElementById('allDataSection').style.display = 'none';
-                document.getElementById('viewSection').style.display = 'none';
-                document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
-                document.querySelector('.nav-bar a:first-child').classList.add('active');
-            };
-
-            window.showAllData = function() {
-                document.getElementById('formSection').style.display = 'none';
-                document.getElementById('allDataSection').style.display = 'block';
-                document.getElementById('viewSection').style.display = 'none';
-                document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
-                document.querySelector('.nav-bar a:nth-child(2)').classList.add('active');
-                renderDataList();
-            };
-
-            // ── selection helpers ──
-            function updateSelectionInfo() {
-                const count = selectedIndices.size;
-                document.getElementById('selectInfo').textContent = count + ' ተመርጧል';
-                document.querySelectorAll('.data-card').forEach(card => {
-                    const idx = parseInt(card.dataset.index);
-                    if (selectedIndices.has(idx)) {
-                        card.classList.add('selected');
-                    } else {
-                        card.classList.remove('selected');
-                    }
-                });
-                document.querySelectorAll('.data-card input[type="checkbox"]').forEach(cb => {
-                    const idx = parseInt(cb.dataset.index);
-                    cb.checked = selectedIndices.has(idx);
-                });
-            }
-
-            window.selectAll = function() {
-                allSubmissions.forEach((_, idx) => selectedIndices.add(idx));
-                updateSelectionInfo();
-            };
-
-            window.clearSelection = function() {
-                selectedIndices.clear();
-                updateSelectionInfo();
-            };
-
-            function toggleSelection(index) {
-                if (selectedIndices.has(index)) {
-                    selectedIndices.delete(index);
-                } else {
-                    selectedIndices.add(index);
-                }
-                updateSelectionInfo();
-            }
-
-            function getSelectedData() {
-                const selected = [];
-                const sorted = Array.from(selectedIndices).sort((a, b) => a - b);
-                sorted.forEach(idx => {
-                    if (idx >= 0 && idx < allSubmissions.length) {
-                        selected.push(allSubmissions[idx]);
-                    }
-                });
-                return selected;
-            }
-
-            // ── render data list with checkboxes ──
-            function renderDataList() {
-                const container = document.getElementById('dataListContainer');
-                if (allSubmissions.length === 0) {
-                    container.innerHTML =
-                        `
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <h3>ምንም ውሂብ የለም</h3>
-                            <p>እባክዎ ቅጹን ይሙሉ እና ያስገቡ</p>
-                        </div>
-                    `;
-                    document.getElementById('selectionToolbar').style.display = 'none';
-                    return;
-                }
-                document.getElementById('selectionToolbar').style.display = 'flex';
-
-                let html = '';
-                allSubmissions.slice().reverse().forEach((data, idx) => {
-                    const realIdx = allSubmissions.length - 1 - idx;
-                    const checked = selectedIndices.has(realIdx) ? 'checked' : '';
-                    html += `
-                        <div class="data-card ${checked ? 'selected' : ''}" data-index="${realIdx}">
-                            <div class="card-left">
-                                <div class="checkbox-wrap">
-                                    <input type="checkbox" data-index="${realIdx}" ${checked} onchange="toggleSelection(${realIdx})" />
-                                </div>
-                                <div class="info">
-                                    <strong>#${realIdx + 1}</strong> | 
-                                    ${data.requesterDept || 'ክፍል የለም'} | 
-                                    ${data.tripDesc || 'መግለጫ የለም'} | 
-                                    ${data.tripDate || 'ቀን የለም'} |
-                                    📅 ${data.timestamp}
-                                </div>
-                            </div>
-                            <div class="actions">
-                                <button class="btn" onclick="viewData(${realIdx})">👁️ አሳይ</button>
-                                <button class="btn green" onclick="printData(${realIdx})">🖨️ አትም</button>
-                                <button class="btn grey" onclick="deleteData(${realIdx})">🗑️</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-                updateSelectionInfo();
-            }
-
-            window.toggleSelection = toggleSelection;
-
-            // ── view / print single ──
-            window.viewData = function(index) {
-                currentViewIndex = index;
-                const data = allSubmissions[index];
-                if (!data) return;
-
-                document.getElementById('formSection').style.display = 'none';
-                document.getElementById('allDataSection').style.display = 'none';
-                document.getElementById('viewSection').style.display = 'block';
-
-                const container = document.getElementById('viewContent');
-                container.innerHTML = generateViewHTML(data);
-            };
-
-            window.printData = function(index) {
-                const data = allSubmissions[index];
-                if (!data) return;
-                printSingleData(data, index);
-            };
-
-            function printSingleData(data, index) {
-                const printWindow = window.open('', '_blank', 'width=800,height=600');
-                printWindow.document.write(`
-                    <html>
-                    <head><title>Print Data #${index+1}</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; }
-                        .commission-header { text-align: center; font-weight: 700; font-size: 1.2rem; border-bottom: 2px solid #1e3a5f; padding-bottom: 8px; margin-bottom: 12px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-                        th { background: #1e3a5f; color: white; padding: 6px; border: 1px solid #1e3a5f; }
-                        td { border: 1px solid #bac9db; padding: 4px; text-align: center; }
-                        .total-row td { background: #dce5f0; font-weight: 600; }
-                        .signature-area { display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid #b7c7dd; gap: 6px 16px; }
-                        .signature-item { display: flex; gap: 8px 16px; flex-wrap: wrap; }
-                        .field-label { font-weight: 600; }
-                        .print-btn { display: none; }
-                        .name-group, .sign-group { display: inline-flex; gap: 4px; align-items: center; }
-                        .name-group { margin-right: 6px; }
-                        @media print { .no-print { display: none; } }
-                    </style>
-                    </head>
-                    <body>
-                        ${generateViewHTML(data)}
-                        <div style="text-align:center; margin-top:20px;" class="no-print">
-                            <button onclick="window.print()">🖨️ Print</button>
-                            <button onclick="window.close()">Close</button>
-                        </div>
-                        <script>
-                            window.onload = function() { window.print(); }
-                        <\/script>
-                    </body>
-                    </html>
-                `);
-                printWindow.document.close();
-            }
-
-            // ── print selected ──
-            window.printSelected = function() {
-                const selected = getSelectedData();
-                if (selected.length === 0) {
-                    alert('እባክዎ ቢያንስ አንድ ውሂብ ይምረጡ / Please select at least one entry.');
-                    return;
-                }
-                const printWindow = window.open('', '_blank', 'width=800,height=600');
-                let htmlContent = `
-                    <html>
-                    <head><title>Print Selected Data</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; }
-                        .commission-header { text-align: center; font-weight: 700; font-size: 1.2rem; border-bottom: 2px solid #1e3a5f; padding-bottom: 8px; margin-bottom: 12px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-                        th { background: #1e3a5f; color: white; padding: 6px; border: 1px solid #1e3a5f; }
-                        td { border: 1px solid #bac9db; padding: 4px; text-align: center; }
-                        .total-row td { background: #dce5f0; font-weight: 600; }
-                        .signature-area { display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid #b7c7dd; gap: 6px 16px; }
-                        .signature-item { display: flex; gap: 8px 16px; flex-wrap: wrap; }
-                        .field-label { font-weight: 600; }
-                        .print-btn { display: none; }
-                        .name-group, .sign-group { display: inline-flex; gap: 4px; align-items: center; }
-                        .name-group { margin-right: 6px; }
-                        .entry-divider { border-top: 3px double #1e3a5f; margin: 30px 0 20px 0; }
-                        @media print { .no-print { display: none; } }
-                    </style>
-                    </head>
-                    <body>
-                `;
-
-                selected.forEach((data, idx) => {
-                    if (idx > 0) {
-                        htmlContent += `<div class="entry-divider"></div>`;
-                    }
-                    htmlContent += generateViewHTML(data);
-                });
-
-                htmlContent += `
-                        <div style="text-align:center; margin-top:20px;" class="no-print">
-                            <button onclick="window.print()">🖨️ Print</button>
-                            <button onclick="window.close()">Close</button>
-                        </div>
-                        <script>
-                            window.onload = function() { window.print(); }
-                        <\/script>
-                    </body>
-                    </html>
-                `;
-                printWindow.document.write(htmlContent);
-                printWindow.document.close();
-            };
-
-            // ── delete ──
-            window.deleteData = function(index) {
-                if (!confirm(`እርግጠኛ ነዎት ይህንን ውሂብ መሰረዝ ይፈልጋሉ? / Delete this entry?`)) return;
-                selectedIndices.delete(index);
-                allSubmissions.splice(index, 1);
-                const newSelected = new Set();
-                selectedIndices.forEach(i => {
-                    if (i > index) newSelected.add(i - 1);
-                    else if (i < index) newSelected.add(i);
-                });
-                selectedIndices = newSelected;
-                localStorage.setItem('transportSubmissions', JSON.stringify(allSubmissions));
-                updateDataCount();
-                renderDataList();
-            };
-
-            window.clearAllData = function() {
-                if (!confirm('ሁሉንም ውሂብ ያጠፋል? / Delete all data?')) return;
-                allSubmissions = [];
-                selectedIndices.clear();
-                localStorage.setItem('transportSubmissions', JSON.stringify(allSubmissions));
-                updateDataCount();
-                renderDataList();
-            };
-
-            // ── export selected to Excel ──
-            window.exportSelectedToExcel = function() {
-                const selected = getSelectedData();
-                if (selected.length === 0) {
-                    alert('እባክዎ ቢያንስ አንድ ውሂብ ይምረጡ / Please select at least one entry.');
-                    return;
-                }
-                exportDataToExcel(selected);
-            };
-
-            // ── export all to Excel ──
-            window.exportAllToExcel = function() {
-                if (allSubmissions.length === 0) {
-                    alert('ምንም ውሂብ የለም / No data to export.');
-                    return;
-                }
-                if (selectedIndices.size > 0 && selectedIndices.size < allSubmissions.length) {
-                    if (!confirm(`የተመረጡትን ${selectedIndices.size} ውሂቦች ብቻ ላክ? "አይ" ከመረጡ ሁሉንም ይልካል።\n\nExport only ${selectedIndices.size} selected entries? Click "No" to export all.`)) {
-                        exportDataToExcel(allSubmissions);
-                    } else {
-                        exportDataToExcel(getSelectedData());
+                    const dataStartRow = headerRow + 1;
+                    for (let i = 0; i < data.rows.length; i++) {
+                        rows[dataStartRow + i][0] = (i + 1).toString();
                     }
                 } else {
-                    exportDataToExcel(allSubmissions);
-                }
-            };
-
-            // ── core Excel export ──
-            function exportDataToExcel(submissions) {
-                if (!submissions || submissions.length === 0) {
-                    alert('ምንም ውሂብ የለም / No data to export.');
-                    return;
+                    rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+                    currentRow++;
                 }
 
-                const TABLE_HEADERS = [
-                    'ተ.ቁ', 'መነሻ', 'መድረሻ',
-                    'ነጠላ ጉዞ በጭነት በኪ.ሜትር',
-                    'በጭነት ደርሶ መልስ በኪ.ሜትር',
-                    'ነጠላ ጉዞ ያለጭነት በኪ.ሜትር',
-                    'ያለጭነት ደርሶ መልስ በኪ.ሜትር',
-                    'በጭነት ደርሶ መልስ አጠቃላይ የፈጀው ነዳጅ በሊትር',
-                    'ያለጭነት ደርሶ መልስ በኪ.ሜትርነዳጅ ዋጋ በሊትር',
-                    'ነዳጅ ዋጋ በሊትር',
-                    'በጭነት የፈጀው ነዳጅ በብር',
-                    'ያለጭነት የፈጀው ነዳጅ በብር',
-                    'አጠቃላይ ድምር በብር',
-                    'ምርመራ'
-                ];
+                const totals = data.totals || {};
+                rows.push([
+                    'ጠቅላላ', '', '',
+                    totals.singleLoad || '0', '',
+                    totals.singleEmpty || '0', '',
+                    totals.fuelLoad || '0',
+                    totals.fuelEmpty || '0',
+                    totals.fuelPrice || '0',
+                    totals.birrLoad || '0',
+                    totals.birrEmpty || '0',
+                    totals.birrSum || '0',
+                    ''
+                ]);
+                currentRow++;
 
-                const rows = [];
-                const merges = [];
-                let currentRow = 0;
-
-                submissions.forEach((data, subIdx) => {
-                    if (subIdx > 0) {
-                        rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
-                        currentRow++;
-                    }
-
-                    // Title
-                    rows.push(['የአደጋ ስጋት አመራር ኮሚሽን']);
-                    merges.push({ s: { r: currentRow, c: 0 }, e: { r: currentRow, c: 13 } });
-                    currentRow++;
-
-                    // Subtitle
-                    rows.push(['የሎጂስቲክስ ትራንስፖርት ኦፕሬሽን ስራ አስፈፃሚ']);
-                    merges.push({ s: { r: currentRow, c: 0 }, e: { r: currentRow, c: 13 } });
-                    currentRow++;
-
-                    // Sub-header
-                    const reqDept = data.requesterDept || '';
-                    const tripDesc = data.tripDesc || '';
-                    const tripDate = data.tripDate || '';
-                    rows.push([
-                        `ጠያቂው የስራ ክፍል: ${reqDept}`,
-                        '', '', '', '',
-                        `የመስክ ጉዞ አጭር መግለጫ: ${tripDesc}`,
-                        '', '', '', '',
-                        `ቀን: ${tripDate}`,
-                        '', '', ''
-                    ]);
-                    currentRow++;
-
-                    // Vehicle bar
-                    const loadSize = data.loadSize || '';
-                    const plateNo = data.plateNo || '';
-                    const kmReading = data.kmReading || '';
-                    const estDays = data.estDays || '';
-                    const driverName = data.driverName || '';
-                    rows.push([
-                        `የጭነት መጠን: ${loadSize}`,
-                        '',
-                        `የሰሌዳ ቁጥር: ${plateNo}`,
-                        '',
-                        `የኪ.ሜ ንባብ: ${kmReading}`,
-                        '',
-                        `የመስክ ስራው የሚወስደው ቀን ግምት: ${estDays}`,
-                        '',
-                        `አሽከርካሪ: ${driverName}`,
-                        '', '', '', '', ''
-                    ]);
-                    currentRow++;
-
-                    // Blank row before table
-                    rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
-                    currentRow++;
-
-                    // Table headers
-                    rows.push(TABLE_HEADERS);
-                    const headerRow = currentRow;
-                    currentRow++;
-
-                    // Data rows
-                    if (data.rows && data.rows.length > 0) {
-                        data.rows.forEach((row) => {
-                            rows.push([
-                                '',
-                                row.origin || '',
-                                row.dest || '',
-                                row.singleLoad || '',
-                                row.doubleLoad || '',
-                                row.singleEmpty || '',
-                                row.doubleEmpty || '',
-                                row.fuelLoad || '',
-                                row.fuelEmpty || '',
-                                row.fuelPrice || '',
-                                row.birrLoad || '',
-                                row.birrEmpty || '',
-                                row.totalBirr || '',
-                                row.remark || ''
-                            ]);
-                            currentRow++;
-                        });
-                        const dataStartRow = headerRow + 1;
-                        for (let i = 0; i < data.rows.length; i++) {
-                            rows[dataStartRow + i][0] = (i + 1).toString();
-                        }
-                    } else {
-                        rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
-                        currentRow++;
-                    }
-
-                    // Totals
-                    const totals = data.totals || {};
-                    rows.push([
-                        'ጠቅላላ', '', '',
-                        totals.singleLoad || '0', '',
-                        totals.singleEmpty || '0', '',
-                        totals.fuelLoad || '0',
-                        totals.fuelEmpty || '0',
-                        totals.fuelPrice || '0',
-                        totals.birrLoad || '0',
-                        totals.birrEmpty || '0',
-                        totals.birrSum || '0',
-                        ''
-                    ]);
-                    currentRow++;
-
-                    // Blank row before signatures
-                    rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
-                    currentRow++;
-
-                    // Signatures with proper spacing and visible labels
-                    const reqSign = data.reqSign || '';
-                    const reqSignMark = data.reqSignMark || '';
-                    const prepSign = data.prepSign || '';
-                    const prepSignMark = data.prepSignMark || '';
-                    const verifSign = data.verifSign || '';
-                    const verifSignMark = data.verifSignMark || '';
-                    const approvSign = data.approvSign || '';
-                    const approvSignMark = data.approvSignMark || '';
-
-                    rows.push([
-                        `የጠያቂው ስም: ${reqSign}`,
-                        `ፊርማ: ${reqSignMark}`,
-                        '', '', '',
-                        `ያዘጋጀው ስም: ${prepSign}`,
-                        `ፊርማ: ${prepSignMark}`,
-                        '', '', '',
-                        `ያረጋገጠው ስም: ${verifSign}`,
-                        `ፊርማ: ${verifSignMark}`,
-                        `ያፀደቀው ስም: ${approvSign}`,
-                        `ፊርማ: ${approvSignMark}`
-                    ]);
-                    currentRow++;
-
-                    // Timestamp
-                    rows.push([
-                        `📅 የተመዘገበ: ${data.timestamp || ''}`,
-                        '', '', '', '', '', '', '', '', '', '', '', '', ''
-                    ]);
-                    currentRow++;
-
-                    // Blank row after submission
-                    rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
-                    currentRow++;
-                });
-
-                const ws = XLSX.utils.aoa_to_sheet(rows);
-                ws['!merges'] = merges;
-                ws['!cols'] = [
-                    { wch: 6 }, { wch: 14 }, { wch: 14 },
-                    { wch: 11 }, { wch: 11 }, { wch: 11 },
-                    { wch: 11 }, { wch: 11 }, { wch: 11 },
-                    { wch: 10 }, { wch: 10 }, { wch: 10 },
-                    { wch: 10 }, { wch: 14 }
-                ];
-                ws['!print'] = {
-                    orientation: 'portrait',
-                    fitToPage: true,
-                    fitToWidth: 1,
-                    fitToHeight: 0,
-                    margins: { left: 0.4, right: 0.4, top: 0.4, bottom: 0.4 }
-                };
-
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'TransportData');
-
-                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-                const blob = new Blob([wbout], { type: 'application/octet-stream' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                link.href = url;
-                link.setAttribute('download',
-                    `Transport_Logistics_Data_${new Date().toISOString().split('T')[0]}.xlsx`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-            }
-
-            // ── view HTML generator ──
-            function generateViewHTML(data) {
-                let rowsHtml = '';
-                data.rows.forEach((row, idx) => {
-                    rowsHtml += `
-                        <tr>
-                            <td>${idx + 1}</td>
-                            <td>${row.origin || ''}</td>
-                            <td>${row.dest || ''}</td>
-                            <td>${row.singleLoad || ''}</td>
-                            <td>${row.doubleLoad || ''}</td>
-                            <td>${row.singleEmpty || ''}</td>
-                            <td>${row.doubleEmpty || ''}</td>
-                            <td>${row.fuelLoad || ''}</td>
-                            <td>${row.fuelEmpty || ''}</td>
-                            <td>${row.fuelPrice || ''}</td>
-                            <td>${row.birrLoad || ''}</td>
-                            <td>${row.birrEmpty || ''}</td>
-                            <td>${row.totalBirr || ''}</td>
-                            <td>${row.remark || ''}</td>
-                        </tr>
-                    `;
-                });
+                rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+                currentRow++;
 
                 const reqSign = data.reqSign || '';
                 const reqSignMark = data.reqSignMark || '';
@@ -1675,100 +2404,489 @@
                 const approvSign = data.approvSign || '';
                 const approvSignMark = data.approvSignMark || '';
 
-                return `
-                    <div class="commission-header">የአደጋ ስጋት አመራር ኮሚሽን</div>
-                    <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">የሎጂስቲክስ ትራንስፖርት ኦፕሬሽን ስራ አስፈፃሚ</div>
+                rows.push([
+                    `የጠያቂው ስም: ${reqSign}`,
+                    `ፊርማ: ${reqSignMark}`,
+                    '', '', '',
+                    `ያዘጋጀው ስም: ${prepSign}`,
+                    `ፊርማ: ${prepSignMark}`,
+                    '', '', '',
+                    `ያረጋገጠው ስም: ${verifSign}`,
+                    `ፊርማ: ${verifSignMark}`,
+                    `ያፀደቀው ስም: ${approvSign}`,
+                    `ፊርማ: ${approvSignMark}`
+                ]);
+                currentRow++;
 
-                    <div style="display:flex; flex-wrap:wrap; gap:8px 20px; background:#f4f7fc; padding:6px 12px; border-radius:5px; margin-bottom:8px; font-size:0.8rem;">
-                        <span><strong>ጠያቂ ክፍል:</strong> ${data.requesterDept || ''}</span>
-                        <span><strong>ጉዞ:</strong> ${data.tripDesc || ''}</span>
-                        <span><strong>ቀን:</strong> ${data.tripDate || ''}</span>
-                        <span><strong>ጭነት:</strong> ${data.loadSize || ''}</span>
-                        <span><strong>ሰሌዳ:</strong> ${data.plateNo || ''}</span>
-                        <span><strong>ኪ.ሜ:</strong> ${data.kmReading || ''}</span>
-                        <span><strong>ቀናት:</strong> ${data.estDays || ''}</span>
-                        <span><strong>አሽከርካሪ:</strong> ${data.driverName || ''}</span>
-                    </div>
+                rows.push([
+                    `📅 የተመዘገበ: ${data.timestamp || ''}`,
+                    '', '', '', '', '', '', '', '', '', '', '', '', ''
+                ]);
+                currentRow++;
 
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ተ.ቁ</th><th>መነሻ</th><th>መድረሻ</th>
-                                <th>ነጠላ ጭነት</th><th>ደርሶ መልስ ጭ</th>
-                                <th>ነጠላ ያለጭ</th><th>ደርሶ መልስ ያለ</th>
-                                <th>ነዳጅ ጭ</th><th>ነዳጅ ያለ</th>
-                                <th>ዋጋ/ሊትር</th><th>ብር ጭ</th><th>ብር ያለ</th>
-                                <th>አጠቃላይ</th><th>ምርመራ</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rowsHtml}</tbody>
-                        <tfoot>
-                            <tr class="total-row">
-                                <td colspan="2" style="text-align:right; font-weight:600;">ጠቅላላ</td>
-                                <td></td>
-                                <td>${data.totals.singleLoad || '0'}</td>
-                                <td></td>
-                                <td>${data.totals.singleEmpty || '0'}</td>
-                                <td></td>
-                                <td>${data.totals.fuelLoad || '0'}</td>
-                                <td>${data.totals.fuelEmpty || '0'}</td>
-                                <td>${data.totals.fuelPrice || '0'}</td>
-                                <td>${data.totals.birrLoad || '0'}</td>
-                                <td>${data.totals.birrEmpty || '0'}</td>
-                                <td>${data.totals.birrSum || '0'}</td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                rows.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+                currentRow++;
+            });
 
-                    <div class="signature-area">
-                        <div class="signature-item">
-                            <span class="name-group"><span class="field-label">የጠያቂው ስም:</span> ${reqSign}</span>
-                            <span class="sign-group"><span class="field-label">ፊርማ:</span> ${reqSignMark}</span>
-                        </div>
-                        <div class="signature-item">
-                            <span class="name-group"><span class="field-label">ያዘጋጀው ስም:</span> ${prepSign}</span>
-                            <span class="sign-group"><span class="field-label">ፊርማ:</span> ${prepSignMark}</span>
-                        </div>
-                        <div class="signature-item">
-                            <span class="name-group"><span class="field-label">ያረጋገጠው ስም:</span> ${verifSign}</span>
-                            <span class="sign-group"><span class="field-label">ፊርማ:</span> ${verifSignMark}</span>
-                        </div>
-                        <div class="signature-item">
-                            <span class="name-group"><span class="field-label">ያፀደቀው ስም:</span> ${approvSign}</span>
-                            <span class="sign-group"><span class="field-label">ፊርማ:</span> ${approvSignMark}</span>
-                        </div>
-                    </div>
-                    <div style="margin-top:8px; font-size:0.7rem; color:#666;">📅 የተመዘገበ: ${data.timestamp}</div>
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!merges'] = merges;
+            ws['!cols'] = [
+                { wch: 6 }, { wch: 14 }, { wch: 14 },
+                { wch: 11 }, { wch: 11 }, { wch: 11 },
+                { wch: 11 }, { wch: 11 }, { wch: 11 },
+                { wch: 10 }, { wch: 10 }, { wch: 10 },
+                { wch: 10 }, { wch: 14 }
+            ];
+            ws['!print'] = {
+                orientation: 'portrait',
+                fitToPage: true,
+                fitToWidth: 1,
+                fitToHeight: 0,
+                margins: { left: 0.4, right: 0.4, top: 0.4, bottom: 0.4 }
+            };
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'TransportData');
+
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.setAttribute('download',
+                `Transport_Logistics_Data_${new Date().toISOString().split('T')[0]}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // ── generateViewHTML ──
+        function generateViewHTML(data) {
+            let rowsHtml = '';
+            data.rows.forEach((row, idx) => {
+                rowsHtml += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td>${row.origin || ''}</td>
+                        <td>${row.dest || ''}</td>
+                        <td>${row.singleLoad || ''}</td>
+                        <td>${row.doubleLoad || ''}</td>
+                        <td>${row.singleEmpty || ''}</td>
+                        <td>${row.doubleEmpty || ''}</td>
+                        <td>${row.fuelLoad || ''}</td>
+                        <td>${row.fuelEmpty || ''}</td>
+                        <td>${row.fuelPrice || ''}</td>
+                        <td>${row.birrLoad || ''}</td>
+                        <td>${row.birrEmpty || ''}</td>
+                        <td>${row.totalBirr || ''}</td>
+                        <td>${row.remark || ''}</td>
+                    </tr>
                 `;
+            });
+
+            const reqSign = data.reqSign || '';
+            const reqSignMark = data.reqSignMark || '';
+            const prepSign = data.prepSign || '';
+            const prepSignMark = data.prepSignMark || '';
+            const verifSign = data.verifSign || '';
+            const verifSignMark = data.verifSignMark || '';
+            const approvSign = data.approvSign || '';
+            const approvSignMark = data.approvSignMark || '';
+
+            return `
+                <div class="commission-header">የአደጋ ስጋት አመራር ኮሚሽን</div>
+                <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 8px;">የሎጂስቲክስ ትራንስፖርት ኦፕሬሽን ስራ አስፈፃሚ</div>
+
+                <div style="display:flex; flex-wrap:wrap; gap:8px 20px; background:#f4f7fc; padding:6px 12px; border-radius:5px; margin-bottom:8px; font-size:0.8rem;">
+                    <span><strong>ጠያቂ ክፍል:</strong> ${data.requesterDept || ''}</span>
+                    <span><strong>ጉዞ:</strong> ${data.tripDesc || ''}</span>
+                    <span><strong>ቀን:</strong> ${data.tripDate || ''}</span>
+                    <span><strong>ጭነት:</strong> ${data.loadSize || ''}</span>
+                    <span><strong>ሰሌዳ:</strong> ${data.plateNo || ''}</span>
+                    <span><strong>ኪ.ሜ:</strong> ${data.kmReading || ''}</span>
+                    <span><strong>ቀናት:</strong> ${data.estDays || ''}</span>
+                    <span><strong>አሽከርካሪ:</strong> ${data.driverName || ''}</span>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ተ.ቁ</th><th>መነሻ</th><th>መድረሻ</th>
+                            <th>ነጠላ ጭነት</th><th>ደርሶ መልስ ጭ</th>
+                            <th>ነጠላ ያለጭ</th><th>ደርሶ መልስ ያለ</th>
+                            <th>ነዳጅ ጭ</th><th>ነዳጅ ያለ</th>
+                            <th>ዋጋ/ሊትር</th><th>ብር ጭ</th><th>ብር ያለ</th>
+                            <th>አጠቃላይ</th><th>ምርመራ</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHtml}</tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="2" style="text-align:right; font-weight:600;">ጠቅላላ</td>
+                            <td></td>
+                            <td>${data.totals.singleLoad || '0'}</td>
+                            <td></td>
+                            <td>${data.totals.singleEmpty || '0'}</td>
+                            <td></td>
+                            <td>${data.totals.fuelLoad || '0'}</td>
+                            <td>${data.totals.fuelEmpty || '0'}</td>
+                            <td>${data.totals.fuelPrice || '0'}</td>
+                            <td>${data.totals.birrLoad || '0'}</td>
+                            <td>${data.totals.birrEmpty || '0'}</td>
+                            <td>${data.totals.birrSum || '0'}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div class="signature-area">
+                    <div class="signature-item">
+                        <span class="name-group"><span class="field-label">የጠያቂው ስም:</span> ${reqSign}</span>
+                        <span class="sign-group"><span class="field-label">ፊርማ:</span> ${reqSignMark}</span>
+                    </div>
+                    <div class="signature-item">
+                        <span class="name-group"><span class="field-label">ያዘጋጀው ስም:</span> ${prepSign}</span>
+                        <span class="sign-group"><span class="field-label">ፊርማ:</span> ${prepSignMark}</span>
+                    </div>
+                    <div class="signature-item">
+                        <span class="name-group"><span class="field-label">ያረጋገጠው ስም:</span> ${verifSign}</span>
+                        <span class="sign-group"><span class="field-label">ፊርማ:</span> ${verifSignMark}</span>
+                    </div>
+                    <div class="signature-item">
+                        <span class="name-group"><span class="field-label">ያፀደቀው ስም:</span> ${approvSign}</span>
+                        <span class="sign-group"><span class="field-label">ፊርማ:</span> ${approvSignMark}</span>
+                    </div>
+                </div>
+                <div style="margin-top:8px; font-size:0.7rem; color:#666;">📅 የተመዘገበ: ${data.timestamp}</div>
+            `;
+        }
+
+        function updateDataCount() {
+            document.getElementById('dataCount').textContent = allSubmissions.length;
+        }
+
+        // ── DASHBOARD ──────────────────────────────────────────────────────
+
+        let chartInstances = {};
+
+        function renderDashboard() {
+            const container = document.getElementById('dashboardContent');
+            if (allSubmissions.length === 0) {
+                container.innerHTML = `
+                    <div class="no-data-msg">
+                        <div class="icon">📊</div>
+                        <p>ምንም ውሂብ የለም / No data available for dashboard.<br>
+                        እባክዎ ቅጹን ይሙሉ እና ያስገቡ / Please fill and submit the form.</p>
+                    </div>
+                `;
+                return;
             }
 
-            function updateDataCount() {
-                document.getElementById('dataCount').textContent = allSubmissions.length;
-            }
+            // Rebuild the dashboard HTML if needed
+            // Stats are updated via updateDashboardStats()
+            updateDashboardStats();
+            updateDashboardCharts();
+            updateDeptSummary();
+        }
 
-            // ── init ──
-            buildRows(defaultRows);
-            updateDataCount();
+        function updateDashboardStats() {
+            let totalTrips = allSubmissions.length;
+            let totalDistance = 0;
+            let totalFuel = 0;
+            let totalCost = 0;
+            let depts = new Set();
 
-            const savedForm = localStorage.getItem('transportFormData');
-            if (savedForm) {
-                try {
-                    const data = JSON.parse(savedForm);
-                    if (data.rows) {
-                        setFormData(data);
+            allSubmissions.forEach(sub => {
+                if (sub.requesterDept) depts.add(sub.requesterDept);
+                if (sub.rows) {
+                    sub.rows.forEach(row => {
+                        const sl = parseFloat(row.singleLoad) || 0;
+                        const dl = parseFloat(row.doubleLoad) || 0;
+                        const se = parseFloat(row.singleEmpty) || 0;
+                        const de = parseFloat(row.doubleEmpty) || 0;
+                        const dist = sl + dl + se + de;
+                        totalDistance += dist;
+                        const fl = parseFloat(row.fuelLoad) || 0;
+                        const fe = parseFloat(row.fuelEmpty) || 0;
+                        totalFuel += fl + fe;
+                        const cost = parseFloat(row.totalBirr) || 0;
+                        totalCost += cost;
+                    });
+                }
+            });
+
+            document.getElementById('statTrips').textContent = totalTrips;
+            document.getElementById('statDistance').textContent = totalDistance.toFixed(0);
+            document.getElementById('statFuel').textContent = totalFuel.toFixed(2);
+            document.getElementById('statCost').textContent = totalCost.toFixed(2);
+            document.getElementById('statAvgFuel').textContent = totalTrips > 0 ? (totalFuel / totalTrips).toFixed(2) : '0';
+            document.getElementById('statDepts').textContent = depts.size;
+        }
+
+        function updateDashboardCharts() {
+            // Destroy existing charts
+            Object.values(chartInstances).forEach(chart => {
+                if (chart) chart.destroy();
+            });
+            chartInstances = {};
+
+            // Aggregate data
+            let loadedDist = 0,
+                emptyDist = 0;
+            let loadedFuel = 0,
+                emptyFuel = 0;
+            let deptData = {};
+            let costData = { loaded: 0, empty: 0 };
+
+            allSubmissions.forEach(sub => {
+                const dept = sub.requesterDept || 'ያልተገለጸ';
+                if (!deptData[dept]) deptData[dept] = { trips: 0, dist: 0, fuel: 0, cost: 0 };
+                deptData[dept].trips += 1;
+
+                if (sub.rows) {
+                    sub.rows.forEach(row => {
+                        const sl = parseFloat(row.singleLoad) || 0;
+                        const dl = parseFloat(row.doubleLoad) || 0;
+                        const se = parseFloat(row.singleEmpty) || 0;
+                        const de = parseFloat(row.doubleEmpty) || 0;
+                        const distLoaded = sl + dl;
+                        const distEmpty = se + de;
+                        loadedDist += distLoaded;
+                        emptyDist += distEmpty;
+                        deptData[dept].dist += distLoaded + distEmpty;
+
+                        const fl = parseFloat(row.fuelLoad) || 0;
+                        const fe = parseFloat(row.fuelEmpty) || 0;
+                        loadedFuel += fl;
+                        emptyFuel += fe;
+                        deptData[dept].fuel += fl + fe;
+
+                        const bl = parseFloat(row.birrLoad) || 0;
+                        const be = parseFloat(row.birrEmpty) || 0;
+                        costData.loaded += bl;
+                        costData.empty += be;
+                        deptData[dept].cost += bl + be;
+                    });
+                }
+            });
+
+            // 1. Distance Chart (Doughnut)
+            const ctx1 = document.getElementById('distanceChart').getContext('2d');
+            chartInstances.distance = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['በጭነት / Loaded', 'ያለጭነት / Empty'],
+                    datasets: [{
+                        data: [loadedDist, emptyDist],
+                        backgroundColor: ['#2c6b9e', '#d4772a'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 10 }, boxWidth: 12, padding: 8 }
+                        }
                     }
-                } catch (e) { /* ignore */ }
+                }
+            });
+
+            // 2. Fuel Chart (Doughnut)
+            const ctx2 = document.getElementById('fuelChart').getContext('2d');
+            chartInstances.fuel = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['በጭነት / Loaded', 'ያለጭነት / Empty'],
+                    datasets: [{
+                        data: [loadedFuel, emptyFuel],
+                        backgroundColor: ['#2a7a4a', '#e67e22'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 10 }, boxWidth: 12, padding: 8 }
+                        }
+                    }
+                }
+            });
+
+            // 3. Department Chart (Bar)
+            const deptNames = Object.keys(deptData);
+            const deptTrips = deptNames.map(d => deptData[d].trips);
+            const deptColors = ['#2c6b9e', '#2a7a4a', '#d4772a', '#6c3a8a', '#1f8a7a', '#c0392b', '#2980b9', '#8e44ad'];
+            const ctx3 = document.getElementById('deptChart').getContext('2d');
+            chartInstances.dept = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: deptNames,
+                    datasets: [{
+                        label: 'የጉዞ ብዛት / Trips',
+                        data: deptTrips,
+                        backgroundColor: deptColors.slice(0, deptNames.length),
+                        borderColor: '#1e3a5f',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { font: { size: 9 }, stepSize: 1 }
+                        },
+                        x: {
+                            ticks: { font: { size: 8 }, maxRotation: 30, minRotation: 0 }
+                        }
+                    }
+                }
+            });
+
+            // 4. Cost Chart (Doughnut)
+            const ctx4 = document.getElementById('costChart').getContext('2d');
+            chartInstances.cost = new Chart(ctx4, {
+                type: 'doughnut',
+                data: {
+                    labels: ['በጭነት / Loaded', 'ያለጭነት / Empty'],
+                    datasets: [{
+                        data: [costData.loaded, costData.empty],
+                        backgroundColor: ['#6c3a8a', '#1f8a7a'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 10 }, boxWidth: 12, padding: 8 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateDeptSummary() {
+            const tbody = document.getElementById('deptSummaryBody');
+            const tfoot = document.getElementById('deptSummaryFoot');
+            let deptData = {};
+
+            allSubmissions.forEach(sub => {
+                const dept = sub.requesterDept || 'ያልተገለጸ';
+                if (!deptData[dept]) deptData[dept] = { trips: 0, dist: 0, fuel: 0, cost: 0 };
+                deptData[dept].trips += 1;
+                if (sub.rows) {
+                    sub.rows.forEach(row => {
+                        const sl = parseFloat(row.singleLoad) || 0;
+                        const dl = parseFloat(row.doubleLoad) || 0;
+                        const se = parseFloat(row.singleEmpty) || 0;
+                        const de = parseFloat(row.doubleEmpty) || 0;
+                        deptData[dept].dist += sl + dl + se + de;
+                        const fl = parseFloat(row.fuelLoad) || 0;
+                        const fe = parseFloat(row.fuelEmpty) || 0;
+                        deptData[dept].fuel += fl + fe;
+                        const cost = parseFloat(row.totalBirr) || 0;
+                        deptData[dept].cost += cost;
+                    });
+                }
+            });
+
+            let html = '';
+            let totalTrips = 0,
+                totalDist = 0,
+                totalFuel = 0,
+                totalCost = 0;
+            const sorted = Object.keys(deptData).sort();
+            sorted.forEach(dept => {
+                const d = deptData[dept];
+                totalTrips += d.trips;
+                totalDist += d.dist;
+                totalFuel += d.fuel;
+                totalCost += d.cost;
+                html += `
+                    <tr>
+                        <td>${dept}</td>
+                        <td>${d.trips}</td>
+                        <td>${d.dist.toFixed(0)}</td>
+                        <td>${d.fuel.toFixed(2)}</td>
+                        <td>${d.cost.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            tfoot.innerHTML = `
+                <tr class="total-row">
+                    <td><strong>ጠቅላላ / Total</strong></td>
+                    <td><strong>${totalTrips}</strong></td>
+                    <td><strong>${totalDist.toFixed(0)}</strong></td>
+                    <td><strong>${totalFuel.toFixed(2)}</strong></td>
+                    <td><strong>${totalCost.toFixed(2)}</strong></td>
+                </tr>
+            `;
+        }
+
+        // ── init app ──
+        function initApp() {
+            const user = getSession();
+            if (user) {
+                if (!user.approved) {
+                    showPending();
+                    return;
+                }
+                showMainApp();
+                const savedForm = localStorage.getItem('transportFormData');
+                if (savedForm) {
+                    try {
+                        const data = JSON.parse(savedForm);
+                        if (data.rows) {
+                            setFormData(data);
+                        }
+                    } catch (e) { /* ignore */ }
+                }
+                document.getElementById('tripDate').value = '';
+                buildRows(defaultRows);
+                updateDataCount();
+            } else {
+                showLogin();
             }
+        }
 
-            document.getElementById('tripDate').value = '';
-            window.allSubmissions = allSubmissions;
+        window.showLogin = showLogin;
+        window.showRegister = showRegister;
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
+        window.logout = logout;
 
-            document.addEventListener('input', function() {
+        // ── start ──
+        initApp();
+
+        document.addEventListener('input', function() {
+            if (currentUser) {
                 const data = getFormData();
                 localStorage.setItem('transportFormData', JSON.stringify(data));
-            });
-        })();
+            }
+        });
+
+        // Expose dashboard render for navigation
+        window.renderDashboard = renderDashboard;
     </script>
 </body>
 </html>
